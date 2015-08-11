@@ -6,7 +6,7 @@
 		<artifactId>parent</artifactId>
 		<version>1.13</version>
 	</parent>
-	<groupId>fr.free.neomcfly.jsoupmapper</groupId>
+	<groupId>neomcfly.jsoupmapper</groupId>
 	<artifactId>jsoup-mapper</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
