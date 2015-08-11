@@ -60,11 +60,24 @@ public class JsoupMapper {
 
 			log.debug(typeClass.getCanonicalName());
 
-			throw new RuntimeException(
-					"Simple type not handled for the moment: "
-							+ typeClass.getCanonicalName());
+            return parseElement(body, typeClass);
+
+        }
+
+    }
+
+    private <T> T parseElement(InputStream in,  Class<T> classArgument) {
+        try {
+            Document parse = Jsoup.parse(in, "UTF8", "/");
+
+            return map(parse.body(), classArgument);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
 		}
 
+        return null;
 	}
 
 	private Collection parseList(InputStream in, Class<?> classArgument) {
@@ -98,9 +111,10 @@ public class JsoupMapper {
 		return null;
 	}
 
-	private Object map(Element element, Class<?> classTarget) {
+    @SuppressWarnings("unchecked")
+    private <T> T map(Element element, Class<T> classTarget) {
 		try {
-			return map(element, classTarget.newInstance());
+            return (T) map(element, classTarget.newInstance());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
