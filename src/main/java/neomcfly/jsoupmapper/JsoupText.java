@@ -1,16 +1,14 @@
-package fr.free.neomcfly.jsoupmapper;
-
+package neomcfly.jsoupmapper;
 
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-@Target({ FIELD })
+@Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JsoupOptional {
-
-    boolean value() default true;
+public @interface JsoupText {
 
 }

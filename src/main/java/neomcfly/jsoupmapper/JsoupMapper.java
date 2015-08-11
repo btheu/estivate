@@ -1,4 +1,4 @@
-package fr.free.neomcfly.jsoupmapper;
+package neomcfly.jsoupmapper;
 
 import java.io.IOException;
 import java.io.InputStream;

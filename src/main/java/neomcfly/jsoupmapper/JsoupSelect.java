@@ -1,4 +1,4 @@
-package fr.free.neomcfly.jsoupmapper;
+package neomcfly.jsoupmapper;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
