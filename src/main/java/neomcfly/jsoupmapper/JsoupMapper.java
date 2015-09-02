@@ -14,15 +14,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 public class JsoupMapper {
+
+	@Getter
+	@Setter
+	private String encoding = "UTF-8";
 
 	public Object fromBody(InputStream body, Type type) {
 
@@ -32,8 +38,7 @@ public class JsoupMapper {
 			ParameterizedType parameterizedType = (ParameterizedType) type;
 
 			// Handle type parameter class
-			Class<?> classArgument = (Class<?>) parameterizedType
-					.getActualTypeArguments()[0];
+			Class<?> classArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
 			// Handle type class
 			Class<?> rowClass = (Class<?>) parameterizedType.getRawType();
@@ -50,8 +55,7 @@ public class JsoupMapper {
 
 				log.debug(rowClass.getCanonicalName() + " is not a collection");
 
-				throw new RuntimeException("Parameterized type not handled: "
-						+ rowClass.getCanonicalName());
+				throw new RuntimeException("Parameterized type not handled: " + rowClass.getCanonicalName());
 			}
 
 		} else {
@@ -60,36 +64,35 @@ public class JsoupMapper {
 
 			log.debug(typeClass.getCanonicalName());
 
-            return parseElement(body, typeClass);
+			return parseElement(body, typeClass);
 
-        }
-
-    }
-
-    private <T> T parseElement(InputStream in,  Class<T> classArgument) {
-        try {
-            Document parse = Jsoup.parse(in, "UTF8", "/");
-
-            return map(parse.body(), classArgument);
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
 		}
 
-        return null;
+	}
+
+	private <T> T parseElement(InputStream in, Class<T> classArgument) {
+		try {
+			Document parse = Jsoup.parse(in, "UTF8", "/");
+
+			return map(parse.body(), classArgument);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	private Collection parseList(InputStream in, Class<?> classArgument) {
 
 		try {
 
-			Document parse = Jsoup.parse(in, "UTF8", "/");
+			Document parse = Jsoup.parse(in, encoding, "/");
 
-			log.info(parse.toString());
+			log.debug(parse.toString());
 
-			JsoupListSelect selector = classArgument
-					.getAnnotation(JsoupListSelect.class);
+			JsoupListSelect selector = classArgument.getAnnotation(JsoupListSelect.class);
 
 			log.debug(selector.value());
 
@@ -111,10 +114,10 @@ public class JsoupMapper {
 		return null;
 	}
 
-    @SuppressWarnings("unchecked")
-    private <T> T map(Element element, Class<T> classTarget) {
+	@SuppressWarnings("unchecked")
+	private <T> T map(Element element, Class<T> classTarget) {
 		try {
-            return (T) map(element, classTarget.newInstance());
+			return (T) map(element, classTarget.newInstance());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -132,8 +135,7 @@ public class JsoupMapper {
 	}
 
 	private Object map(Element element, Object target)
-			throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		List<Field> allFields = getAllFields(target.getClass());
 		for (Field field : allFields) {
@@ -148,9 +150,8 @@ public class JsoupMapper {
 		return target;
 	}
 
-	private void evaluate(Element source, AccessibleObject accessibleObject,
-			Object target) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	private void evaluate(Element source, AccessibleObject accessibleObject, Object target)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		Object value = null;
 
@@ -158,29 +159,25 @@ public class JsoupMapper {
 		Element currentElement = source;
 		Boolean optional = false;
 
-		JsoupOptional optionalAnnotation = accessibleObject
-				.getAnnotation(JsoupOptional.class);
+		JsoupOptional optionalAnnotation = accessibleObject.getAnnotation(JsoupOptional.class);
 		if (optionalAnnotation != null) {
 			optional = optionalAnnotation.value();
 		}
 
-		JsoupSelect selector = accessibleObject
-				.getAnnotation(JsoupSelect.class);
+		JsoupSelect selector = accessibleObject.getAnnotation(JsoupSelect.class);
 		if (selector != null) {
-			log.debug("{}, select [{},{}]", getName(accessibleObject),
-					source.nodeName(), selector.value());
+			log.debug("{}, select [{},{}]", getName(accessibleObject), source.nodeName(), selector.value());
 
 			Elements select = source.select(selector.value());
 
-			log.debug("{}, select [{},{} => {}]", getName(accessibleObject),
-					source.nodeName(), selector.value(), select.size());
+			log.debug("{}, select [{},{} => {}]", getName(accessibleObject), source.nodeName(), selector.value(),
+					select.size());
 
 			currentElement = select.first();
 
 			if (!select.isEmpty()) {
-				log.debug("{}, select [{},{} => {}]",
-						getName(accessibleObject), source.nodeName(),
-						selector.value(), currentElement.nodeName());
+				log.debug("{}, select [{},{} => {}]", getName(accessibleObject), source.nodeName(), selector.value(),
+						currentElement.nodeName());
 			}
 		}
 
@@ -188,9 +185,11 @@ public class JsoupMapper {
 
 			log.debug("{}]", source.toString());
 
-			throw new RuntimeException(
-					"Select returns none for non optional field: "
-							+ getName(accessibleObject));
+			throw new RuntimeException("Select returns none for non optional field: " + getName(accessibleObject));
+		}
+
+		if (currentElement == null) {
+			return;
 		}
 
 		JsoupAttr attr = accessibleObject.getAnnotation(JsoupAttr.class);
@@ -222,9 +221,8 @@ public class JsoupMapper {
 		return "__unknown__";
 	}
 
-	private void setValue(Object target, AccessibleObject accessibleObject,
-			Object value) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	private void setValue(Object target, AccessibleObject accessibleObject, Object value)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		if (accessibleObject instanceof Field) {
 			setValue(target, (Field) accessibleObject, value);
 		} else if (accessibleObject instanceof Method) {
@@ -259,8 +257,7 @@ public class JsoupMapper {
 	}
 
 	public static void setValue(Object target, Method method, Object value)
-			throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		log.debug("set value [{}({}) ]", method.getName(), value);
 
