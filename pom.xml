@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>fr.free.neomcfly</groupId>
+		<groupId>neomcfly.parent</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.13</version>
+		<version>1.14</version>
 	</parent>
 	<groupId>neomcfly.jsoupmapper</groupId>
 	<artifactId>jsoup-mapper</artifactId>
