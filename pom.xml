@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>neomcfly.parent</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.17</version>
+		<version>1.19</version>
 	</parent>
 	<groupId>neomcfly.jsoupmapper</groupId>
 	<artifactId>jsoup-mapper</artifactId>
