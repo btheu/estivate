@@ -79,8 +79,7 @@ public class JsoupMapper {
             return map(parse.body(), classArgument);
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         return null;
@@ -110,8 +109,7 @@ public class JsoupMapper {
             return result;
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         return null;
@@ -122,17 +120,13 @@ public class JsoupMapper {
         try {
             return (T) map(element, classTarget.newInstance());
         } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }
