@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
  */
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JsoupAttr {
+public @interface JSoupAttr {
 
     String value();
 

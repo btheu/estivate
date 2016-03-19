@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  */
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JsoupText {
+public @interface JSoupText {
 
     /**
      * When <code>true</code>, equivalent to JSoup's element.ownText()

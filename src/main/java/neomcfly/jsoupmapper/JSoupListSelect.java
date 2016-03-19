@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target({ FIELD, TYPE })
 @Retention(RUNTIME)
-public @interface JsoupListSelect {
+public @interface JSoupListSelect {
 
     String value();
 

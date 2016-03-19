@@ -34,7 +34,7 @@ import org.jsoup.select.Selector;
  */
 @Target({ FIELD, TYPE, METHOD })
 @Retention(RUNTIME)
-public @interface JsoupSelect {
+public @interface JSoupSelect {
 
     String value();
 

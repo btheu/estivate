@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JSoupMapperAttrTest {
 
-    JsoupMapper mapper = new JsoupMapper();
+    JSoupMapper mapper = new JSoupMapper();
 
     @Test
     public void attr1() {
@@ -46,14 +46,14 @@ public class JSoupMapperAttrTest {
     @Data
     public static class Result {
 
-        @JsoupSelect("#name")
-        @JsoupAttr("value")
+        @JSoupSelect("#name")
+        @JSoupAttr("value")
         public String name1;
 
         public String name2;
 
-        @JsoupSelect("#name")
-        @JsoupAttr("value")
+        @JSoupSelect("#name")
+        @JSoupAttr("value")
         public void setName2(String name2) {
             this.name2 = name2;
         }
@@ -61,7 +61,7 @@ public class JSoupMapperAttrTest {
     }
 
     private InputStream read(String string) {
-        InputStream resourceAsStream = JsoupMapper.class
+        InputStream resourceAsStream = JSoupMapper.class
                 .getResourceAsStream(string);
         TestCase.assertNotNull(resourceAsStream);
         return resourceAsStream;

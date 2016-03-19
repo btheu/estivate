@@ -24,7 +24,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class JsoupMapper {
+public class JSoupMapper {
 
     @Getter
     @Setter
@@ -93,8 +93,8 @@ public class JsoupMapper {
 
             log.debug(parse.toString());
 
-            JsoupListSelect selector = classArgument
-                    .getAnnotation(JsoupListSelect.class);
+            JSoupListSelect selector = classArgument
+                    .getAnnotation(JSoupListSelect.class);
 
             log.debug(selector.value());
 
@@ -158,14 +158,14 @@ public class JsoupMapper {
         Element currentElement = source;
         Boolean optional = false;
 
-        JsoupOptional optionalAnnotation = accessibleObject
-                .getAnnotation(JsoupOptional.class);
+        JSoupOptional optionalAnnotation = accessibleObject
+                .getAnnotation(JSoupOptional.class);
         if (optionalAnnotation != null) {
             optional = optionalAnnotation.value();
         }
 
-        JsoupSelect selector = accessibleObject
-                .getAnnotation(JsoupSelect.class);
+        JSoupSelect selector = accessibleObject
+                .getAnnotation(JSoupSelect.class);
         if (selector != null) {
             log.debug("{}, select [{},{}]", getName(accessibleObject),
                     source.nodeName(), selector.value());
@@ -197,7 +197,7 @@ public class JsoupMapper {
             return;
         }
 
-        JsoupAttr attr = accessibleObject.getAnnotation(JsoupAttr.class);
+        JSoupAttr attr = accessibleObject.getAnnotation(JSoupAttr.class);
         if (attr != null) {
 
             log.debug("{} attr", getName(accessibleObject));
@@ -205,7 +205,7 @@ public class JsoupMapper {
             value = currentElement.attr(attr.value());
         }
 
-        JsoupText text = accessibleObject.getAnnotation(JsoupText.class);
+        JSoupText text = accessibleObject.getAnnotation(JSoupText.class);
         if (text != null) {
 
             log.debug("{} text", getName(accessibleObject));
