@@ -283,7 +283,7 @@ public class Page {
 * All fields will be mapped with the sub DOM 
 * selected by <code>Page</code> articles rule for one <code>P</code>
 */
-// JSoupSelectList is not necessary as long Page already Select.
+// JSoupSelectList is not necessary as long Page already specify the select rule.
 public class Article {
 
 	@JsoupSelect("#author")
