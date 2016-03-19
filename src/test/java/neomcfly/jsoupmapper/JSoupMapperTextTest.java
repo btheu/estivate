@@ -18,7 +18,7 @@ public class JSoupMapperTextTest {
 
         InputStream document = read("/text/u1.html");
 
-        Result result = mapper.fromBody(document, Result.class);
+        Result result = mapper.map(document, Result.class);
 
         TestCase.assertNotNull(result);
         TestCase.assertNotNull(result.getName1());
@@ -33,7 +33,7 @@ public class JSoupMapperTextTest {
 
         InputStream document = read("/text/u2.html");
 
-        Result fromBody = mapper.fromBody(document, Result.class);
+        Result fromBody = mapper.map(document, Result.class);
 
         TestCase.assertNotNull(fromBody);
         TestCase.assertNotNull(fromBody.getName1());
