@@ -26,242 +26,255 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JsoupMapper {
 
-	@Getter
-	@Setter
-	private String encoding = "UTF-8";
+    @Getter
+    @Setter
+    private String encoding = "UTF-8";
 
-	public Object fromBody(InputStream body, Type type) {
+    public <T> T fromBody(InputStream body, Type type) {
 
-		log.debug(type.getClass().getCanonicalName());
+        log.debug(type.getClass().getCanonicalName());
 
-		if (type instanceof ParameterizedType) {
-			ParameterizedType parameterizedType = (ParameterizedType) type;
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
 
-			// Handle type parameter class
-			Class<?> classArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+            // Handle type parameter class
+            Class<?> classArgument = (Class<?>) parameterizedType
+                    .getActualTypeArguments()[0];
 
-			// Handle type class
-			Class<?> rowClass = (Class<?>) parameterizedType.getRawType();
+            // Handle type class
+            Class<?> rowClass = (Class<?>) parameterizedType.getRawType();
 
-			if (Collection.class.isAssignableFrom(rowClass)) {
+            if (Collection.class.isAssignableFrom(rowClass)) {
 
-				Collection o = new ArrayList<Object>();
+                Collection o = new ArrayList<Object>();
 
-				o.addAll(parseList(body, classArgument));
+                o.addAll(parseList(body, classArgument));
 
-				return o;
+                return (T) o;
 
-			} else {
+            } else {
 
-				log.debug(rowClass.getCanonicalName() + " is not a collection");
+                log.debug(rowClass.getCanonicalName() + " is not a collection");
 
-				throw new RuntimeException("Parameterized type not handled: " + rowClass.getCanonicalName());
-			}
+                throw new RuntimeException("Parameterized type not handled: "
+                        + rowClass.getCanonicalName());
+            }
 
-		} else {
+        } else {
 
-			Class<?> typeClass = (Class<?>) type;
+            Class<?> typeClass = (Class<?>) type;
 
-			log.debug(typeClass.getCanonicalName());
+            log.debug(typeClass.getCanonicalName());
 
-			return parseElement(body, typeClass);
+            return (T) parseElement(body, typeClass);
 
-		}
+        }
 
-	}
+    }
 
-	private <T> T parseElement(InputStream in, Class<T> classArgument) {
-		try {
-			Document parse = Jsoup.parse(in, "UTF8", "/");
+    private <T> T parseElement(InputStream in, Class<T> classArgument) {
+        try {
+            Document parse = Jsoup.parse(in, "UTF8", "/");
 
-			return map(parse.body(), classArgument);
+            return map(parse.body(), classArgument);
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private Collection parseList(InputStream in, Class<?> classArgument) {
+    private Collection parseList(InputStream in, Class<?> classArgument) {
 
-		try {
+        try {
 
-			Document parse = Jsoup.parse(in, encoding, "/");
+            Document parse = Jsoup.parse(in, encoding, "/");
 
-			log.debug(parse.toString());
+            log.debug(parse.toString());
 
-			JsoupListSelect selector = classArgument.getAnnotation(JsoupListSelect.class);
+            JsoupListSelect selector = classArgument
+                    .getAnnotation(JsoupListSelect.class);
 
-			log.debug(selector.value());
+            log.debug(selector.value());
 
-			Collection result = new ArrayList();
+            Collection result = new ArrayList();
 
-			Elements select = parse.select(selector.value());
-			for (Element element : select) {
+            Elements select = parse.select(selector.value());
+            for (Element element : select) {
 
-				result.add(map(element, classArgument));
-			}
+                result.add(map(element, classArgument));
+            }
 
-			return result;
+            return result;
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
-	private <T> T map(Element element, Class<T> classTarget) {
-		try {
-			return (T) map(element, classTarget.newInstance());
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @SuppressWarnings("unchecked")
+    private <T> T map(Element element, Class<T> classTarget) {
+        try {
+            return (T) map(element, classTarget.newInstance());
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Object map(Element element, Object target)
+            throws IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException {
+
+        List<Field> allFields = getAllFields(target.getClass());
+        for (Field field : allFields) {
+            evaluate(element, field, target);
+        }
 
-	private Object map(Element element, Object target)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        Method[] methods = target.getClass().getMethods();
+        for (Method method : methods) {
+            evaluate(element, method, target);
+        }
 
-		List<Field> allFields = getAllFields(target.getClass());
-		for (Field field : allFields) {
-			evaluate(element, field, target);
-		}
+        return target;
+    }
 
-		Method[] methods = target.getClass().getMethods();
-		for (Method method : methods) {
-			evaluate(element, method, target);
-		}
+    private void evaluate(Element source, AccessibleObject accessibleObject,
+            Object target) throws IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException {
 
-		return target;
-	}
+        Object value = null;
 
-	private void evaluate(Element source, AccessibleObject accessibleObject, Object target)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        // Element JSoup en cours de parcours
+        Element currentElement = source;
+        Boolean optional = false;
 
-		Object value = null;
+        JsoupOptional optionalAnnotation = accessibleObject
+                .getAnnotation(JsoupOptional.class);
+        if (optionalAnnotation != null) {
+            optional = optionalAnnotation.value();
+        }
 
-		// Element JSoup en cours de parcours
-		Element currentElement = source;
-		Boolean optional = false;
+        JsoupSelect selector = accessibleObject
+                .getAnnotation(JsoupSelect.class);
+        if (selector != null) {
+            log.debug("{}, select [{},{}]", getName(accessibleObject),
+                    source.nodeName(), selector.value());
 
-		JsoupOptional optionalAnnotation = accessibleObject.getAnnotation(JsoupOptional.class);
-		if (optionalAnnotation != null) {
-			optional = optionalAnnotation.value();
-		}
+            Elements select = source.select(selector.value());
 
-		JsoupSelect selector = accessibleObject.getAnnotation(JsoupSelect.class);
-		if (selector != null) {
-			log.debug("{}, select [{},{}]", getName(accessibleObject), source.nodeName(), selector.value());
+            log.debug("{}, select [{},{} => {}]", getName(accessibleObject),
+                    source.nodeName(), selector.value(), select.size());
 
-			Elements select = source.select(selector.value());
+            currentElement = select.first();
 
-			log.debug("{}, select [{},{} => {}]", getName(accessibleObject), source.nodeName(), selector.value(),
-					select.size());
+            if (!select.isEmpty()) {
+                log.debug("{}, select [{},{} => {}]", getName(accessibleObject),
+                        source.nodeName(), selector.value(),
+                        currentElement.nodeName());
+            }
+        }
 
-			currentElement = select.first();
+        if (currentElement == null && !optional) {
 
-			if (!select.isEmpty()) {
-				log.debug("{}, select [{},{} => {}]", getName(accessibleObject), source.nodeName(), selector.value(),
-						currentElement.nodeName());
-			}
-		}
+            log.debug("{}]", source.toString());
 
-		if (currentElement == null && !optional) {
+            throw new RuntimeException(
+                    "Select returns none for non optional field: "
+                            + getName(accessibleObject));
+        }
 
-			log.debug("{}]", source.toString());
+        if (currentElement == null) {
+            return;
+        }
 
-			throw new RuntimeException("Select returns none for non optional field: " + getName(accessibleObject));
-		}
+        JsoupAttr attr = accessibleObject.getAnnotation(JsoupAttr.class);
+        if (attr != null) {
 
-		if (currentElement == null) {
-			return;
-		}
+            log.debug("{} attr", getName(accessibleObject));
 
-		JsoupAttr attr = accessibleObject.getAnnotation(JsoupAttr.class);
-		if (attr != null) {
+            value = currentElement.attr(attr.value());
+        }
 
-			log.debug("{} attr", getName(accessibleObject));
+        JsoupText text = accessibleObject.getAnnotation(JsoupText.class);
+        if (text != null) {
 
-			value = currentElement.attr(attr.value());
-		}
+            log.debug("{} text", getName(accessibleObject));
 
-		JsoupText text = accessibleObject.getAnnotation(JsoupText.class);
-		if (text != null) {
+            value = currentElement.text();
+        }
 
-			log.debug("{} text", getName(accessibleObject));
+        if (value != null) {
+            setValue(target, accessibleObject, value);
+        }
 
-			value = currentElement.text();
-		}
+    }
 
-		if (value != null) {
-			setValue(target, accessibleObject, value);
-		}
+    private Object getName(AccessibleObject accessibleObject) {
+        if (accessibleObject instanceof Member) {
+            return ((Member) accessibleObject).getName();
+        }
+        return "__unknown__";
+    }
 
-	}
+    private void setValue(Object target, AccessibleObject accessibleObject,
+            Object value) throws IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException {
+        if (accessibleObject instanceof Field) {
+            setValue(target, (Field) accessibleObject, value);
+        } else if (accessibleObject instanceof Method) {
+            setValue(target, (Method) accessibleObject, value);
+        }
 
-	private Object getName(AccessibleObject accessibleObject) {
-		if (accessibleObject instanceof Member) {
-			return ((Member) accessibleObject).getName();
-		}
-		return "__unknown__";
-	}
+    }
 
-	private void setValue(Object target, AccessibleObject accessibleObject, Object value)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		if (accessibleObject instanceof Field) {
-			setValue(target, (Field) accessibleObject, value);
-		} else if (accessibleObject instanceof Method) {
-			setValue(target, (Method) accessibleObject, value);
-		}
+    public static List<Field> getAllFields(Class<?> clazz) {
 
-	}
+        List<Field> res = new ArrayList<Field>();
 
-	public static List<Field> getAllFields(Class<?> clazz) {
+        Class<?> index = clazz;
+        while (index != Object.class) {
+            res.addAll(Arrays.asList(index.getDeclaredFields()));
 
-		List<Field> res = new ArrayList<Field>();
+            index = index.getSuperclass();
 
-		Class<?> index = clazz;
-		while (index != Object.class) {
-			res.addAll(Arrays.asList(index.getDeclaredFields()));
+        }
 
-			index = index.getSuperclass();
+        return res;
+    }
 
-		}
+    public static void setValue(Object target, Field field, Object value)
+            throws IllegalArgumentException, IllegalAccessException {
 
-		return res;
-	}
+        log.debug("set value [{} => {} ]", value, field.getName());
 
-	public static void setValue(Object target, Field field, Object value)
-			throws IllegalArgumentException, IllegalAccessException {
+        field.setAccessible(true);
 
-		log.debug("set value [{} => {} ]", value, field.getName());
+        field.set(target, value);
+    }
 
-		field.setAccessible(true);
+    public static void setValue(Object target, Method method, Object value)
+            throws IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException {
 
-		field.set(target, value);
-	}
+        log.debug("set value [{}({}) ]", method.getName(), value);
 
-	public static void setValue(Object target, Method method, Object value)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-
-		log.debug("set value [{}({}) ]", method.getName(), value);
-
-		method.invoke(target, value);
-	}
+        method.invoke(target, value);
+    }
 
 }
