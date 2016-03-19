@@ -12,9 +12,11 @@ import java.lang.annotation.Target;
  * normalized and trimmed.
  * <p>
  * For example, given HTML {@code 
- * <p>
+ * 
+<p>
  * Hello  <b>there</b> now! 
- * </p>
+ * 
+</p>
  * }, {@code p.text()} returns {@code "Hello there now!"}
  *
  * @return unencoded text, or empty string if none.
@@ -24,5 +26,19 @@ import java.lang.annotation.Target;
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
 public @interface JsoupText {
+
+    /**
+     * When <code>true</code>, equivalent to JSoup's element.ownText()
+     * 
+     */
+    @AliasFor("own")
+    boolean value() default false;
+
+    /**
+     * When <code>true</code>, equivalent to JSoup's element.ownText()
+     * 
+     */
+    @AliasFor("value")
+    boolean own() default false;
 
 }
