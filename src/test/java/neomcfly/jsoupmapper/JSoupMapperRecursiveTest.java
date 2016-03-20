@@ -19,12 +19,11 @@ public class JSoupMapperRecursiveTest {
 
         InputStream document = read("/select/u2.html");
 
-        ResultList result = mapper.map(document, ResultList.class);
+        ResultSingle result = mapper.map(document, ResultSingle.class);
 
         TestCase.assertNotNull(result);
-        TestCase.assertNotNull(result.getSubResults());
-
-        TestCase.assertEquals(result.getSubResults().size(), 3);
+        TestCase.assertNotNull(result.getSubResult());
+        TestCase.assertNotNull(result.getSubResult().getName());
 
         log.info(result.toString());
 
@@ -35,11 +34,12 @@ public class JSoupMapperRecursiveTest {
 
         InputStream document = read("/select/u2.html");
 
-        ResultSingle result = mapper.map(document, ResultSingle.class);
+        ResultList result = mapper.map(document, ResultList.class);
 
         TestCase.assertNotNull(result);
-        TestCase.assertNotNull(result.getSubResult());
-        TestCase.assertNotNull(result.getSubResult().getName());
+        TestCase.assertNotNull(result.getSubResults());
+
+        TestCase.assertEquals(3, result.getSubResults().size());
 
         log.info(result.toString());
 

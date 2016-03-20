@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +32,12 @@ public class JSoupMapper extends JSoupMapperOLD {
     @Setter
     protected String baseURI = "/";
 
-    public <T> Collection<T> mapToList(InputStream document, Class<T> clazz) {
+    @Override
+    public Object map(InputStream document, Type type) {
+        return map(parseDocument(document), type);
+    }
+
+    public <T> List<T> mapToList(InputStream document, Class<T> clazz) {
         return mapToList(parseDocument(document), clazz);
     }
 
@@ -37,23 +45,49 @@ public class JSoupMapper extends JSoupMapperOLD {
         return map(parseDocument(document), clazz);
     }
 
-    public <T> Collection<T> mapToList(Element element, Class<T> clazz) {
-        Collection<T> result = new ArrayList<T>();
+    public Object map(Element document, Type type) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+
+            // Handle type parameter class
+            Class<?> classArgument = (Class<?>) parameterizedType
+                    .getActualTypeArguments()[0];
+
+            // Handle type class
+            Class<?> rowClass = (Class<?>) parameterizedType.getRawType();
+
+            if (Collection.class.isAssignableFrom(rowClass)) {
+
+                return mapToList(document, classArgument);
+
+            } else {
+                log.debug(rowClass.getCanonicalName() + " is not a collection");
+
+                throw new IllegalArgumentException(
+                        "Parameterized type not handled: "
+                                + rowClass.getCanonicalName());
+            }
+        } else {
+            return map(document, (Class<?>) type);
+        }
+    }
+
+    public <T> List<T> mapToList(Element element, Class<T> clazz) {
+        List<T> result = new ArrayList<T>();
+
+        Elements elementsCur = new Elements(element);
 
         log.debug(element.toString());
 
         JSoupListSelect selector = clazz.getAnnotation(JSoupListSelect.class);
-        if (selector == null) {
-            throw new IllegalStateException("Class " + clazz.getCanonicalName()
-                    + " does not have " + JSoupListSelect.class.getSimpleName()
-                    + " annotation");
+        if (selector != null) {
+            log.debug(selector.value());
+
+            elementsCur = element.select(selector.value());
         }
 
-        log.debug(selector.value());
-
-        Elements elements = element.select(selector.value());
-        for (Element currElement : elements) {
-            result.add(map(currElement, clazz));
+        for (Element elt : elementsCur) {
+            result.add(map(elt, clazz));
         }
 
         return result;
@@ -98,17 +132,17 @@ public class JSoupMapper extends JSoupMapperOLD {
                 optional = aOptional.value();
             }
 
-            Elements elementSelected = select(element, member);
+            // FIXME Handle here member of collection type
+            Element elementSelected = select(element, member).first();
 
-            // TODO Handle here member of collection type
-            Object value = reduce(elementSelected.first(), member);
+            Object value = reduce(elementSelected, member);
 
             if (!optional && value == null) {
                 throw new IllegalStateException(
                         "No value matched and not optional for "
                                 + getName(member));
             } else {
-                setValue(target, member, value);
+                setValue(elementSelected, target, member, value);
             }
         }
 
@@ -141,6 +175,8 @@ public class JSoupMapper extends JSoupMapperOLD {
             log.debug("no JSoupSelect found, using root element");
             return new Elements(element);
         }
+
+        log.debug("{} select {}", getName(member), selector.value());
 
         return element.select(selector.value());
     }
@@ -187,6 +223,49 @@ public class JSoupMapper extends JSoupMapperOLD {
 
         // TODO throw exeption if not optional and no result
         return value;
+    }
+
+    protected void setValue(Element element, Object target, Field field,
+            Object value)
+            throws IllegalArgumentException, IllegalAccessException {
+
+        log.debug("set value by field [{} => {} ]", value, field.getName());
+
+        if (field.getType().isAssignableFrom(value.getClass())) {
+            // TODO call setter first if exists
+            field.setAccessible(true);
+
+            field.set(target, value);
+        } else {
+            setValue(element, target, field,
+                    map(element, field.getGenericType()));
+        }
+
+    }
+
+    protected void setValue(Element element, Object target, Method method,
+            Object value) throws IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException {
+
+        log.debug("set value by method [{}({}) ]", method.getName(), value);
+
+        method.invoke(target, value);
+    }
+
+    protected void setValue(Element element, Object target,
+            AccessibleObject member, Object value) {
+        try {
+            if (member instanceof Field) {
+                setValue(element, target, (Field) member, value);
+            } else if (member instanceof Method) {
+                setValue(element, target, (Method) member, value);
+            }
+        } catch (IllegalArgumentException | IllegalAccessException
+                | InvocationTargetException e) {
+            throw new IllegalArgumentException("Cannot set value [" + value
+                    + "] for [" + getName(member) + "]", e);
+        }
+
     }
 
     protected Element parseDocument(InputStream document) {
