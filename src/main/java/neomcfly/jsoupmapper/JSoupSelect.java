@@ -38,4 +38,10 @@ public @interface JSoupSelect {
 
     String value();
 
+    boolean unique() default false;
+
+    boolean first() default false;
+
+    boolean last() default false;
+
 }
