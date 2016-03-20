@@ -42,7 +42,7 @@ public class JSoupMapperSelectTest {
                 ResultList.class);
 
         TestCase.assertNotNull(results);
-        TestCase.assertEquals(results.size(), 3);
+        TestCase.assertEquals(3, results.size());
 
         for (ResultList result : results) {
             TestCase.assertNotNull(result);

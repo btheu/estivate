@@ -39,10 +39,10 @@ public class JSoupMapperTextTest {
         TestCase.assertNotNull(result.getName1());
         TestCase.assertNotNull(result.getName2());
 
-        TestCase.assertEquals(result.getName1(), "John");
-        TestCase.assertEquals(result.getName2(), "John");
-        TestCase.assertEquals(result.getName3(), "John");
-        TestCase.assertEquals(result.getName4(), "John");
+        TestCase.assertEquals("John", result.getName1());
+        TestCase.assertEquals("John", result.getName2());
+        TestCase.assertEquals("John", result.getName3());
+        TestCase.assertEquals("John", result.getName4());
 
         log.info(result.toString());
 

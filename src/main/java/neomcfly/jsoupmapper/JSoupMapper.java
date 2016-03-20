@@ -45,7 +45,7 @@ public class JSoupMapper extends JSoupMapperOLD {
         return map(parseDocument(document), clazz);
     }
 
-    public Object map(Element document, Type type) {
+    public Object map(Elements document, Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
@@ -72,7 +72,7 @@ public class JSoupMapper extends JSoupMapperOLD {
         }
     }
 
-    public <T> List<T> mapToList(Element element, Class<T> clazz) {
+    public <T> List<T> mapToList(Elements element, Class<T> clazz) {
         List<T> result = new ArrayList<T>();
 
         Elements elementsCur = new Elements(element);
@@ -93,8 +93,7 @@ public class JSoupMapper extends JSoupMapperOLD {
         return result;
     }
 
-    @Override
-    public <T> T map(Element element, Class<T> clazz) {
+    public <T> T map(Elements element, Class<T> clazz) {
         try {
             return map(element, clazz, clazz.newInstance());
         } catch (InstantiationException e) {
@@ -107,7 +106,7 @@ public class JSoupMapper extends JSoupMapperOLD {
         return null;
     }
 
-    public <T> T map(Element element, Class<T> clazz, T target) {
+    public <T> T map(Elements element, Class<T> clazz, T target) {
 
         List<Field> allFields = getAllFields(target.getClass());
         for (Field field : allFields) {
@@ -122,7 +121,7 @@ public class JSoupMapper extends JSoupMapperOLD {
         return target;
     }
 
-    private <T> void map(Element element, AccessibleObject member, T target) {
+    private <T> void map(Elements element, AccessibleObject member, T target) {
 
         if (hasOneAnnotationMapper(member)) {
             Boolean optional = false;
@@ -133,16 +132,17 @@ public class JSoupMapper extends JSoupMapperOLD {
             }
 
             // FIXME Handle here member of collection type
-            Element elementSelected = select(element, member).first();
+            Elements elementsSelected = select(element, member);
 
-            Object value = reduce(elementSelected, member);
+            Object value = reduce(elementsSelected, member);
 
             if (!optional && value == null) {
                 throw new IllegalStateException(
                         "No value matched and not optional for "
                                 + getName(member));
             } else {
-                setValue(elementSelected, target, member, value);
+
+                setValue(elementsSelected, target, member, value);
             }
         }
 
@@ -168,7 +168,7 @@ public class JSoupMapper extends JSoupMapperOLD {
      * @param member
      * @return
      */
-    private Elements select(Element element, AccessibleObject member) {
+    private Elements select(Elements element, AccessibleObject member) {
 
         JSoupSelect selector = member.getAnnotation(JSoupSelect.class);
         if (selector == null) {
@@ -194,9 +194,9 @@ public class JSoupMapper extends JSoupMapperOLD {
      * @param member
      * @return
      */
-    private Object reduce(Element element, AccessibleObject member) {
+    private Object reduce(Elements element, AccessibleObject member) {
 
-        Object value = element;
+        Object value = element.first();
 
         JSoupAttr aAttr = member.getAnnotation(JSoupAttr.class);
         if (aAttr != null) {
@@ -213,37 +213,44 @@ public class JSoupMapper extends JSoupMapperOLD {
             log.debug("{} text", getName(member));
 
             if (aText.value() || aText.own()) {
-                log.debug("using owntext()");
-                value = element.ownText();
+                log.debug("using first().owntext()");
+                value = element.first().ownText();
             } else {
                 log.debug("using text()");
                 value = element.text();
             }
         }
 
-        // TODO throw exeption if not optional and no result
         return value;
     }
 
-    protected void setValue(Element element, Object target, Field field,
+    protected void setValue(Elements element, Object target, Field field,
             Object value)
             throws IllegalArgumentException, IllegalAccessException {
 
-        log.debug("set value by field [{} => {} ]", value, field.getName());
+        log.debug("set value on field [{} => {} ]", value, field.getName());
 
+        // If both types matchs
         if (field.getType().isAssignableFrom(value.getClass())) {
+
+            log.debug("set value by field");
+
             // TODO call setter first if exists
             field.setAccessible(true);
 
             field.set(target, value);
+
         } else {
+
+            log.debug("set value by recursive mapping");
+
             setValue(element, target, field,
                     map(element, field.getGenericType()));
         }
 
     }
 
-    protected void setValue(Element element, Object target, Method method,
+    protected void setValue(Elements element, Object target, Method method,
             Object value) throws IllegalArgumentException,
             IllegalAccessException, InvocationTargetException {
 
@@ -252,7 +259,7 @@ public class JSoupMapper extends JSoupMapperOLD {
         method.invoke(target, value);
     }
 
-    protected void setValue(Element element, Object target,
+    protected void setValue(Elements element, Object target,
             AccessibleObject member, Object value) {
         try {
             if (member instanceof Field) {
@@ -268,9 +275,9 @@ public class JSoupMapper extends JSoupMapperOLD {
 
     }
 
-    protected Element parseDocument(InputStream document) {
+    protected Elements parseDocument(InputStream document) {
         try {
-            return Jsoup.parse(document, encoding, baseURI);
+            return new Elements(Jsoup.parse(document, encoding, baseURI));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
