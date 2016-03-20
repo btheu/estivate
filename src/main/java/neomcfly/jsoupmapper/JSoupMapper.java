@@ -2,20 +2,15 @@ package neomcfly.jsoupmapper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -24,260 +19,183 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class JSoupMapper {
+public class JSoupMapper extends JSoupMapperOLD {
 
     @Getter
     @Setter
     protected String encoding = "UTF-8";
 
-    public <T> T map(InputStream body, Class<T> clazz) {
+    @Getter
+    @Setter
+    protected String baseURI = "/";
 
-        return map(body, (Type) clazz);
+    public <T> Collection<T> mapToList(InputStream document, Class<T> clazz) {
+        return mapToList(parseDocument(document), clazz);
     }
 
-    public <T> List<T> mapToList(InputStream body, Class<T> class1) {
-        return map(body, (Type) class1);
+    public <T> T map(InputStream document, Class<T> clazz) {
+        return map(parseDocument(document), clazz);
     }
 
-    public <T> T map(InputStream body, Type type) {
+    public <T> Collection<T> mapToList(Element element, Class<T> clazz) {
+        Collection<T> result = new ArrayList<T>();
 
-        log.debug(type.getClass().getCanonicalName());
+        log.debug(element.toString());
 
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-
-            // Handle type parameter class
-            Class<?> classArgument = (Class<?>) parameterizedType
-                    .getActualTypeArguments()[0];
-
-            // Handle type class
-            Class<?> rowClass = (Class<?>) parameterizedType.getRawType();
-
-            if (Collection.class.isAssignableFrom(rowClass)) {
-
-                Collection o = new ArrayList<Object>();
-
-                o.addAll(parseList(body, classArgument));
-
-                return (T) o;
-
-            } else {
-
-                log.debug(rowClass.getCanonicalName() + " is not a collection");
-
-                throw new RuntimeException("Parameterized type not handled: "
-                        + rowClass.getCanonicalName());
-            }
-
-        } else {
-
-            Class<?> typeClass = (Class<?>) type;
-
-            log.debug(typeClass.getCanonicalName());
-
-            return (T) parseElement(body, typeClass);
-
+        JSoupListSelect selector = clazz.getAnnotation(JSoupListSelect.class);
+        if (selector == null) {
+            throw new IllegalStateException("Class " + clazz.getCanonicalName()
+                    + " does not have " + JSoupListSelect.class.getSimpleName()
+                    + " annotation");
         }
 
-    }
+        log.debug(selector.value());
 
-    protected <T> T parseElement(InputStream in, Class<T> classArgument) {
-        try {
-            Document parse = Jsoup.parse(in, "UTF8", "/");
-
-            return map(parse.body(), classArgument);
-
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
+        Elements elements = element.select(selector.value());
+        for (Element currElement : elements) {
+            result.add(map(currElement, clazz));
         }
 
-        return null;
+        return result;
     }
 
-    protected Collection parseList(InputStream in, Class<?> classArgument) {
-
+    @Override
+    public <T> T map(Element element, Class<T> clazz) {
         try {
-
-            Document parse = Jsoup.parse(in, encoding, "/");
-
-            log.debug(parse.toString());
-
-            JSoupListSelect selector = classArgument
-                    .getAnnotation(JSoupListSelect.class);
-
-            log.debug(selector.value());
-
-            Collection result = new ArrayList();
-
-            Elements select = parse.select(selector.value());
-            for (Element element : select) {
-
-                result.add(map(element, classArgument));
-            }
-
-            return result;
-
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T map(Element element, Class<T> classTarget) {
-        try {
-            return (T) map(element, classTarget.newInstance());
+            return map(element, clazz, clazz.newInstance());
         } catch (InstantiationException e) {
             log.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
             log.error(e.getMessage(), e);
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
-            log.error(e.getMessage(), e);
         }
         return null;
     }
 
-    protected Object map(Element element, Object target)
-            throws IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException {
+    public <T> T map(Element element, Class<T> clazz, T target) {
 
         List<Field> allFields = getAllFields(target.getClass());
         for (Field field : allFields) {
-            evaluate(element, field, target);
+            map(element, field, target);
         }
 
         Method[] methods = target.getClass().getMethods();
         for (Method method : methods) {
-            evaluate(element, method, target);
+            map(element, method, target);
         }
 
         return target;
     }
 
-    protected void evaluate(Element source, AccessibleObject accessibleObject,
-            Object target) throws IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException {
+    private <T> void map(Element element, AccessibleObject member, T target) {
 
-        Object value = null;
+        if (hasOneAnnotationMapper(member)) {
+            Boolean optional = false;
 
-        // Element JSoup en cours de parcours
-        Element currentElement = source;
-        Boolean optional = false;
+            JSoupOptional aOptional = member.getAnnotation(JSoupOptional.class);
+            if (aOptional != null) {
+                optional = aOptional.value();
+            }
 
-        JSoupOptional optionalAnnotation = accessibleObject
-                .getAnnotation(JSoupOptional.class);
-        if (optionalAnnotation != null) {
-            optional = optionalAnnotation.value();
-        }
+            Elements elementSelected = select(element, member);
 
-        JSoupSelect selector = accessibleObject
-                .getAnnotation(JSoupSelect.class);
-        if (selector != null) {
-            log.debug("{}, select [{},{}]", getName(accessibleObject),
-                    source.nodeName(), selector.value());
+            // TODO Handle here member of collection type
+            Object value = reduce(elementSelected.first(), member);
 
-            Elements select = source.select(selector.value());
-
-            log.debug("{}, select [{},{} => {}]", getName(accessibleObject),
-                    source.nodeName(), selector.value(), select.size());
-
-            currentElement = select.first();
-
-            if (!select.isEmpty()) {
-                log.debug("{}, select [{},{} => {}]", getName(accessibleObject),
-                        source.nodeName(), selector.value(),
-                        currentElement.nodeName());
+            if (!optional && value == null) {
+                throw new IllegalStateException(
+                        "No value matched and not optional for "
+                                + getName(member));
+            } else {
+                setValue(target, member, value);
             }
         }
 
-        if (currentElement == null && !optional) {
-
-            log.debug("{}]", source.toString());
-
-            throw new RuntimeException(
-                    "Select returns none for non optional field: "
-                            + getName(accessibleObject));
-        }
-
-        if (currentElement == null) {
-            return;
-        }
-
-        JSoupAttr attr = accessibleObject.getAnnotation(JSoupAttr.class);
-        if (attr != null) {
-
-            log.debug("{} attr", getName(accessibleObject));
-
-            value = currentElement.attr(attr.value());
-        }
-
-        JSoupText text = accessibleObject.getAnnotation(JSoupText.class);
-        if (text != null) {
-
-            log.debug("{} text", getName(accessibleObject));
-
-            value = currentElement.text();
-        }
-
-        if (value != null) {
-            setValue(target, accessibleObject, value);
-        }
-
     }
 
-    protected Object getName(AccessibleObject accessibleObject) {
-        if (accessibleObject instanceof Member) {
-            return ((Member) accessibleObject).getName();
+    private boolean hasOneAnnotationMapper(AccessibleObject member) {
+        Annotation[] annotations = member.getAnnotations();
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().getCanonicalName()
+                    .startsWith("neomcfly.jsoupmapper")) {
+                return true;
+            }
         }
-        return "__unknown__";
+        return false;
     }
 
-    protected void setValue(Object target, AccessibleObject accessibleObject,
-            Object value) throws IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException {
-        if (accessibleObject instanceof Field) {
-            setValue(target, (Field) accessibleObject, value);
-        } else if (accessibleObject instanceof Method) {
-            setValue(target, (Method) accessibleObject, value);
-        }
+    /**
+     * Apply all rules (annotations) of type select
+     * 
+     * @see JSoupSelect
+     * 
+     * @param element
+     * @param member
+     * @return
+     */
+    private Elements select(Element element, AccessibleObject member) {
 
-    }
-
-    public static List<Field> getAllFields(Class<?> clazz) {
-
-        List<Field> res = new ArrayList<Field>();
-
-        Class<?> index = clazz;
-        while (index != Object.class) {
-            res.addAll(Arrays.asList(index.getDeclaredFields()));
-
-            index = index.getSuperclass();
-
+        JSoupSelect selector = member.getAnnotation(JSoupSelect.class);
+        if (selector == null) {
+            log.debug("no JSoupSelect found, using root element");
+            return new Elements(element);
         }
 
-        return res;
+        return element.select(selector.value());
     }
 
-    public static void setValue(Object target, Field field, Object value)
-            throws IllegalArgumentException, IllegalAccessException {
+    /**
+     * Apply all rules (annotations) of type reduce.
+     * 
+     * @see JSoupAttr
+     * @see JSoupText
+     * @see JSoupTitle
+     * @see JSoupTagName
+     * @see JSoupVal
+     * 
+     * @param elementSelected
+     * @param member
+     * @return
+     */
+    private Object reduce(Element element, AccessibleObject member) {
 
-        log.debug("set value [{} => {} ]", value, field.getName());
+        Object value = element;
 
-        field.setAccessible(true);
+        JSoupAttr aAttr = member.getAnnotation(JSoupAttr.class);
+        if (aAttr != null) {
 
-        field.set(target, value);
+            log.debug("{} attr", getName(member));
+
+            log.debug("using attr()", getName(member));
+
+            value = element.attr(aAttr.value());
+        }
+
+        JSoupText aText = member.getAnnotation(JSoupText.class);
+        if (aText != null) {
+            log.debug("{} text", getName(member));
+
+            if (aText.value() || aText.own()) {
+                log.debug("using owntext()");
+                value = element.ownText();
+            } else {
+                log.debug("using text()");
+                value = element.text();
+            }
+        }
+
+        // TODO throw exeption if not optional and no result
+        return value;
     }
 
-    public static void setValue(Object target, Method method, Object value)
-            throws IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException {
-
-        log.debug("set value [{}({}) ]", method.getName(), value);
-
-        method.invoke(target, value);
+    protected Element parseDocument(InputStream document) {
+        try {
+            return Jsoup.parse(document, encoding, baseURI);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
     }
 
 }

@@ -1,7 +1,7 @@
 package neomcfly.jsoupmapper;
 
 import java.io.InputStream;
-import java.util.List;
+import java.util.Collection;
 
 import org.jsoup.nodes.Element;
 import org.junit.Test;
@@ -26,8 +26,8 @@ public class JSoupMapperSelectTest {
         TestCase.assertNotNull(result.getInput1());
         TestCase.assertNotNull(result.getInput2());
 
-        TestCase.assertEquals("Input", result.getInput1().tagName());
-        TestCase.assertEquals("Input", result.getInput2().tagName());
+        TestCase.assertEquals("input", result.getInput1().tagName());
+        TestCase.assertEquals("input", result.getInput2().tagName());
 
         log.info(result.toString());
 
@@ -38,7 +38,8 @@ public class JSoupMapperSelectTest {
 
         InputStream document = read("/select/u2.html");
 
-        List<ResultList> results = mapper.mapToList(document, ResultList.class);
+        Collection<ResultList> results = mapper.mapToList(document,
+                ResultList.class);
 
         TestCase.assertNotNull(results);
         TestCase.assertEquals(results.size(), 3);
@@ -81,7 +82,7 @@ public class JSoupMapperSelectTest {
         @JSoupSelect(".name")
         @JSoupText
         public void setName2(String name) {
-            this.name1 = name;
+            this.name2 = name;
         }
 
     }
