@@ -28,11 +28,15 @@ public class JSoupMapper {
 
     @Getter
     @Setter
-    private String encoding = "UTF-8";
+    protected String encoding = "UTF-8";
 
     public <T> T map(InputStream body, Class<T> clazz) {
 
         return map(body, (Type) clazz);
+    }
+
+    public <T> List<T> mapToList(InputStream body, Class<T> class1) {
+        return map(body, (Type) class1);
     }
 
     public <T> T map(InputStream body, Type type) {
@@ -77,7 +81,7 @@ public class JSoupMapper {
 
     }
 
-    private <T> T parseElement(InputStream in, Class<T> classArgument) {
+    protected <T> T parseElement(InputStream in, Class<T> classArgument) {
         try {
             Document parse = Jsoup.parse(in, "UTF8", "/");
 
@@ -90,7 +94,7 @@ public class JSoupMapper {
         return null;
     }
 
-    private Collection parseList(InputStream in, Class<?> classArgument) {
+    protected Collection parseList(InputStream in, Class<?> classArgument) {
 
         try {
 
@@ -121,7 +125,7 @@ public class JSoupMapper {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T map(Element element, Class<T> classTarget) {
+    protected <T> T map(Element element, Class<T> classTarget) {
         try {
             return (T) map(element, classTarget.newInstance());
         } catch (InstantiationException e) {
@@ -136,7 +140,7 @@ public class JSoupMapper {
         return null;
     }
 
-    private Object map(Element element, Object target)
+    protected Object map(Element element, Object target)
             throws IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
 
@@ -153,7 +157,7 @@ public class JSoupMapper {
         return target;
     }
 
-    private void evaluate(Element source, AccessibleObject accessibleObject,
+    protected void evaluate(Element source, AccessibleObject accessibleObject,
             Object target) throws IllegalArgumentException,
             IllegalAccessException, InvocationTargetException {
 
@@ -224,14 +228,14 @@ public class JSoupMapper {
 
     }
 
-    private Object getName(AccessibleObject accessibleObject) {
+    protected Object getName(AccessibleObject accessibleObject) {
         if (accessibleObject instanceof Member) {
             return ((Member) accessibleObject).getName();
         }
         return "__unknown__";
     }
 
-    private void setValue(Object target, AccessibleObject accessibleObject,
+    protected void setValue(Object target, AccessibleObject accessibleObject,
             Object value) throws IllegalArgumentException,
             IllegalAccessException, InvocationTargetException {
         if (accessibleObject instanceof Field) {
