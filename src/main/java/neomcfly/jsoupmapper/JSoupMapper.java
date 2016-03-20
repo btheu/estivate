@@ -30,6 +30,11 @@ public class JSoupMapper {
     @Setter
     private String encoding = "UTF-8";
 
+    public <T> T map(InputStream body, Class<T> clazz) {
+
+        return map(body, (Type) clazz);
+    }
+
     public <T> T map(InputStream body, Type type) {
 
         log.debug(type.getClass().getCanonicalName());

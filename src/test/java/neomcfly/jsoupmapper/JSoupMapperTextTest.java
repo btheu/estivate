@@ -29,17 +29,22 @@ public class JSoupMapperTextTest {
     }
 
     @Test
-    public void text2() {
+    public void textOwn1() {
 
-        InputStream document = read("/text/u2.html");
+        InputStream document = read("/text/u1.html");
 
-        Result fromBody = mapper.map(document, Result.class);
+        ResultOwn result = mapper.map(document, ResultOwn.class);
 
-        TestCase.assertNotNull(fromBody);
-        TestCase.assertNotNull(fromBody.getName1());
-        TestCase.assertNotNull(fromBody.getName2());
+        TestCase.assertNotNull(result);
+        TestCase.assertNotNull(result.getName1());
+        TestCase.assertNotNull(result.getName2());
 
-        log.info(fromBody.toString());
+        TestCase.assertEquals(result.getName1(), "John");
+        TestCase.assertEquals(result.getName2(), "John");
+        TestCase.assertEquals(result.getName3(), "John");
+        TestCase.assertEquals(result.getName4(), "John");
+
+        log.info(result.toString());
 
     }
 
@@ -56,6 +61,35 @@ public class JSoupMapperTextTest {
         @JSoupText
         public void setName2(String name2) {
             this.name2 = name2;
+        }
+
+    }
+
+    @Data
+    public static class ResultOwn {
+
+        @JSoupSelect("#name")
+        @JSoupText(own = true)
+        public String name1;
+
+        @JSoupSelect("#name")
+        @JSoupText(true)
+        public String name2;
+
+        public String name3;
+
+        public String name4;
+
+        @JSoupSelect("#name")
+        @JSoupText(own = true)
+        public void setName3(String name) {
+            this.name3 = name;
+        }
+
+        @JSoupSelect("#name")
+        @JSoupText(true)
+        public void setName4(String name) {
+            this.name4 = name;
         }
 
     }

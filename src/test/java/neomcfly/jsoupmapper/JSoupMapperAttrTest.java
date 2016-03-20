@@ -28,21 +28,6 @@ public class JSoupMapperAttrTest {
 
     }
 
-    @Test
-    public void attr2() {
-
-        InputStream document = read("/attr/u2.html");
-
-        Result fromBody = mapper.map(document, Result.class);
-
-        TestCase.assertNotNull(fromBody);
-        TestCase.assertNotNull(fromBody.getName1());
-        TestCase.assertNotNull(fromBody.getName2());
-
-        log.info(fromBody.toString());
-
-    }
-
     @Data
     public static class Result {
 
