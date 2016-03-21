@@ -21,8 +21,8 @@ public class JSoupMapperAttrTest {
         Result result = mapper.map(document, Result.class);
 
         TestCase.assertNotNull(result);
-        TestCase.assertNotNull(result.getName1());
-        TestCase.assertNotNull(result.getName2());
+        TestCase.assertEquals("role_of_name",result.getName1());
+        TestCase.assertEquals("role_of_name",result.getName2());
 
         log.info(result.toString());
 
@@ -32,13 +32,13 @@ public class JSoupMapperAttrTest {
     public static class Result {
 
         @JSoupSelect("#name")
-        @JSoupAttr("value")
+        @JSoupAttr("role")
         public String name1;
 
         public String name2;
 
         @JSoupSelect("#name")
-        @JSoupAttr("value")
+        @JSoupAttr("role")
         public void setName2(String name2) {
             this.name2 = name2;
         }
