@@ -32,7 +32,7 @@ import org.jsoup.select.Selector;
  * @param value
  *            a {@link Selector} CSS-like query
  */
-@Target({ FIELD, TYPE, METHOD })
+@Target({ TYPE, FIELD, METHOD })
 @Retention(RUNTIME)
 public @interface JSoupSelect {
 
@@ -40,8 +40,17 @@ public @interface JSoupSelect {
 
     boolean unique() default false;
 
+    /**
+     * -1 means no access by index to an item of Elements collection.
+     * 
+     * @return
+     */
+    int index() default -1;
+    
     boolean first() default false;
 
     boolean last() default false;
+    
+    boolean optional() default false;
 
 }
