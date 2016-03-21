@@ -24,9 +24,11 @@ public class JSoupMapperRecursiveTest {
         TestCase.assertNotNull(result);
         TestCase.assertNotNull(result.getSubResult());
         TestCase.assertNotNull(result.getSubResult().getName());
+        
+        TestCase.assertNotNull(result.getSubResult2());
+        TestCase.assertNotNull(result.getSubResult2().getName());
 
         log.info(result.toString());
-
     }
 
     @Test
@@ -37,9 +39,12 @@ public class JSoupMapperRecursiveTest {
         ResultList result = mapper.map(document, ResultList.class);
 
         TestCase.assertNotNull(result);
+        
         TestCase.assertNotNull(result.getSubResults());
-
         TestCase.assertEquals(3, result.getSubResults().size());
+        
+        TestCase.assertNotNull(result.getSubResults2());
+        TestCase.assertEquals(3, result.getSubResults2().size());
 
         log.info(result.toString());
 
@@ -50,6 +55,13 @@ public class JSoupMapperRecursiveTest {
 
         @JSoupSelect("#div2")
         public SubResult subResult;
+        
+		public SubResult subResult2;
+        
+        @JSoupSelect("#div2")
+        public void setSubResult2(SubResult subResult){
+			subResult2 = subResult;
+        }
 
     }
 
@@ -59,6 +71,13 @@ public class JSoupMapperRecursiveTest {
         @JSoupSelect(".someClass")
         public List<SubResult> subResults;
 
+		public List<SubResult> subResults2;
+        
+		@JSoupSelect(".someClass")
+        public void setSubResult2(List<SubResult> subResults){
+			subResults2 = subResults;
+        }
+        
     }
 
     @Data
