@@ -6,10 +6,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,7 +24,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class JSoupMapper extends JSoupMapperOLD {
+public class JSoupMapper {
 
     @Getter
     @Setter
@@ -32,7 +34,6 @@ public class JSoupMapper extends JSoupMapperOLD {
     @Setter
     protected String baseURI = "/";
 
-    @Override
     public Object map(InputStream document, Type type) {
         return map(parseDocument(document), type);
     }
@@ -87,7 +88,7 @@ public class JSoupMapper extends JSoupMapperOLD {
         }
 
         for (Element elt : elementsCur) {
-            result.add(map(elt, clazz));
+            result.add(map(new Elements(elt), clazz));
         }
 
         return result;
@@ -224,6 +225,13 @@ public class JSoupMapper extends JSoupMapperOLD {
         return value;
     }
 
+    protected Object getName(AccessibleObject member) {
+        if (member instanceof Member) {
+            return ((Member) member).getName();
+        }
+        return "__unknown__";
+    }
+    
     protected void setValue(Elements element, Object target, Field field,
             Object value)
             throws IllegalArgumentException, IllegalAccessException {
@@ -275,6 +283,21 @@ public class JSoupMapper extends JSoupMapperOLD {
 
     }
 
+    public static List<Field> getAllFields(Class<?> clazz) {
+
+        List<Field> res = new ArrayList<Field>();
+
+        Class<?> index = clazz;
+        while (index != Object.class) {
+            res.addAll(Arrays.asList(index.getDeclaredFields()));
+
+            index = index.getSuperclass();
+
+        }
+
+        return res;
+    }
+    
     protected Elements parseDocument(InputStream document) {
         try {
             return new Elements(Jsoup.parse(document, encoding, baseURI));
