@@ -1,6 +1,6 @@
 # JSoupMapper
 
-Mapping from DOM to POJO with JSoup API
+Mapping from DOM to POJO with <a href="http://jsoup.org/">JSoup API</a>
 
 # Getting Started
 
@@ -247,7 +247,7 @@ POJO can have complexe mapping having sub POJO themself mapped with a sub DOM El
 ```java
 public class Page {
 
-	@JsoupSelect("div#content")
+	@JsoupSelect("div#content2")
 	public Content content;
 
 }
@@ -269,12 +269,42 @@ public class Content {
 }
 ```
 
+The ```name``` field will be setted as ```"Actual name2"``` with the following HTML.
+
+
+```html
+<html>
+	<head></head>
+	<body>
+		<div id="content1">
+			<div class="name">
+				Actual name1
+			</div>
+			...
+			<div class="description">
+				This is the description of content 1.
+			</div>
+		</div>
+		<div id="content2">
+			<div class="name">
+				Actual name2
+			</div>
+			...
+			<div class="description">
+				This is the description of content 2.
+			</div>
+		</div>
+	</body>
+</html>
+```
+
+
 #### List of Element
 
 ```java
 public class Page {
 
-	@JsoupSelect("div#article p")
+	@JsoupSelect("div.article p")
 	public List<Article> articles;
 
 }
@@ -286,13 +316,44 @@ public class Page {
 // JSoupSelectList is not necessary as long Page already specify the select rule.
 public class Article {
 
-	@JsoupSelect("#author")
+	@JsoupSelect(".author")
 	@JsoupText
 	public String author;
 	
-	@JsoupSelect("#date")
+	@JsoupSelect(".date")
 	@JsoupText
 	public String date;
 
 }
 ```
+
+This will perfectly macht all aticles giving this HTML DOM.
+
+```html
+<html>
+	<head></head>
+	<body>
+		<div class="article">
+			<div class="author">
+				Author first article.
+			</div>
+			...
+			<div class="date">
+				Nov. 1st 2015
+			</div>
+		</div>
+		... 
+		<div class="article">
+			<div class="author">
+				Author last article.
+			</div>
+			...
+			<div class="date">
+				Nov. 31th 2015
+			</div>
+		</div>
+	</body>
+</html>
+```
+
+
