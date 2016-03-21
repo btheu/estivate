@@ -14,7 +14,7 @@ public class JSoupMapperTagNameTest {
     JSoupMapper mapper = new JSoupMapper();
 
     @Test
-    public void val1() {
+    public void tagName() {
 
         InputStream document = read("/tagName/u1.html");
 
