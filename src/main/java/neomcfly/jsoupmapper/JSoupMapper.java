@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -36,18 +37,21 @@ public class JSoupMapper {
     protected String baseURI = "/";
 
     public Object map(InputStream document, Type type) {
-        return map(parseDocument(document), type);
+        Document parseDocument = parseDocument(document);
+        return map(parseDocument, new Elements(parseDocument), type);
     }
 
     public <T> List<T> mapToList(InputStream document, Class<T> clazz) {
-        return mapToList(parseDocument(document), clazz);
+        Document parseDocument = parseDocument(document);
+        return mapToList(parseDocument, new Elements(parseDocument), clazz);
     }
 
     public <T> T map(InputStream document, Class<T> clazz) {
-        return map(parseDocument(document), clazz);
+        Document parseDocument = parseDocument(document);
+        return map(parseDocument, new Elements(parseDocument), clazz);
     }
 
-    public Object map(Elements document, Type type) {
+    public Object map(Document document, Elements elements, Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
@@ -60,7 +64,7 @@ public class JSoupMapper {
 
             if (Collection.class.isAssignableFrom(rowClass)) {
 
-                return mapToList(document, classArgument);
+                return mapToList(document, elements, classArgument);
 
             } else {
                 log.debug(rowClass.getCanonicalName() + " is not a collection");
@@ -70,11 +74,12 @@ public class JSoupMapper {
                                 + rowClass.getCanonicalName());
             }
         } else {
-            return map(document, (Class<?>) type);
+            return map(document, elements, (Class<?>) type);
         }
     }
 
-    public <T> List<T> mapToList(Elements element, Class<T> clazz) {
+    public <T> List<T> mapToList(Document document, Elements element,
+            Class<T> clazz) {
         List<T> result = new ArrayList<T>();
 
         Elements elementsCur = element;
@@ -89,17 +94,17 @@ public class JSoupMapper {
         }
 
         for (Element elt : elementsCur) {
-            result.add(map(new Elements(elt), clazz));
+            result.add(map(document, new Elements(elt), clazz));
         }
 
         return result;
     }
 
-    public <T> T map(Elements element, Class<T> clazz) {
+    public <T> T map(Document document, Elements element, Class<T> clazz) {
         try {
-            Elements elementsCur = select(element, clazz);
+            Elements elementsCur = select(document, element, clazz);
 
-            return map(elementsCur, clazz, clazz.newInstance());
+            return map(document, elementsCur, clazz, clazz.newInstance());
         } catch (InstantiationException e) {
             log.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
@@ -110,22 +115,24 @@ public class JSoupMapper {
         return null;
     }
 
-    public <T> T map(Elements element, Class<T> clazz, T target) {
+    public <T> T map(Document document, Elements element, Class<T> clazz,
+            T target) {
 
         List<Field> allFields = getAllFields(target.getClass());
         for (Field field : allFields) {
-            map(element, field, target);
+            map(document, element, field, target);
         }
 
         Method[] methods = target.getClass().getMethods();
         for (Method method : methods) {
-            map(element, method, target);
+            map(document, element, method, target);
         }
 
         return target;
     }
 
-    private <T> void map(Elements element, AccessibleObject member, T target) {
+    private <T> void map(Document document, Elements element,
+            AccessibleObject member, T target) {
 
         if (hasOneAnnotationMapper(member)) {
             Boolean optional = false;
@@ -135,10 +142,9 @@ public class JSoupMapper {
                 optional = aOptional.value();
             }
 
-            // FIXME Handle here member of collection type
-            Elements elementsSelected = select(element, member);
+            Elements elementsSelected = select(document, element, member);
 
-            Object value = reduce(elementsSelected, member);
+            Object value = reduce(document, elementsSelected, member);
 
             if (!optional && value == null) {
                 throw new IllegalStateException(
@@ -146,7 +152,7 @@ public class JSoupMapper {
                                 + getName(member));
             } else {
 
-                setValue(elementsSelected, target, member, value);
+                setValue(document, elementsSelected, target, member, value);
             }
         }
 
@@ -172,7 +178,8 @@ public class JSoupMapper {
      * @param member
      * @return
      */
-    private Elements select(Elements elements, AnnotatedElement member) {
+    private Elements select(Document document, Elements elements,
+            AnnotatedElement member) {
 
         Elements elementsCurr = elements;
 
@@ -210,7 +217,8 @@ public class JSoupMapper {
      * @param member
      * @return
      */
-    private Object reduce(Elements element, AnnotatedElement member) {
+    private Object reduce(Document document, Elements element,
+            AnnotatedElement member) {
 
         Object value = element.first();
 
@@ -232,6 +240,26 @@ public class JSoupMapper {
             log.debug("using val()", getName(member));
 
             value = element.val();
+        }
+
+        JSoupTagName aTagName = member.getAnnotation(JSoupTagName.class);
+        if (aTagName != null) {
+
+            log.debug("{} tagName", getName(member));
+
+            log.debug("using tagName()", getName(member));
+
+            value = element.first().tagName();
+        }
+
+        JSoupTitle aTitle = member.getAnnotation(JSoupTitle.class);
+        if (aTitle != null) {
+
+            log.debug("{} title", getName(member));
+
+            log.debug("using title()", getName(member));
+
+            value = document.title();
         }
 
         JSoupText aText = member.getAnnotation(JSoupText.class);
@@ -260,8 +288,8 @@ public class JSoupMapper {
         return "__unknown__";
     }
 
-    protected void setValue(Elements element, Object target, Field field,
-            Object value)
+    protected void setValue(Document document, Elements element, Object target,
+            Field field, Object value)
             throws IllegalArgumentException, IllegalAccessException {
 
         log.debug("set value on field [{} => {} ]", value, field.getName());
@@ -280,14 +308,14 @@ public class JSoupMapper {
 
             log.debug("set value by recursive mapping");
 
-            setValue(element, target, field,
-                    map(element, field.getGenericType()));
+            setValue(document, element, target, field,
+                    map(document, element, field.getGenericType()));
         }
 
     }
 
-    protected void setValue(Elements element, Object target, Method method,
-            Object value) throws IllegalArgumentException,
+    protected void setValue(Document document, Elements element, Object target,
+            Method method, Object value) throws IllegalArgumentException,
             IllegalAccessException, InvocationTargetException {
 
         log.debug("set value by method [{}({}) ]", method.getName(), value);
@@ -295,13 +323,13 @@ public class JSoupMapper {
         method.invoke(target, value);
     }
 
-    protected void setValue(Elements element, Object target,
+    protected void setValue(Document document, Elements element, Object target,
             AccessibleObject member, Object value) {
         try {
             if (member instanceof Field) {
-                setValue(element, target, (Field) member, value);
+                setValue(document, element, target, (Field) member, value);
             } else if (member instanceof Method) {
-                setValue(element, target, (Method) member, value);
+                setValue(document, element, target, (Method) member, value);
             }
         } catch (IllegalArgumentException | IllegalAccessException
                 | InvocationTargetException e) {
@@ -320,15 +348,14 @@ public class JSoupMapper {
             res.addAll(Arrays.asList(index.getDeclaredFields()));
 
             index = index.getSuperclass();
-
         }
 
         return res;
     }
 
-    protected Elements parseDocument(InputStream document) {
+    protected Document parseDocument(InputStream document) {
         try {
-            return new Elements(Jsoup.parse(document, encoding, baseURI));
+            return Jsoup.parse(document, encoding, baseURI);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
