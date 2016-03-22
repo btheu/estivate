@@ -268,8 +268,6 @@ public class JSoupMapper {
 		JSoupText aText = member.getAnnotation(JSoupText.class);
 		if (aText != null) {
 			log.debug("'{}' text", getName(member));
-
-			
 			
 			if (aText.value() || aText.own()) {
 				log.debug("using first().owntext()");
