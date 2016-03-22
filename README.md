@@ -258,11 +258,11 @@ public class Page {
 */
 public class Content {
 
-	@JsoupSelect("#name")
+	@JsoupSelect(".name")
 	@JsoupText
 	public String name;
 	
-	@JsoupSelect("#description")
+	@JsoupSelect(".description")
 	@JsoupText
 	public String description;
 
@@ -349,7 +349,7 @@ This will perfectly macht all aticles giving this HTML DOM.
 			</div>
 			...
 			<div class="date">
-				Nov. 31th 2015
+				Nov. 30th 2015
 			</div>
 		</div>
 	</body>
