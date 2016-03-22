@@ -47,6 +47,16 @@ public class JSoupMapperRecursiveTest {
         TestCase.assertEquals(3, result.getSubResults().size());
         TestCase.assertEquals(3, result.getSubResults2().size());
 
+        List<SubResult> subResults = result.getSubResults();
+        for (SubResult subResult : subResults) {
+			subResult.getName();
+		}
+        
+        List<SubResult> subResults2 = result.getSubResults2();
+        for (SubResult subResult : subResults2) {
+        	subResult.getName();
+        }
+        
         log.info(result.toString());
 
     }
