@@ -334,23 +334,27 @@ This will perfectly macht all aticles giving this HTML DOM.
 	<head></head>
 	<body>
 		<div class="article">
-			<div class="author">
-				Author first article.
-			</div>
-			...
-			<div class="date">
-				Nov. 1st 2015
-			</div>
+			<p>
+				<div class="author">
+					Author first article.
+				</div>
+				...
+				<div class="date">
+					Nov. 1st 2015
+				</div>
+			</p>
 		</div>
 		... 
 		<div class="article">
-			<div class="author">
-				Author last article.
-			</div>
-			...
-			<div class="date">
-				Nov. 30th 2015
-			</div>
+			<p>
+				<div class="author">
+					Author last article.
+				</div>
+				...
+				<div class="date">
+					Nov. 30th 2015
+				</div>
+			</p>
 		</div>
 	</body>
 </html>
