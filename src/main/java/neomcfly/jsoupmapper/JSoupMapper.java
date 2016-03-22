@@ -57,7 +57,7 @@ public class JSoupMapper {
         return map(parseDocument, new Elements(parseDocument), clazz);
     }
 
-	public static Object map(Document document, Elements elements, Type type) {
+    public static Object map(Document document, Elements elements, Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
@@ -84,7 +84,7 @@ public class JSoupMapper {
         }
     }
 
-	public static <T> List<T> mapToList(Document document, Elements element,
+    public static <T> List<T> mapToList(Document document, Elements element,
             Class<T> clazz) {
         List<T> result = new ArrayList<T>();
 
@@ -106,7 +106,8 @@ public class JSoupMapper {
         return result;
     }
 
-	public static <T> T map(Document document, Elements element, Class<T> clazz) {
+    public static <T> T map(Document document, Elements element,
+            Class<T> clazz) {
         try {
             Elements elementsCur = select(document, element, clazz);
 
@@ -121,7 +122,7 @@ public class JSoupMapper {
         }
     }
 
-	public static <T> T map(Document document, Elements element, Class<T> clazz,
+    public static <T> T map(Document document, Elements element, Class<T> clazz,
             T target) {
 
         List<Field> allFields = getAllFields(target.getClass());
@@ -137,7 +138,7 @@ public class JSoupMapper {
         return target;
     }
 
-	private static <T> void map(Document document, Elements elements,
+    private static <T> void map(Document document, Elements elements,
             AccessibleObject member, T target) {
 
         if (hasOneAnnotationMapper(member)) {
@@ -164,7 +165,7 @@ public class JSoupMapper {
 
     }
 
-	private static boolean hasOneAnnotationMapper(AccessibleObject member) {
+    private static boolean hasOneAnnotationMapper(AccessibleObject member) {
         Annotation[] annotations = member.getAnnotations();
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().getCanonicalName()
@@ -184,7 +185,7 @@ public class JSoupMapper {
      * @param member
      * @return
      */
-	private static Elements select(Document document, Elements elements,
+    private static Elements select(Document document, Elements elements,
             AnnotatedElement member) {
 
         Elements elementsCurr = elements;
@@ -225,7 +226,7 @@ public class JSoupMapper {
      * @param member
      * @return
      */
-	private static Object reduce(Document document, Elements elements,
+    private static Object reduce(Document document, Elements elements,
             AnnotatedElement member) {
 
         Object value = elements;
@@ -274,8 +275,8 @@ public class JSoupMapper {
         if (aText != null) {
             log.debug("'{}' text", getName(member));
 
-			log.trace("text in  '{}'", elements);
-			
+            log.trace("text in  '{}'", elements);
+
             if (aText.value() || aText.own()) {
                 log.debug("using first().owntext()");
                 value = elements.first().ownText();
@@ -283,14 +284,14 @@ public class JSoupMapper {
                 log.debug("using text()");
                 value = elements.text();
             }
-			
-			log.trace("text out  '{}'", value);
+
+            log.trace("text out  '{}'", value);
         }
 
         return value;
     }
 
-	protected static Object getName(AnnotatedElement member) {
+    protected static Object getName(AnnotatedElement member) {
         if (member instanceof Member) {
             return ((Member) member).getName();
         }
@@ -300,8 +301,9 @@ public class JSoupMapper {
         return "__unknown__";
     }
 
-    protected void mapFieldOrArgument(Document document, Elements elements,
-            Object target, AccessibleObject member, Object value) {
+    protected static void mapFieldOrArgument(Document document,
+            Elements elements, Object target, AccessibleObject member,
+            Object value) {
         try {
             // Get target Type of
             // - Field
@@ -336,35 +338,36 @@ public class JSoupMapper {
         }
 
     }
-    
-	public static final List<TypeConvertor<?, ?>> convertors = new ArrayList<>();
-	static{
-		convertors.add(new StringIntegerConvertor());
-		convertors.add(TypeConvertor.VOID);
-	}
-	
-	protected static Object[] evaluateArguments(Document document, Elements elements, Object value, Class<?>...argumentsType) {
-		Object[] arguments = new Object[argumentsType.length];
-		
-		for (int i = 0; i < argumentsType.length; i++) {
-			Class<?> argumentType = argumentsType[i];
-			
-			for(TypeConvertor<?, ?> convertor : convertors){
-				if(convertor.canHandle(value.getClass(), argumentType)){
-					
-					arguments[i] = convertor.convert(document, elements, value);
-					break;
-				}
-				
-				log.debug("evaluate argument by recursive mapping");
-				arguments[i] = map(document, elements, (Type)argumentType);
-			}
-			
-		}
-		
-		return arguments;
-	}
-	
+
+    public static final List<TypeConvertor<?, ?>> convertors = new ArrayList<>();
+    static {
+        convertors.add(new StringIntegerConvertor());
+        convertors.add(TypeConvertor.VOID);
+    }
+
+    protected static Object[] evaluateArguments(Document document,
+            Elements elements, Object value, Class<?>... argumentsType) {
+        Object[] arguments = new Object[argumentsType.length];
+
+        for (int i = 0; i < argumentsType.length; i++) {
+            Class<?> argumentType = argumentsType[i];
+
+            for (TypeConvertor<?, ?> convertor : convertors) {
+                if (convertor.canHandle(value.getClass(), argumentType)) {
+
+                    arguments[i] = convertor.convert(document, elements, value);
+                    break;
+                }
+
+                log.debug("evaluate argument by recursive mapping");
+                arguments[i] = map(document, elements, (Type) argumentType);
+            }
+
+        }
+
+        return arguments;
+    }
+
     private static boolean isAssignableFrom(Type type1, Type type2) {
 
         boolean isParam1 = type1 instanceof ParameterizedType;
@@ -425,8 +428,8 @@ public class JSoupMapper {
      * @return Arguments ordered giving method signature aka <code>argumentsType
      *         <code>
      */
-    protected Object[] evaluateArguments(Document document, Elements elements,
-            Object value, Type... argumentsType) {
+    protected static Object[] evaluateArguments(Document document,
+            Elements elements, Object value, Type... argumentsType) {
         Object[] arguments = new Object[argumentsType.length];
 
         for (int i = 0; i < argumentsType.length; i++) {
@@ -454,14 +457,14 @@ public class JSoupMapper {
         return arguments;
     }
 
-	protected static void setValue(Document document, Elements element, Object target,
-            Field field, Object value)
+    protected static void setValue(Document document, Elements element,
+            Object target, Field field, Object value)
             throws IllegalArgumentException, IllegalAccessException {
 
         log.debug("set value on field ['{}' => '{}']", value, field.getName());
 
         // If both types matchs
-		if (ClassUtils.isAssignable(field.getType(), value.getClass())) {
+        if (ClassUtils.isAssignable(field.getType(), value.getClass())) {
 
             // TODO call setter first if exists
             field.setAccessible(true);
@@ -476,9 +479,10 @@ public class JSoupMapper {
 
     }
 
-	protected static void setValue(Document document, Elements element, Object target,
-            Method method, Object... values) throws IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException {
+    protected static void setValue(Document document, Elements element,
+            Object target, Method method, Object... values)
+            throws IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException {
 
         log.debug("set value by method [{} ({})]", method.getName(), values);
 
