@@ -11,83 +11,83 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JSoupMapperTitleTest {
 
-	JSoupMapper mapper = new JSoupMapper();
+    JSoupMapper mapper = new JSoupMapper();
 
-	@Test
-	public void title1() {
+    @Test
+    public void title1() {
 
-		InputStream document = read("/title/u1.html");
+        InputStream document = read("/title/u1.html");
 
-		Result result = mapper.map(document, Result.class);
+        Result result = mapper.map(document, Result.class);
 
-		TestCase.assertNotNull(result);
+        TestCase.assertNotNull(result);
 
-		TestCase.assertEquals("Page Title", result.getTitle1());
-		TestCase.assertEquals("Page Title", result.getTitle2());
+        TestCase.assertEquals("Page Title", result.getTitle1());
+        TestCase.assertEquals("Page Title", result.getTitle2());
 
-		log.info(result.toString());
-	}
+        log.info(result.toString());
+    }
 
-	@Test
-	public void title2() {
+    @Test
+    public void title2() {
 
-		InputStream document = read("/title/u1.html");
+        InputStream document = read("/title/u1.html");
 
-		ResultPage result = mapper.map(document, ResultPage.class);
+        ResultPage result = mapper.map(document, ResultPage.class);
 
-		TestCase.assertNotNull(result);
-		TestCase.assertNotNull(result.getContent());
+        TestCase.assertNotNull(result);
+        TestCase.assertNotNull(result.getContent());
 
-		TestCase.assertEquals("Page Title", result.getContent().getTitle1());
-		TestCase.assertEquals("Page Title", result.getContent().getTitle2());
+        TestCase.assertEquals("Page Title", result.getContent().getTitle1());
+        TestCase.assertEquals("Page Title", result.getContent().getTitle2());
 
-		log.info(result.toString());
-	}
+        log.info(result.toString());
+    }
 
-	@Data
-	public static class Result {
+    @Data
+    public static class Result {
 
-		@JSoupSelect("#name")
-		@JSoupTitle
-		public String title1;
+        @JSoupSelect("#content")
+        @JSoupTitle
+        public String title1;
 
-		public String title2;
+        public String title2;
 
-		@JSoupSelect("#name")
-		@JSoupTitle
-		public void setValue2(String title2) {
-			this.title2 = title2;
-		}
+        @JSoupSelect("#content")
+        @JSoupTitle
+        public void setValue2(String title2) {
+            this.title2 = title2;
+        }
 
-	}
+    }
 
-	@Data
-	public static class ResultPage {
+    @Data
+    public static class ResultPage {
 
-		@JSoupSelect("#content")
-		public ResultContent content;
+        @JSoupSelect("#content")
+        public ResultContent content;
 
-	}
+    }
 
-	@Data
-	public static class ResultContent {
+    @Data
+    public static class ResultContent {
 
-		@JSoupTitle
-		public String title1;
+        @JSoupTitle
+        public String title1;
 
-		public String title2;
+        public String title2;
 
-		@JSoupTitle
-		public void setValue2(String title2) {
-			this.title2 = title2;
-		}
+        @JSoupTitle
+        public void setValue2(String title2) {
+            this.title2 = title2;
+        }
 
-	}
+    }
 
-	private InputStream read(String string) {
-		InputStream resourceAsStream = JSoupMapper.class
-				.getResourceAsStream(string);
-		TestCase.assertNotNull(resourceAsStream);
-		return resourceAsStream;
-	}
+    private InputStream read(String string) {
+        InputStream resourceAsStream = JSoupMapper.class
+                .getResourceAsStream(string);
+        TestCase.assertNotNull(resourceAsStream);
+        return resourceAsStream;
+    }
 }

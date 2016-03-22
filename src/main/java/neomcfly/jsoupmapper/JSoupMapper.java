@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import neomcfly.jsoupmapper.core.ClassUtils;
+import neomcfly.jsoupmapper.core.StandardTypeConvertor;
 import neomcfly.jsoupmapper.core.StringIntegerConvertor;
 import neomcfly.jsoupmapper.core.TypeConvertor;
 
@@ -342,77 +343,28 @@ public class JSoupMapper {
     public static final List<TypeConvertor<?, ?>> convertors = new ArrayList<>();
     static {
         convertors.add(new StringIntegerConvertor());
-        convertors.add(TypeConvertor.VOID);
+        convertors.add(new StandardTypeConvertor());
+        convertors.add(new RecursiveMappingTypeConvertor());
     }
 
     protected static Object[] evaluateArguments(Document document,
-            Elements elements, Object value, Class<?>... argumentsType) {
+            Elements elements, Object value, Type... argumentsType) {
         Object[] arguments = new Object[argumentsType.length];
 
         for (int i = 0; i < argumentsType.length; i++) {
-            Class<?> argumentType = argumentsType[i];
+            Type argumentType = argumentsType[i];
 
             for (TypeConvertor<?, ?> convertor : convertors) {
                 if (convertor.canHandle(value.getClass(), argumentType)) {
 
-                    arguments[i] = convertor.convert(document, elements, value);
+                    arguments[i] = convertor.convert(document, elements, value,
+                            argumentType);
                     break;
                 }
-
-                log.debug("evaluate argument by recursive mapping");
-                arguments[i] = map(document, elements, (Type) argumentType);
             }
-
         }
 
         return arguments;
-    }
-
-    private static boolean isAssignableFrom(Type type1, Type type2) {
-
-        boolean isParam1 = type1 instanceof ParameterizedType;
-        boolean isParam2 = type2 instanceof ParameterizedType;
-
-        if (isParam1 && isParam2) {
-            ParameterizedType pType1 = (ParameterizedType) type1;
-            ParameterizedType pType2 = (ParameterizedType) type2;
-            return isAssignableFrom(pType1, pType2);
-        }
-        if (isParam1 != isParam2) {
-            return false;
-        }
-
-        Class<?> c1 = (Class<?>) type1;
-        Class<?> c2 = (Class<?>) type2;
-
-        return c1.isAssignableFrom(c2);
-    }
-
-    private static boolean isAssignableFrom(ParameterizedType type1,
-            ParameterizedType type2) {
-
-        Type raw1 = type1.getRawType();
-        Type raw2 = type2.getRawType();
-
-        if (isAssignableFrom(raw1, raw2)) {
-
-            Type[] ata1 = type1.getActualTypeArguments();
-            Type[] ata2 = type2.getActualTypeArguments();
-
-            if (ata1.length == ata2.length) {
-
-                for (int i = 0; i < ata2.length; i++) {
-                    Type atype1 = ata1[i];
-                    Type atype2 = ata2[i];
-                    if (!isAssignableFrom(atype1, atype2)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return false;
-        }
-        return false;
     }
 
     /**
@@ -428,18 +380,20 @@ public class JSoupMapper {
      * @return Arguments ordered giving method signature aka <code>argumentsType
      *         <code>
      */
-    protected static Object[] evaluateArguments(Document document,
+    protected static Object[] evaluateArgumentsOLD(Document document,
             Elements elements, Object value, Type... argumentsType) {
         Object[] arguments = new Object[argumentsType.length];
 
         for (int i = 0; i < argumentsType.length; i++) {
             Type argumentType = argumentsType[i];
 
-            if (isAssignableFrom(argumentType, value.getClass())) {
+            if (ClassUtils.isAssignableFrom(argumentType, value.getClass())) {
                 arguments[i] = value;
-            } else if (isAssignableFrom(argumentType, Elements.class)) {
+            } else if (ClassUtils.isAssignableFrom(argumentType,
+                    Elements.class)) {
                 arguments[i] = elements;
-            } else if (isAssignableFrom(argumentType, Element.class)) {
+            } else if (ClassUtils.isAssignableFrom(argumentType,
+                    Element.class)) {
                 if (elements.size() == 1) {
                     arguments[i] = elements.first();
                 } else {
@@ -447,7 +401,8 @@ public class JSoupMapper {
                             "Cant set 'Element' object with Elements of size:"
                                     + elements.size());
                 }
-            } else if (isAssignableFrom(argumentType, Document.class)) {
+            } else if (ClassUtils.isAssignableFrom(argumentType,
+                    Document.class)) {
                 arguments[i] = document;
             } else {
                 log.debug("evaluate argument by recursive mapping");
@@ -464,7 +419,7 @@ public class JSoupMapper {
         log.debug("set value on field ['{}' => '{}']", value, field.getName());
 
         // If both types matchs
-        if (ClassUtils.isAssignable(field.getType(), value.getClass())) {
+        if (ClassUtils.isAssignableFrom(field.getType(), value.getClass())) {
 
             // TODO call setter first if exists
             field.setAccessible(true);
@@ -512,4 +467,21 @@ public class JSoupMapper {
         return null;
     }
 
+    @SuppressWarnings("rawtypes")
+    public static class RecursiveMappingTypeConvertor implements TypeConvertor {
+
+        @Override
+        public boolean canHandle(Type from, Type to) {
+            return true;
+        }
+
+        @Override
+        public Object convert(Document document, Elements elements,
+                Object value, Type targetType) {
+
+            log.debug("evaluate argument by recursive mapping");
+            return map(document, elements, targetType);
+        }
+
+    }
 }
