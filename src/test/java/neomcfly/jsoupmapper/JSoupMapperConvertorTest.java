@@ -26,8 +26,15 @@ public class JSoupMapperConvertorTest {
         TestCase.assertEquals(3, result.getInt2());
         
         TestCase.assertEquals(new Boolean("false"), result.getBool1());
-        TestCase.assertEquals(false, result.getBool2());
+        TestCase.assertEquals(false, result.isBool2());
         
+        TestCase.assertEquals(new Character('C'), result.getChar1());
+        TestCase.assertEquals('C', result.getChar2());
+        
+        TestCase.assertEquals(new Byte("11"), result.getByte1());
+        TestCase.assertEquals(11, result.getByte2());
+        
+        /*
         TestCase.assertEquals(new Double("5.5"), result.getDouble1());
         TestCase.assertEquals(5.5d, result.getDouble2());
         
@@ -39,13 +46,7 @@ public class JSoupMapperConvertorTest {
         
         TestCase.assertEquals(new Float("10.2"), result.getFloat1());
         TestCase.assertEquals(10.2f, result.getFloat2());
-        
-        TestCase.assertEquals(new Character('C'), result.getChar1());
-        TestCase.assertEquals('C', result.getChar2());
-        
-        TestCase.assertEquals(new Byte("11"), result.getByte1());
-        TestCase.assertEquals(0x11, result.getByte2());
-        
+        */
         log.info(result.toString());
     }
 
@@ -60,15 +61,22 @@ public class JSoupMapperConvertorTest {
         @JSoupText
         public int int2;
         
-        
-        @JSoupSelect("#floatId")
+        @JSoupSelect("#charId")
         @JSoupText
-        public Float float1;
+        public Character char1;
         
-        @JSoupSelect("#floatId")
+        @JSoupSelect("#charId")
         @JSoupText
-        public float float2;
+        public char char2;
         
+        
+        @JSoupSelect("#byteId")
+        @JSoupText
+        public Byte byte1;
+        
+        @JSoupSelect("#byteId")
+        @JSoupText
+        public byte byte2;
         
         @JSoupSelect("#boolId")
         @JSoupText
@@ -76,8 +84,17 @@ public class JSoupMapperConvertorTest {
         
         @JSoupSelect("#boolId")
         @JSoupText
-        public float bool2;
+        public boolean bool2;
 
+        
+        /*
+        @JSoupSelect("#floatId")
+        @JSoupText
+        public Float float1;
+        
+        @JSoupSelect("#floatId")
+        @JSoupText
+        public float float2;
         
         @JSoupSelect("#doubleId")
         @JSoupText
@@ -104,27 +121,7 @@ public class JSoupMapperConvertorTest {
         @JSoupSelect("#shortId")
         @JSoupText
         public short short2;
-        
-        
-        @JSoupSelect("charId")
-        @JSoupText
-        public Character char1;
-        
-        @JSoupSelect("#charId")
-        @JSoupText
-        public char char2;
-        
-        
-        @JSoupSelect("byteId")
-        @JSoupText
-        public Byte byte1;
-        
-        @JSoupSelect("#byteId")
-        @JSoupText
-        public byte byte2;
-
-        
-        
+        */
     }
 
     private InputStream read(String string) {

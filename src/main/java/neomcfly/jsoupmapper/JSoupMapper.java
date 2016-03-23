@@ -25,8 +25,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import neomcfly.jsoupmapper.core.ClassUtils;
+import neomcfly.jsoupmapper.core.PrimitiveTypeConvertor;
 import neomcfly.jsoupmapper.core.StandardTypeConvertor;
-import neomcfly.jsoupmapper.core.StringIntegerConvertor;
 import neomcfly.jsoupmapper.core.TypeConvertor;
 
 @Slf4j
@@ -335,14 +335,14 @@ public class JSoupMapper {
         } catch (IllegalArgumentException | IllegalAccessException
                 | InvocationTargetException e) {
             throw new IllegalArgumentException("Cannot set value [" + value
-                    + "] for [" + getName(member) + "]", e);
+                    + "] for member [" + getName(member) + "]", e);
         }
 
     }
 
     public static final List<TypeConvertor<?, ?>> convertors = new ArrayList<>();
     static {
-        convertors.add(new StringIntegerConvertor());
+        convertors.add(new PrimitiveTypeConvertor());
         convertors.add(new StandardTypeConvertor());
         convertors.add(new RecursiveMappingTypeConvertor());
     }
