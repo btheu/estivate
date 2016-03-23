@@ -24,6 +24,10 @@ import org.jsoup.select.Elements;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import neomcfly.jsoupmapper.core.ClassUtils;
+import neomcfly.jsoupmapper.core.StandardTypeConvertor;
+import neomcfly.jsoupmapper.core.StringIntegerConvertor;
+import neomcfly.jsoupmapper.core.TypeConvertor;
 
 @Slf4j
 public class JSoupMapper {
@@ -54,7 +58,7 @@ public class JSoupMapper {
         return map(parseDocument, new Elements(parseDocument), clazz);
     }
 
-    public Object map(Document document, Elements elements, Type type) {
+    public static Object map(Document document, Elements elements, Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
@@ -81,7 +85,7 @@ public class JSoupMapper {
         }
     }
 
-    public <T> List<T> mapToList(Document document, Elements element,
+    public static <T> List<T> mapToList(Document document, Elements element,
             Class<T> clazz) {
         List<T> result = new ArrayList<T>();
 
@@ -103,7 +107,8 @@ public class JSoupMapper {
         return result;
     }
 
-    public <T> T map(Document document, Elements element, Class<T> clazz) {
+    public static <T> T map(Document document, Elements element,
+            Class<T> clazz) {
         try {
             Elements elementsCur = select(document, element, clazz);
 
@@ -118,7 +123,7 @@ public class JSoupMapper {
         }
     }
 
-    public <T> T map(Document document, Elements element, Class<T> clazz,
+    public static <T> T map(Document document, Elements element, Class<T> clazz,
             T target) {
 
         List<Field> allFields = getAllFields(target.getClass());
@@ -134,7 +139,7 @@ public class JSoupMapper {
         return target;
     }
 
-    private <T> void map(Document document, Elements elements,
+    private static <T> void map(Document document, Elements elements,
             AccessibleObject member, T target) {
 
         if (hasOneAnnotationMapper(member)) {
@@ -161,7 +166,7 @@ public class JSoupMapper {
 
     }
 
-    private boolean hasOneAnnotationMapper(AccessibleObject member) {
+    private static boolean hasOneAnnotationMapper(AccessibleObject member) {
         Annotation[] annotations = member.getAnnotations();
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().getCanonicalName()
@@ -181,7 +186,7 @@ public class JSoupMapper {
      * @param member
      * @return
      */
-    private Elements select(Document document, Elements elements,
+    private static Elements select(Document document, Elements elements,
             AnnotatedElement member) {
 
         Elements elementsCurr = elements;
@@ -222,7 +227,7 @@ public class JSoupMapper {
      * @param member
      * @return
      */
-    private Object reduce(Document document, Elements elements,
+    private static Object reduce(Document document, Elements elements,
             AnnotatedElement member) {
 
         Object value = elements;
@@ -271,6 +276,8 @@ public class JSoupMapper {
         if (aText != null) {
             log.debug("'{}' text", getName(member));
 
+            log.trace("text in  '{}'", elements);
+
             if (aText.value() || aText.own()) {
                 log.debug("using first().owntext()");
                 value = elements.first().ownText();
@@ -278,12 +285,14 @@ public class JSoupMapper {
                 log.debug("using text()");
                 value = elements.text();
             }
+
+            log.trace("text out  '{}'", value);
         }
 
         return value;
     }
 
-    protected Object getName(AnnotatedElement member) {
+    protected static Object getName(AnnotatedElement member) {
         if (member instanceof Member) {
             return ((Member) member).getName();
         }
@@ -293,8 +302,9 @@ public class JSoupMapper {
         return "__unknown__";
     }
 
-    protected void mapFieldOrArgument(Document document, Elements elements,
-            Object target, AccessibleObject member, Object value) {
+    protected static void mapFieldOrArgument(Document document,
+            Elements elements, Object target, AccessibleObject member,
+            Object value) {
         try {
             // Get target Type of
             // - Field
@@ -330,51 +340,31 @@ public class JSoupMapper {
 
     }
 
-    private static boolean isAssignableFrom(Type type1, Type type2) {
-
-        boolean isParam1 = type1 instanceof ParameterizedType;
-        boolean isParam2 = type2 instanceof ParameterizedType;
-
-        if (isParam1 && isParam2) {
-            ParameterizedType pType1 = (ParameterizedType) type1;
-            ParameterizedType pType2 = (ParameterizedType) type2;
-            return isAssignableFrom(pType1, pType2);
-        }
-        if (isParam1 != isParam2) {
-            return false;
-        }
-
-        Class<?> c1 = (Class<?>) type1;
-        Class<?> c2 = (Class<?>) type2;
-
-        return c1.isAssignableFrom(c2);
+    public static final List<TypeConvertor<?, ?>> convertors = new ArrayList<>();
+    static {
+        convertors.add(new StringIntegerConvertor());
+        convertors.add(new StandardTypeConvertor());
+        convertors.add(new RecursiveMappingTypeConvertor());
     }
 
-    private static boolean isAssignableFrom(ParameterizedType type1,
-            ParameterizedType type2) {
+    protected static Object[] evaluateArguments(Document document,
+            Elements elements, Object value, Type... argumentsType) {
+        Object[] arguments = new Object[argumentsType.length];
 
-        Type raw1 = type1.getRawType();
-        Type raw2 = type2.getRawType();
+        for (int i = 0; i < argumentsType.length; i++) {
+            Type argumentType = argumentsType[i];
 
-        if (isAssignableFrom(raw1, raw2)) {
+            for (TypeConvertor<?, ?> convertor : convertors) {
+                if (convertor.canHandle(value.getClass(), argumentType)) {
 
-            Type[] ata1 = type1.getActualTypeArguments();
-            Type[] ata2 = type2.getActualTypeArguments();
-
-            if (ata1.length == ata2.length) {
-
-                for (int i = 0; i < ata2.length; i++) {
-                    Type atype1 = ata1[i];
-                    Type atype2 = ata2[i];
-                    if (!isAssignableFrom(atype1, atype2)) {
-                        return false;
-                    }
+                    arguments[i] = convertor.convert(document, elements, value,
+                            argumentType);
+                    break;
                 }
-                return true;
             }
-            return false;
         }
-        return false;
+
+        return arguments;
     }
 
     /**
@@ -390,18 +380,20 @@ public class JSoupMapper {
      * @return Arguments ordered giving method signature aka <code>argumentsType
      *         <code>
      */
-    protected Object[] evaluateArguments(Document document, Elements elements,
-            Object value, Type... argumentsType) {
+    protected static Object[] evaluateArgumentsOLD(Document document,
+            Elements elements, Object value, Type... argumentsType) {
         Object[] arguments = new Object[argumentsType.length];
 
         for (int i = 0; i < argumentsType.length; i++) {
             Type argumentType = argumentsType[i];
 
-            if (isAssignableFrom(argumentType, value.getClass())) {
+            if (ClassUtils.isAssignableFrom(argumentType, value.getClass())) {
                 arguments[i] = value;
-            } else if (isAssignableFrom(argumentType, Elements.class)) {
+            } else if (ClassUtils.isAssignableFrom(argumentType,
+                    Elements.class)) {
                 arguments[i] = elements;
-            } else if (isAssignableFrom(argumentType, Element.class)) {
+            } else if (ClassUtils.isAssignableFrom(argumentType,
+                    Element.class)) {
                 if (elements.size() == 1) {
                     arguments[i] = elements.first();
                 } else {
@@ -409,7 +401,8 @@ public class JSoupMapper {
                             "Cant set 'Element' object with Elements of size:"
                                     + elements.size());
                 }
-            } else if (isAssignableFrom(argumentType, Document.class)) {
+            } else if (ClassUtils.isAssignableFrom(argumentType,
+                    Document.class)) {
                 arguments[i] = document;
             } else {
                 log.debug("evaluate argument by recursive mapping");
@@ -419,14 +412,14 @@ public class JSoupMapper {
         return arguments;
     }
 
-    protected void setValue(Document document, Elements element, Object target,
-            Field field, Object value)
+    protected static void setValue(Document document, Elements element,
+            Object target, Field field, Object value)
             throws IllegalArgumentException, IllegalAccessException {
 
         log.debug("set value on field ['{}' => '{}']", value, field.getName());
 
         // If both types matchs
-        if (field.getType().isAssignableFrom(value.getClass())) {
+        if (ClassUtils.isAssignableFrom(field.getType(), value.getClass())) {
 
             // TODO call setter first if exists
             field.setAccessible(true);
@@ -441,9 +434,10 @@ public class JSoupMapper {
 
     }
 
-    protected void setValue(Document document, Elements element, Object target,
-            Method method, Object... values) throws IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException {
+    protected static void setValue(Document document, Elements element,
+            Object target, Method method, Object... values)
+            throws IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException {
 
         log.debug("set value by method [{} ({})]", method.getName(), values);
 
@@ -473,4 +467,21 @@ public class JSoupMapper {
         return null;
     }
 
+    @SuppressWarnings("rawtypes")
+    public static class RecursiveMappingTypeConvertor implements TypeConvertor {
+
+        @Override
+        public boolean canHandle(Type from, Type to) {
+            return true;
+        }
+
+        @Override
+        public Object convert(Document document, Elements elements,
+                Object value, Type targetType) {
+
+            log.debug("evaluate argument by recursive mapping");
+            return map(document, elements, targetType);
+        }
+
+    }
 }
