@@ -360,4 +360,34 @@ This will perfectly macht all aticles giving this HTML DOM.
 </html>
 ```
 
+#### Primitive types
+
+JSoupMapper handle primitive types for fields or methods arguments mapping.
+
+```java
+public class Rapport {
+
+	@JsoupSelect("#nbTeachers")
+	@JsoupText
+	public Integer ;
+	
+	@JsoupSelect("#nbStudents")
+	@JsoupText
+	public int ;
+}
+```
+
+```html
+<html>
+	<head></head>
+	<body>
+		<div id="nbTeachers">
+			123
+		</div>
+		<div id="nbStudents">
+			456
+		</div>
+	</body>
+</html>
+```
 
