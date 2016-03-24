@@ -1,6 +1,8 @@
 package neomcfly.jsoupmapper.core;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -74,6 +76,18 @@ public class PrimitiveTypeConvertor implements TypeConvertor {
 			return Short.parseShort(s);
 		}
 	};
+	public static Function<String, Object> parseBigDecimal = new Function<String, Object>() {
+		@Override
+		public Object apply(String s) {
+			return new BigDecimal(s);
+		}
+	};
+	public static Function<String, Object> parseBigInteger = new Function<String, Object>() {
+		@Override
+		public Object apply(String s) {
+			return new BigInteger(s);
+		}
+	};
 	
 	private static final Map<Type, Function<String,Object>> mLBD = new HashMap<>();
 	static{
@@ -94,6 +108,9 @@ public class PrimitiveTypeConvertor implements TypeConvertor {
 		mLBD.put(Long.class, 		parseLong);
 		mLBD.put(short.class, 		parseShort);
 		mLBD.put(Short.class, 		parseShort);
+		
+		mLBD.put(BigDecimal.class, 		parseBigDecimal);
+		mLBD.put(BigInteger.class, 		parseBigInteger);
 	}
 	
 	private static final Set<Type> primitivesAndBoxes = mLBD.keySet();

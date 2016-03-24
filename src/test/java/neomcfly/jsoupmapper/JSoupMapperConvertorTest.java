@@ -1,6 +1,8 @@
 package neomcfly.jsoupmapper;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.junit.Test;
 
@@ -50,6 +52,31 @@ public class JSoupMapperConvertorTest {
 		log.info(result.toString());
 	}
 
+	@Test
+	public void convertorBigNumber1() {
+		InputStream document = read("/convertor/u2.html");
+
+		ResultBig result = mapper.map(document, ResultBig.class);
+
+		TestCase.assertNotNull(result);
+
+		TestCase.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"), result.getInt1());
+		TestCase.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"), result.getDec1());
+	}
+	
+	@Data
+	public static class ResultBig {
+		
+		@JSoupSelect("#bigIntId")
+		@JSoupText
+		public BigInteger int1;
+		
+		@JSoupSelect("#bigDecId")
+		@JSoupText
+		public BigDecimal dec1;
+		
+	}
+	
 	@Data
 	public static class Result {
 
