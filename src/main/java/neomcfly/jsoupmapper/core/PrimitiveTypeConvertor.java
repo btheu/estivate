@@ -50,6 +50,30 @@ public class PrimitiveTypeConvertor implements TypeConvertor {
 			return Boolean.parseBoolean(s);
 		}
 	};
+	public static Function<String, Object> parseFloat = new Function<String, Object>() {
+		@Override
+		public Object apply(String s) {
+			return Float.parseFloat(s);
+		}
+	};
+	public static Function<String, Object> parseDouble = new Function<String, Object>() {
+		@Override
+		public Object apply(String s) {
+			return Double.parseDouble(s);
+		}
+	};
+	public static Function<String, Object> parseLong = new Function<String, Object>() {
+		@Override
+		public Object apply(String s) {
+			return Long.parseLong(s);
+		}
+	};
+	public static Function<String, Object> parseShort = new Function<String, Object>() {
+		@Override
+		public Object apply(String s) {
+			return Short.parseShort(s);
+		}
+	};
 	
 	private static final Map<Type, Function<String,Object>> mLBD = new HashMap<>();
 	static{
@@ -62,6 +86,14 @@ public class PrimitiveTypeConvertor implements TypeConvertor {
 		mLBD.put(Byte.class, 		parseByte);	
 		mLBD.put(boolean.class, 	parseBool);
 		mLBD.put(Boolean.class, 	parseBool);
+		mLBD.put(float.class, 		parseFloat);
+		mLBD.put(Float.class, 		parseFloat);
+		mLBD.put(double.class, 		parseDouble);
+		mLBD.put(Double.class, 		parseDouble);
+		mLBD.put(long.class, 		parseLong);
+		mLBD.put(Long.class, 		parseLong);
+		mLBD.put(short.class, 		parseShort);
+		mLBD.put(Short.class, 		parseShort);
 	}
 	
 	private static final Set<Type> primitivesAndBoxes = mLBD.keySet();

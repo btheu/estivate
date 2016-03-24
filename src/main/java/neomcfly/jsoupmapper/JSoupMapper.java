@@ -25,8 +25,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import neomcfly.jsoupmapper.core.ClassUtils;
-import neomcfly.jsoupmapper.core.PrimitiveTypeConvertor;
 import neomcfly.jsoupmapper.core.ConvertorContext;
+import neomcfly.jsoupmapper.core.PrimitiveTypeConvertor;
 import neomcfly.jsoupmapper.core.StandardTypeConvertor;
 import neomcfly.jsoupmapper.core.TypeConvertor;
 
@@ -336,7 +336,7 @@ public class JSoupMapper {
         } catch (IllegalArgumentException | IllegalAccessException
                 | InvocationTargetException e) {
             throw new IllegalArgumentException("Cannot set value [" + value
-                    + "] for member [" + getName(member) + "]", e);
+                    + "|"+value.getClass()+"] for member [" + getName(member) + "]", e);
         }
 
     }

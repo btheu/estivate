@@ -8,9 +8,12 @@ import java.util.Map;
 public abstract class ClassUtils {
 
     /**
+     * 
      * Determine if the given type is assignable from the given value, assuming
      * setting by reflection. Considers primitive wrapper classes as assignable
      * to the corresponding primitive types.
+     * 
+     * @author Spring Framework
      * 
      * @param type
      *            the target type
@@ -18,15 +21,16 @@ public abstract class ClassUtils {
      *            the value that should be assigned to the type
      * @return if the type is assignable from the value
      */
-    public static boolean isAssignableValue(Class<?> type, Object value) {
-        return (value != null ? isAssignable(type, value.getClass())
-                : !type.isPrimitive());
-    }
+	public static boolean isAssignableValue(Class<?> type, Object value) {
+		return (value != null ? isAssignable(type, value.getClass()) : !type.isPrimitive());
+	}
 
     /**
      * Check if the right-hand side type may be assigned to the left-hand side
      * type, assuming setting by reflection. Considers primitive wrapper classes
      * as assignable to the corresponding primitive types.
+     * 
+     * @author Spring Framework
      * 
      * @param lhsType
      *            the target type
@@ -35,25 +39,24 @@ public abstract class ClassUtils {
      * @return if the target type is assignable from the value type
      * @see TypeUtils#isAssignable
      */
-    public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
-        if (lhsType.isAssignableFrom(rhsType)) {
-            return true;
-        }
-        if (lhsType.isPrimitive()) {
-            Class resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
-            if (resolvedPrimitive != null
-                    && lhsType.equals(resolvedPrimitive)) {
-                return true;
-            }
-        } else {
-            Class resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
-            if (resolvedWrapper != null
-                    && lhsType.isAssignableFrom(resolvedWrapper)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
+		if (lhsType.isAssignableFrom(rhsType)) {
+			return true;
+		}
+		if (lhsType.isPrimitive()) {
+			Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
+			if (lhsType == resolvedPrimitive) {
+				return true;
+			}
+		}
+		else {
+			Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
+			if (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     /**
      * Map with primitive wrapper type as key and corresponding primitive type
@@ -83,7 +86,6 @@ public abstract class ClassUtils {
                 .entrySet()) {
             primitiveTypeToWrapperMap.put(entry.getValue(), entry.getKey());
         }
-
     }
 
     public static Class<?> rawType(Type type) {
