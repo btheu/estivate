@@ -6,27 +6,32 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-@SuppressWarnings("rawtypes")
-public class StandardTypeConvertor implements TypeConvertor {
+import lombok.Setter;
+
+public class StandardTypeConvertor implements TypeConvertor, ConvertorContext {
+
+    @Setter
+    private Elements elements;
+    @Setter
+    private Document document;
+    @Setter
+    private Type genericTargetType;
 
     @Override
-    public boolean canHandle(Type from, Type to) {
-        return ClassUtils.isAssignableFrom(to,
-                Document.class.getGenericSuperclass())
-                || ClassUtils.isAssignableFrom(to,
-                        Element.class.getGenericSuperclass())
-                || ClassUtils.isAssignableFrom(to,
-                        Elements.class.getGenericSuperclass())
-                || ClassUtils.isAssignableFrom(to, from);
+    public boolean canConvert(Class<?> targetType, Object value) {
+        return Document.class.equals(targetType)
+                || Element.class.equals(targetType)
+                || Elements.class.equals(targetType)
+                || (ClassUtils.isAssignableValue(targetType, value)
+                        && !Elements.class.equals(value.getClass()));
     }
 
     @Override
-    public Object convert(Document document, Elements elements, Object value,
-            Type targetType) {
-        if (ClassUtils.isAssignableFrom(targetType, Elements.class)) {
+    public Object convert(Class<?> targetType, Object value) {
+        if (Elements.class.equals(targetType)) {
             return elements;
         }
-        if (ClassUtils.isAssignableFrom(targetType, Element.class)) {
+        if (Element.class.equals(targetType)) {
             if (elements.size() == 1) {
                 return elements.first();
             } else {
@@ -35,10 +40,10 @@ public class StandardTypeConvertor implements TypeConvertor {
                                 + elements.size());
             }
         }
-        if (ClassUtils.isAssignableFrom(targetType, Document.class)) {
+        if (Document.class.equals(targetType)) {
             return document;
         }
-        if (ClassUtils.isAssignableFrom(targetType, value.getClass())) {
+        if (ClassUtils.isAssignableValue(targetType, value)) {
             return value;
         }
         return null;

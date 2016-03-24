@@ -5,31 +5,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 /**
  * Handles primitives types or their respective object definition class type
  * 
  * @author theunissenb
  *
  */
-@SuppressWarnings("rawtypes")
 public class PrimitiveTypeConvertor implements TypeConvertor {
 
 	@Override
-	public boolean canHandle(Type from, Type to) {
-		if (!ClassUtils.isAssignableFrom(from, String.class)) {
+	public boolean canConvert(Class<?> targetType, Object value) {
+		if (!value.getClass().isAssignableFrom(String.class)) {
 			return false;
 		}
-		return primitivesAndBoxes.contains(to);
+		return primitivesAndBoxes.contains(targetType);
 	}
 
 	@Override
-	public Object convert(Document document, Elements elements, Object value, Type targetType) {
+	public Object convert(Class<?> targetType, Object value) {
 		return mLBD.get(targetType).apply((String) value);
 	}
-
+	
 	public static Function<String, Object> parseInt = new Function<String, Object>() {
 		@Override
 		public Object apply(String s) {
@@ -69,5 +65,7 @@ public class PrimitiveTypeConvertor implements TypeConvertor {
 	}
 	
 	private static final Set<Type> primitivesAndBoxes = mLBD.keySet();
+
+
 	
 }

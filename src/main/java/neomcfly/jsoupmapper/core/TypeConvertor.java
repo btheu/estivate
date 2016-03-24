@@ -1,15 +1,9 @@
 package neomcfly.jsoupmapper.core;
 
-import java.lang.reflect.Type;
+public interface TypeConvertor {
 
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+    public boolean canConvert(Class<?> targetType, Object value);
 
-public interface TypeConvertor<I, O> {
-
-    public boolean canHandle(Type from, Type to);
-
-    public O convert(Document document, Elements elements, Object value,
-            Type targetType);
+    public Object convert(Class<?> targetType, Object value);
 
 }

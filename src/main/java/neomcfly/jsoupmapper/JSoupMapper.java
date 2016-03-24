@@ -26,6 +26,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import neomcfly.jsoupmapper.core.ClassUtils;
 import neomcfly.jsoupmapper.core.PrimitiveTypeConvertor;
+import neomcfly.jsoupmapper.core.ConvertorContext;
 import neomcfly.jsoupmapper.core.StandardTypeConvertor;
 import neomcfly.jsoupmapper.core.TypeConvertor;
 
@@ -340,31 +341,11 @@ public class JSoupMapper {
 
     }
 
-    public static final List<TypeConvertor<?, ?>> convertors = new ArrayList<>();
+    public static final List<TypeConvertor> convertors = new ArrayList<>();
     static {
         convertors.add(new PrimitiveTypeConvertor());
         convertors.add(new StandardTypeConvertor());
         convertors.add(new RecursiveMappingTypeConvertor());
-    }
-
-    protected static Object[] evaluateArguments(Document document,
-            Elements elements, Object value, Type... argumentsType) {
-        Object[] arguments = new Object[argumentsType.length];
-
-        for (int i = 0; i < argumentsType.length; i++) {
-            Type argumentType = argumentsType[i];
-
-            for (TypeConvertor<?, ?> convertor : convertors) {
-                if (convertor.canHandle(value.getClass(), argumentType)) {
-
-                    arguments[i] = convertor.convert(document, elements, value,
-                            argumentType);
-                    break;
-                }
-            }
-        }
-
-        return arguments;
     }
 
     /**
@@ -375,38 +356,33 @@ public class JSoupMapper {
      * @param elements
      * @param value
      *            The current value of the DOM after selects and reduces
-     * @param argumentsType
+     * @param targetsType
      * 
      * @return Arguments ordered giving method signature aka <code>argumentsType
      *         <code>
      */
-    protected static Object[] evaluateArgumentsOLD(Document document,
-            Elements elements, Object value, Type... argumentsType) {
-        Object[] arguments = new Object[argumentsType.length];
+    protected static Object[] evaluateArguments(Document document,
+            Elements elements, Object value, Type... targetsType) {
+        Object[] arguments = new Object[targetsType.length];
 
-        for (int i = 0; i < argumentsType.length; i++) {
-            Type argumentType = argumentsType[i];
+        for (int i = 0; i < targetsType.length; i++) {
+            Type targetType = targetsType[i];
 
-            if (ClassUtils.isAssignableFrom(argumentType, value.getClass())) {
-                arguments[i] = value;
-            } else if (ClassUtils.isAssignableFrom(argumentType,
-                    Elements.class)) {
-                arguments[i] = elements;
-            } else if (ClassUtils.isAssignableFrom(argumentType,
-                    Element.class)) {
-                if (elements.size() == 1) {
-                    arguments[i] = elements.first();
-                } else {
-                    throw new IllegalArgumentException(
-                            "Cant set 'Element' object with Elements of size:"
-                                    + elements.size());
+            Class<?> targetRawType = ClassUtils.rawType(targetType);
+
+            for (TypeConvertor convertor : convertors) {
+                if (convertor instanceof ConvertorContext) {
+                    ConvertorContext convertorContext = (ConvertorContext) convertor;
+                    convertorContext.setDocument(document);
+                    convertorContext.setElements(elements);
+                    convertorContext.setGenericTargetType(targetType);
                 }
-            } else if (ClassUtils.isAssignableFrom(argumentType,
-                    Document.class)) {
-                arguments[i] = document;
-            } else {
-                log.debug("evaluate argument by recursive mapping");
-                arguments[i] = map(document, elements, argumentType);
+                if (convertor.canConvert(targetRawType, value)) {
+
+                    arguments[i] = convertor.convert(targetRawType, value);
+
+                    break;
+                }
             }
         }
         return arguments;
@@ -419,7 +395,7 @@ public class JSoupMapper {
         log.debug("set value on field ['{}' => '{}']", value, field.getName());
 
         // If both types matchs
-        if (ClassUtils.isAssignableFrom(field.getType(), value.getClass())) {
+        if (ClassUtils.isAssignableValue(field.getType(), value)) {
 
             // TODO call setter first if exists
             field.setAccessible(true);
@@ -467,20 +443,25 @@ public class JSoupMapper {
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
-    public static class RecursiveMappingTypeConvertor implements TypeConvertor {
+    public static class RecursiveMappingTypeConvertor
+            implements TypeConvertor, ConvertorContext {
+
+        @Setter
+        private Document document;
+        @Setter
+        private Elements elements;
+        @Setter
+        private Type genericTargetType;
 
         @Override
-        public boolean canHandle(Type from, Type to) {
+        public boolean canConvert(Class<?> targetType, Object value) {
             return true;
         }
 
         @Override
-        public Object convert(Document document, Elements elements,
-                Object value, Type targetType) {
-
+        public Object convert(Class<?> targetType, Object value) {
             log.debug("evaluate argument by recursive mapping");
-            return map(document, elements, targetType);
+            return map(document, elements, genericTargetType);
         }
 
     }

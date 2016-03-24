@@ -2,70 +2,95 @@ package neomcfly.jsoupmapper.core;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class ClassUtils {
 
-    public static boolean isAssignableFrom(Type type1, Type type2) {
-
-        boolean isParam1 = type1 instanceof ParameterizedType;
-        boolean isParam2 = type2 instanceof ParameterizedType;
-
-        if (isParam1 && isParam2) {
-            ParameterizedType pType1 = (ParameterizedType) type1;
-            ParameterizedType pType2 = (ParameterizedType) type2;
-            return isAssignableFrom(pType1, pType2);
-        }
-        if (isParam1 != isParam2) {
-            return false;
-        }
-
-        Class<?> c1 = (Class<?>) type1;
-        Class<?> c2 = (Class<?>) type2;
-
-        try {
-            if (c1.isPrimitive() && c1.equals(c2.getField("TYPE").get(null))) {
-                return true;
-            }
-        } catch (IllegalArgumentException | IllegalAccessException
-                | NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (c2.isPrimitive() && c2.equals(c1.getField("TYPE").get(null))) {
-                return true;
-            }
-        } catch (IllegalArgumentException | IllegalAccessException
-                | NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-        }
-
-        return c1.isAssignableFrom(c2);
+    /**
+     * Determine if the given type is assignable from the given value, assuming
+     * setting by reflection. Considers primitive wrapper classes as assignable
+     * to the corresponding primitive types.
+     * 
+     * @param type
+     *            the target type
+     * @param value
+     *            the value that should be assigned to the type
+     * @return if the type is assignable from the value
+     */
+    public static boolean isAssignableValue(Class<?> type, Object value) {
+        return (value != null ? isAssignable(type, value.getClass())
+                : !type.isPrimitive());
     }
 
-    public static boolean isAssignableFrom(ParameterizedType type1,
-            ParameterizedType type2) {
-
-        Type raw1 = type1.getRawType();
-        Type raw2 = type2.getRawType();
-
-        if (isAssignableFrom(raw1, raw2)) {
-
-            Type[] ata1 = type1.getActualTypeArguments();
-            Type[] ata2 = type2.getActualTypeArguments();
-
-            if (ata1.length == ata2.length) {
-
-                for (int i = 0; i < ata2.length; i++) {
-                    Type atype1 = ata1[i];
-                    Type atype2 = ata2[i];
-                    if (!isAssignableFrom(atype1, atype2)) {
-                        return false;
-                    }
-                }
+    /**
+     * Check if the right-hand side type may be assigned to the left-hand side
+     * type, assuming setting by reflection. Considers primitive wrapper classes
+     * as assignable to the corresponding primitive types.
+     * 
+     * @param lhsType
+     *            the target type
+     * @param rhsType
+     *            the value type that should be assigned to the target type
+     * @return if the target type is assignable from the value type
+     * @see TypeUtils#isAssignable
+     */
+    public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
+        if (lhsType.isAssignableFrom(rhsType)) {
+            return true;
+        }
+        if (lhsType.isPrimitive()) {
+            Class resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
+            if (resolvedPrimitive != null
+                    && lhsType.equals(resolvedPrimitive)) {
                 return true;
             }
-            return false;
+        } else {
+            Class resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
+            if (resolvedWrapper != null
+                    && lhsType.isAssignableFrom(resolvedWrapper)) {
+                return true;
+            }
         }
         return false;
+    }
+
+    /**
+     * Map with primitive wrapper type as key and corresponding primitive type
+     * as value, for example: Integer.class -> int.class.
+     */
+    private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new HashMap<Class<?>, Class<?>>(
+            8);
+
+    /**
+     * Map with primitive type as key and corresponding wrapper type as value,
+     * for example: int.class -> Integer.class.
+     */
+    private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new HashMap<Class<?>, Class<?>>(
+            8);
+
+    static {
+        primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
+        primitiveWrapperTypeMap.put(Byte.class, byte.class);
+        primitiveWrapperTypeMap.put(Character.class, char.class);
+        primitiveWrapperTypeMap.put(Double.class, double.class);
+        primitiveWrapperTypeMap.put(Float.class, float.class);
+        primitiveWrapperTypeMap.put(Integer.class, int.class);
+        primitiveWrapperTypeMap.put(Long.class, long.class);
+        primitiveWrapperTypeMap.put(Short.class, short.class);
+
+        for (Map.Entry<Class<?>, Class<?>> entry : primitiveWrapperTypeMap
+                .entrySet()) {
+            primitiveTypeToWrapperMap.put(entry.getValue(), entry.getKey());
+        }
+
+    }
+
+    public static Class<?> rawType(Type type) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            return (Class<?>) parameterizedType.getRawType();
+        }
+        return (Class<?>) type;
     }
 }
