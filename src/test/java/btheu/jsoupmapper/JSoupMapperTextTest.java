@@ -21,8 +21,8 @@ public class JSoupMapperTextTest {
         Result result = mapper.map(document, Result.class);
 
         TestCase.assertNotNull(result);
-        TestCase.assertNotNull(result.getName1());
-        TestCase.assertNotNull(result.getName2());
+        TestCase.assertEquals("This is my name: John",result.getName1());
+        TestCase.assertEquals("This is my name: John",result.getName2());
 
         log.info(result.toString());
 
