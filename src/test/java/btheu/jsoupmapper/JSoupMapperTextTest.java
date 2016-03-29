@@ -2,9 +2,9 @@ package btheu.jsoupmapper;
 
 import java.io.InputStream;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,9 +20,9 @@ public class JSoupMapperTextTest {
 
         Result result = mapper.map(document, Result.class);
 
-        TestCase.assertNotNull(result);
-        TestCase.assertEquals("This is my name: John",result.getName1());
-        TestCase.assertEquals("This is my name: John",result.getName2());
+        Assert.assertNotNull(result);
+        Assert.assertEquals("This is my name: John",result.getName1());
+        Assert.assertEquals("This is my name: John",result.getName2());
 
         log.info(result.toString());
 
@@ -35,12 +35,12 @@ public class JSoupMapperTextTest {
 
         ResultOwn result = mapper.map(document, ResultOwn.class);
 
-        TestCase.assertNotNull(result);
-        TestCase.assertNotNull(result.getName1());
-        TestCase.assertNotNull(result.getName2());
+        Assert.assertNotNull(result);
+        Assert.assertNotNull(result.getName1());
+        Assert.assertNotNull(result.getName2());
 
-        TestCase.assertEquals("John", result.getName1());
-        TestCase.assertEquals("John", result.getName2());
+        Assert.assertEquals("John", result.getName1());
+        Assert.assertEquals("John", result.getName2());
 
         log.info(result.toString());
 
@@ -79,7 +79,7 @@ public class JSoupMapperTextTest {
     private InputStream read(String string) {
         InputStream resourceAsStream = JSoupMapper.class
                 .getResourceAsStream(string);
-        TestCase.assertNotNull(resourceAsStream);
+        Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;
     }
 }

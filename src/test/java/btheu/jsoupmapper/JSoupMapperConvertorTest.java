@@ -4,9 +4,9 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,32 +22,32 @@ public class JSoupMapperConvertorTest {
 
 		Result result = mapper.map(document, Result.class);
 
-		TestCase.assertNotNull(result);
+		Assert.assertNotNull(result);
 
-		TestCase.assertEquals(new Integer("3"), result.getInt1());
-		TestCase.assertEquals(3, result.getInt2());
+		Assert.assertEquals(new Integer("3"), result.getInt1());
+		Assert.assertEquals(3, result.getInt2());
 
-		TestCase.assertEquals(new Boolean("false"), result.getBool1());
-		TestCase.assertEquals(false, result.isBool2());
+		Assert.assertEquals(new Boolean("false"), result.getBool1());
+		Assert.assertEquals(false, result.isBool2());
 
-		TestCase.assertEquals(new Character('C'), result.getChar1());
-		TestCase.assertEquals('C', result.getChar2());
+		Assert.assertEquals(new Character('C'), result.getChar1());
+		Assert.assertEquals('C', result.getChar2());
 
-		TestCase.assertEquals(new Byte("11"), result.getByte1());
-		TestCase.assertEquals(11, result.getByte2());
+		Assert.assertEquals(new Byte("11"), result.getByte1());
+		Assert.assertEquals(11, result.getByte2());
 
 		
-        TestCase.assertEquals(new Double("5.5"), result.getDouble1());
-        TestCase.assertEquals(5.5d, result.getDouble2());
+        Assert.assertEquals(new Double("5.5"), result.getDouble1());
+        Assert.assertEquals(5.5d, result.getDouble2(),0);
 
-        TestCase.assertEquals(new Long("6"), result.getLong1());
-        TestCase.assertEquals(6L, result.getLong2());
+        Assert.assertEquals(new Long("6"), result.getLong1());
+        Assert.assertEquals(6L, result.getLong2());
 
-        TestCase.assertEquals(new Short("7"), result.getShort1());
-        TestCase.assertEquals(7, result.getShort2());
+        Assert.assertEquals(new Short("7"), result.getShort1());
+        Assert.assertEquals(7, result.getShort2());
 
-        TestCase.assertEquals(new Float("10.2"), result.getFloat1());
-        TestCase.assertEquals(10.2f, result.getFloat2());
+        Assert.assertEquals(new Float("10.2"), result.getFloat1());
+        Assert.assertEquals(10.2f, result.getFloat2(),0);
 		 
 		log.info(result.toString());
 	}
@@ -58,10 +58,10 @@ public class JSoupMapperConvertorTest {
 
 		ResultBig result = mapper.map(document, ResultBig.class);
 
-		TestCase.assertNotNull(result);
+		Assert.assertNotNull(result);
 
-		TestCase.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"), result.getInt1());
-		TestCase.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"), result.getDec1());
+		Assert.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"), result.getInt1());
+		Assert.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"), result.getDec1());
 	}
 	
 	@Data
@@ -135,7 +135,7 @@ public class JSoupMapperConvertorTest {
 	private InputStream read(String string) {
 		InputStream resourceAsStream = JSoupMapper.class
 				.getResourceAsStream(string);
-		TestCase.assertNotNull(resourceAsStream);
+		Assert.assertNotNull(resourceAsStream);
 		return resourceAsStream;
 	}
 }

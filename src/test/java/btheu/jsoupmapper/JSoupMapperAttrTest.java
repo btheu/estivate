@@ -2,9 +2,9 @@ package btheu.jsoupmapper;
 
 import java.io.InputStream;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,9 +20,9 @@ public class JSoupMapperAttrTest {
 
         Result result = mapper.map(document, Result.class);
 
-        TestCase.assertNotNull(result);
-        TestCase.assertEquals("role_of_name",result.getName1());
-        TestCase.assertEquals("role_of_name",result.getName2());
+        Assert.assertNotNull(result);
+        Assert.assertEquals("role_of_name",result.getName1());
+        Assert.assertEquals("role_of_name",result.getName2());
 
         log.info(result.toString());
 
@@ -46,7 +46,7 @@ public class JSoupMapperAttrTest {
     private InputStream read(String string) {
         InputStream resourceAsStream = JSoupMapper.class
                 .getResourceAsStream(string);
-        TestCase.assertNotNull(resourceAsStream);
+        Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;
     }
 }

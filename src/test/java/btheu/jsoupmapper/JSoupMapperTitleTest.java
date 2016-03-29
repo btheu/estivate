@@ -2,9 +2,9 @@ package btheu.jsoupmapper;
 
 import java.io.InputStream;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,10 +20,10 @@ public class JSoupMapperTitleTest {
 
         Result result = mapper.map(document, Result.class);
 
-        TestCase.assertNotNull(result);
+        Assert.assertNotNull(result);
 
-        TestCase.assertEquals("Page Title", result.getTitle1());
-        TestCase.assertEquals("Page Title", result.getTitle2());
+        Assert.assertEquals("Page Title", result.getTitle1());
+        Assert.assertEquals("Page Title", result.getTitle2());
 
         log.info(result.toString());
     }
@@ -35,11 +35,11 @@ public class JSoupMapperTitleTest {
 
         ResultPage result = mapper.map(document, ResultPage.class);
 
-        TestCase.assertNotNull(result);
-        TestCase.assertNotNull(result.getContent());
+        Assert.assertNotNull(result);
+        Assert.assertNotNull(result.getContent());
 
-        TestCase.assertEquals("Page Title", result.getContent().getTitle1());
-        TestCase.assertEquals("Page Title", result.getContent().getTitle2());
+        Assert.assertEquals("Page Title", result.getContent().getTitle1());
+        Assert.assertEquals("Page Title", result.getContent().getTitle2());
 
         log.info(result.toString());
     }
@@ -85,7 +85,7 @@ public class JSoupMapperTitleTest {
     private InputStream read(String string) {
         InputStream resourceAsStream = JSoupMapper.class
                 .getResourceAsStream(string);
-        TestCase.assertNotNull(resourceAsStream);
+        Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;
     }
 }

@@ -3,9 +3,9 @@ package btheu.jsoupmapper;
 import java.io.InputStream;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,13 +21,13 @@ public class JSoupMapperRecursiveTest {
 
         ResultSingle result = mapper.map(document, ResultSingle.class);
 
-        TestCase.assertNotNull(result);
+        Assert.assertNotNull(result);
         
-        TestCase.assertNotNull(result.getSubResult());
-        TestCase.assertNotNull(result.getSubResult2());
+        Assert.assertNotNull(result.getSubResult());
+        Assert.assertNotNull(result.getSubResult2());
         
-        TestCase.assertEquals("Name 2",result.getSubResult().getName());
-        TestCase.assertEquals("Name 2",result.getSubResult2().getName());
+        Assert.assertEquals("Name 2",result.getSubResult().getName());
+        Assert.assertEquals("Name 2",result.getSubResult2().getName());
 
         log.info(result.toString());
     }
@@ -39,13 +39,13 @@ public class JSoupMapperRecursiveTest {
 
         ResultList result = mapper.map(document, ResultList.class);
 
-        TestCase.assertNotNull(result);
+        Assert.assertNotNull(result);
         
-        TestCase.assertNotNull(result.getSubResults());
-        TestCase.assertNotNull(result.getSubResults2());
+        Assert.assertNotNull(result.getSubResults());
+        Assert.assertNotNull(result.getSubResults2());
         
-        TestCase.assertEquals(3, result.getSubResults().size());
-        TestCase.assertEquals(3, result.getSubResults2().size());
+        Assert.assertEquals(3, result.getSubResults().size());
+        Assert.assertEquals(3, result.getSubResults2().size());
 
         List<SubResult> subResults = result.getSubResults();
         for (SubResult subResult : subResults) {
@@ -102,7 +102,7 @@ public class JSoupMapperRecursiveTest {
     private InputStream read(String string) {
         InputStream resourceAsStream = JSoupMapper.class
                 .getResourceAsStream(string);
-        TestCase.assertNotNull(resourceAsStream);
+        Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;
     }
 }

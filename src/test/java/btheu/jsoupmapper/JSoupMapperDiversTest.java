@@ -2,9 +2,9 @@ package btheu.jsoupmapper;
 
 import java.io.InputStream;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,10 +20,10 @@ public class JSoupMapperDiversTest {
 
         ResultFirst result = mapper.map(document, ResultFirst.class);
 
-        TestCase.assertNotNull(result);
+        Assert.assertNotNull(result);
         
-        TestCase.assertEquals("Name 1", result.getValue1());
-        TestCase.assertEquals("Name 1", result.getValue2());
+        Assert.assertEquals("Name 1", result.getValue1());
+        Assert.assertEquals("Name 1", result.getValue2());
         
         log.info(result.toString());
     }
@@ -35,10 +35,10 @@ public class JSoupMapperDiversTest {
     	
     	ResultLast result = mapper.map(document, ResultLast.class);
     	
-    	TestCase.assertNotNull(result);
+    	Assert.assertNotNull(result);
     	
-    	TestCase.assertEquals("Name 3", result.getValue1());
-    	TestCase.assertEquals("Name 3", result.getValue2());
+    	Assert.assertEquals("Name 3", result.getValue1());
+    	Assert.assertEquals("Name 3", result.getValue2());
     	
     	log.info(result.toString());
     }
@@ -100,7 +100,7 @@ public class JSoupMapperDiversTest {
     private InputStream read(String string) {
         InputStream resourceAsStream = JSoupMapper.class
                 .getResourceAsStream(string);
-        TestCase.assertNotNull(resourceAsStream);
+        Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;
     }
 }
