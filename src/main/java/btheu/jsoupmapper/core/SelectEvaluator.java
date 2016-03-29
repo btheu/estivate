@@ -3,6 +3,7 @@ package btheu.jsoupmapper.core;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 
+import org.jsoup.helper.StringUtil;
 import org.jsoup.select.Elements;
 
 import btheu.jsoupmapper.Attr;
@@ -74,7 +75,7 @@ public abstract class SelectEvaluator {
 
 		public SelectBean(Select annotation) {
 			setAnnotation(annotation);
-			this.select = annotation.select();
+			this.select = or(annotation.value(), annotation.select());
 			this.index = annotation.index();
 			this.unique = annotation.unique();
 			this.first = annotation.first();
@@ -126,6 +127,9 @@ public abstract class SelectEvaluator {
 			this.name = annotation.annotationType().getSimpleName();
 		}
 
+		private String or(String value1, String value2) {
+			return StringUtil.isBlank(value1) ? value2 : value1;
+		}
 	}
 
 
