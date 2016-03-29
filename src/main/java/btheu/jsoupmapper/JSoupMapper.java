@@ -372,10 +372,13 @@ public class JSoupMapper {
 		// If both types matchs
 		if (ClassUtils.isAssignableValue(field.getType(), value)) {
 
-			// TODO call setter first if exists
+			boolean accessibleBack = field.isAccessible();
+			
 			field.setAccessible(true);
 
 			field.set(target, value);
+			
+			field.setAccessible(accessibleBack);
 
 		} else {
 			log.error("set value is not assignable with field");
