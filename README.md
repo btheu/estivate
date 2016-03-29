@@ -23,8 +23,7 @@ Definition of Result class POJO definition which is:
 ```java
 public class Result {
 
-	@JsoupSelect("#nameId")
-	@JsoupText
+	@Text(select="#nameId")
 	public String name;
 
 }
@@ -52,11 +51,10 @@ List<Result> result = mapper.mapToList(document, Result.class);
 ```
 
 ```java
-@JSoupListSelect("div.someClass")
+@Select("div.someClass")
 public class Result {
 
-	@JsoupSelect(".name")
-	@JsoupText
+	@Text(select=".name")
 	public String name;
 
 }
@@ -72,8 +70,7 @@ public class Result {
 
 	public String name;
 	
-	@JsoupSelect("#nameId")
-	@JsoupText
+	@Text(select="#nameId")
 	public void setName(String pName){
 		this.name = pName.substring(0,3).toUpperCase();
 	}
@@ -81,20 +78,19 @@ public class Result {
 }
 ```
 
-### ```@JSoupSelect``` 
+### ```@Select``` 
 
 Makes JSoup's ``` element.select(...) ``` operation on the DOM Document.
 
 Do cssQuery on the DOM Document then return the DOM Element corresponding. 
-When combined with ``` @JSoupText ``` (or ``` @JSoupAttr ```), the 
+When combined with ``` @Text ``` (or ``` @Attr ```), the 
 final result will be the application of ```text()``` (or ``` attr(...) ```)
 on this DOM Element.
 
 ```java
 public class Result {
 
-	@JsoupSelect("div#content > span p")
-	@JsoupText
+	@Text(select="div#content > span p")
 	public String description;
 
 }
@@ -105,7 +101,7 @@ Also, the JSoup Element object can be mapped to the field or method.
 ```java
 public class Result {
 
-	@JsoupSelect("div#content > span p")
+	@Select(select="div#content > span p")
 	public Element paragraphElement;
 
 }
@@ -118,7 +114,7 @@ public class Result {
 
 	public String name;
 	
-	@JsoupSelect("div#content > span p")
+	@Select(select="div#content > span p")
 	public void setName(Element pElement){
 		name = pElement.siblingNodes().first().text();
 	}
@@ -126,11 +122,9 @@ public class Result {
 }
 ```
 
-### ```@JSoupText```
+### ```@Text```
 
-Usually combined with ``` @JSoupSelect ```
-
-Makes JSoup's ``` element.text() ``` operation on the DOM Element when value is false.
+Makes JSoup's ``` element.text() ``` operation on the DOM Element when own attribute is set to false.
 
 Maps the combined text of this element and all its children. Whitespace is 
 normalized and trimmed.
@@ -138,8 +132,7 @@ normalized and trimmed.
 ```java
 public class Result {
 
-	@JsoupSelect("#description")
-	@JsoupText
+	@Text(select="#description")
 	public String description;
 
 }
@@ -152,18 +145,15 @@ Maps the text owned by this element only; does not get the combined text of all 
 ```java
 public class Result {
 
-	@JsoupSelect("#description")
-	@JsoupText(own=true)
+	@Text(select="#description")
 	public String description;
 
 }
 ```
 
-### ```@JSoupAttr```
+### ```@Attr```
 
 Makes JSoup's ``` element.attr(...) ``` operation on the DOM Element.
-
-Usually combined with ``` @JSoupSelect ```.
 
 Maps an attribute's value by its key. To get an absolute URL from an attribute
 that may be a relative URL, prefix the key with abs, which is a shortcut to
@@ -172,14 +162,13 @@ the absUrl method. E.g.:
 ```java
 public class Result {
 
-	@JsoupSelect("#picture")
-	@JsoupAttr("abs:href")
+	@Attr(select="#picture", value="abs:href")
 	public String absoluteUrl;
 
 }
 ```
 
-### ```@JSoupOptional```
+### ```@Optional```
 
 Indicate that JSoupMapper wont throw a exception if the mapping of this field
 or method is not satisfied.
@@ -187,25 +176,19 @@ or method is not satisfied.
 ```java
 public class Result {
 
-	@JSoupOptional
-	@JsoupSelect("#description")
-	@JsoupText()
+	@Text(select="#description", optional=true)
 	public String description;
 
 }
 ```
 
-### ```@JSoupListSelect```
-
-### ```@JSoupTagName```
+### ```@TagName```
 
 Makes JSoup's ``` element.TagName() ``` operation on the DOM Element.
 
-Usually combined with ``` @JSoupSelect ```.
-
 Maps the name of the tag for this element. E.g. div
 
-### ```@JSoupTitle```
+### ```@Title```
 
 Makes JSoup's ``` element.title() ``` operation on the DOM Document.
 
@@ -214,25 +197,22 @@ Maps the string contents of the document's title element.
 ```java
 public class Result {
 
-	@JsoupTitle
+	@Title
 	public String pageTitle;
 
 }
 ```
 
-### ```@JSoupVal```
+### ```@Val```
 
 Makes JSoup's ``` element.val() ``` operation on the DOM Element.
-
-Usually combined with ``` @JSoupSelect ```.
 
 Maps the value of a form element (input, textarea, etc).
 
 ```java
 public class Result {
 
-	@JsoupSelect("#form_field_1")
-	@JsoupVal
+	@Val("#form_field_1")
 	public String name;
 
 }
@@ -247,7 +227,7 @@ POJO can have complexe mapping having sub POJO themself mapped with a sub DOM El
 ```java
 public class Page {
 
-	@JsoupSelect("div#content2")
+	@Select(select="div#content2")
 	public Content content;
 
 }
@@ -258,12 +238,10 @@ public class Page {
 */
 public class Content {
 
-	@JsoupSelect(".name")
-	@JsoupText
+	@Text(select=".name")
 	public String name;
 	
-	@JsoupSelect(".description")
-	@JsoupText
+	@Text(select=".description")
 	public String description;
 
 }
@@ -304,7 +282,7 @@ The ```name``` field will be setted as ```"Actual name2"``` with the following H
 ```java
 public class Page {
 
-	@JsoupSelect("div.article p")
+	@Select(select="div.article p")
 	public List<Article> articles;
 
 }
@@ -316,12 +294,10 @@ public class Page {
 // JSoupSelectList is not necessary as long Page already specify the select rule.
 public class Article {
 
-	@JsoupSelect(".author")
-	@JsoupText
+	@Text(select=".author")
 	public String author;
 	
-	@JsoupSelect(".date")
-	@JsoupText
+	@Text(select=".date")
 	public String date;
 
 }
@@ -367,13 +343,12 @@ JSoupMapper handle primitive types for fields or methods arguments mapping.
 ```java
 public class Rapport {
 
-	@JsoupSelect("#nbTeachers")
-	@JsoupText
+	@Text(select="#nbTeachers")
 	public Integer ;
 	
-	@JsoupSelect("#nbStudents")
-	@JsoupText
+	@Text(select="#nbStudents")
 	public int ;
+
 }
 ```
 
