@@ -228,7 +228,7 @@ public class JSoupMapper {
 		Val aVal = member.getAnnotation(Val.class);
 		if (aVal != null) {
 
-			Elements currElts = SelectEvaluator.select(aAttr,elements, member);
+			Elements currElts = SelectEvaluator.select(aVal,elements, member);
 			
 			log.debug("'{}' val", getName(member));
 
@@ -240,7 +240,7 @@ public class JSoupMapper {
 		TagName aTagName = member.getAnnotation(TagName.class);
 		if (aTagName != null) {
 
-			Elements currElts = SelectEvaluator.select(aAttr,elements, member);
+			Elements currElts = SelectEvaluator.select(aTagName,elements, member);
 			
 			log.debug("'{}' tagName", getName(member));
 
