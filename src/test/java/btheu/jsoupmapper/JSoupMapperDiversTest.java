@@ -42,6 +42,15 @@ public class JSoupMapperDiversTest {
     	
     	log.info(result.toString());
     }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void failure() {
+    	
+    	InputStream document = read("/divers/u2.html");
+    	
+    	ResultFail result = mapper.map(document, ResultFail.class);
+    	
+    }
 
     @Data
     public static class ResultFirst {
@@ -67,6 +76,21 @@ public class JSoupMapperDiversTest {
     	public String value2;
     	
     	@Text(select=".someClass", last=true)
+    	public void setValue2(String value2) {
+    		this.value2 = value2;
+    	}
+    	
+    }
+    
+    @Data
+    public static class ResultFail {
+    	
+    	@Text(select=".someClass", first=true, last=true)
+    	public String value1;
+    	
+    	public String value2;
+    	
+    	@Text(select=".someClass", first=true, last=true)
     	public void setValue2(String value2) {
     		this.value2 = value2;
     	}

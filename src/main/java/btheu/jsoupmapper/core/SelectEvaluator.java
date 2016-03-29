@@ -24,13 +24,25 @@ public abstract class SelectEvaluator {
 
 	public static Elements select(SelectBean bean, Elements elementsIn, AnnotatedElement member) {
 
-		log.debug("select with '{}' for '{}'", bean.getName(), ClassUtils.getName(member));
-		log.trace("select in  '{}'", elementsIn.toString());
+		log.debug("selecting '{}' with '{}' for '{}'",bean.getSelect(), bean.getName(), ClassUtils.getName(member));
+		log.trace("select in '{}'", elementsIn.toString());
 
 		Elements elementsOut = elementsIn.select(bean.getSelect());
 
-		log.trace("select out '{}'", elementsOut.toString());
 
+		if(bean.isFirst() && bean.isLast()){
+			throw new IllegalArgumentException("Select cant be true for first() and last() a the same time");
+		}
+		if(bean.isFirst()){
+			log.trace("select first element");
+			elementsOut = new Elements(elementsOut.first());
+		}
+		if(bean.isLast()){
+			log.trace("select last element");
+			elementsOut = new Elements(elementsOut.last());
+		}
+		log.trace("select out '{}'", elementsOut.toString());
+		
 		return elementsOut;
 	}
 
