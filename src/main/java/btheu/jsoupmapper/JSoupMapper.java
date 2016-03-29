@@ -216,31 +216,37 @@ public class JSoupMapper {
 		Attr aAttr = member.getAnnotation(Attr.class);
 		if (aAttr != null) {
 
+			Elements currElts = SelectEvaluator.select(aAttr,elements, member);
+			
 			log.debug("'{}' attr", getName(member));
 
 			log.debug("using attr()", getName(member));
 
-			value = elements.attr(aAttr.value());
+			value = currElts.attr(aAttr.value());
 		}
 
 		Val aVal = member.getAnnotation(Val.class);
 		if (aVal != null) {
 
+			Elements currElts = SelectEvaluator.select(aAttr,elements, member);
+			
 			log.debug("'{}' val", getName(member));
 
 			log.debug("using val()", getName(member));
 
-			value = elements.val();
+			value = currElts.val();
 		}
 
 		TagName aTagName = member.getAnnotation(TagName.class);
 		if (aTagName != null) {
 
+			Elements currElts = SelectEvaluator.select(aAttr,elements, member);
+			
 			log.debug("'{}' tagName", getName(member));
 
 			log.debug("using tagName()", getName(member));
 
-			value = elements.first().tagName();
+			value = currElts.first().tagName();
 		}
 
 		Title aTitle = member.getAnnotation(Title.class);
