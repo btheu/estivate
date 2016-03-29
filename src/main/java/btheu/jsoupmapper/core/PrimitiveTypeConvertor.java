@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Handles primitives types or their respective object definition class type
  * 
- * @author theunissenb
+ * @author Benoit Theunissen
  *
  */
 public class PrimitiveTypeConvertor implements TypeConvertor {

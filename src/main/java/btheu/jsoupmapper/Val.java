@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * Get the value of a form element (input, textarea, etc).
  * 
- * @author NeoMcFly
+ * @author Benoit Theunissen
  *
  */
 @Target({ FIELD, METHOD })

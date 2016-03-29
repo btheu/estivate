@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * Indicate that JSoupMapper wont throw a exception if the mapping of this field
  * or method is not satisfied.
  * 
- * @author NeoMcFly
+ * @author Benoit Theunissen
  *
  */
 @Target({ TYPE })

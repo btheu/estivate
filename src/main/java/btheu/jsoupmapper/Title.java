@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * Get the string contents of the document's title element
  * 
- * @author NeoMcFly
+ * @author Benoit Theunissen
  *
  */
 @Target({ FIELD, METHOD })

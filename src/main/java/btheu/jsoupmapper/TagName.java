@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * Get the name of the tag for this element. E.g. div
  * 
- * @author NeoMcFly
+ * @author Benoit Theunissen
  *
  */
 @Target({ FIELD, METHOD })

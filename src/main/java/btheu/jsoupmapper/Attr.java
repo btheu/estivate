@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * <p>
  * <code>String url = a.attr("abs:href");<code>
  * 
- * @author NeoMcFly
+ * @author Benoit Theunissen
  *
  */
 @Target({ FIELD, METHOD })
