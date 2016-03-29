@@ -7,6 +7,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import btheu.jsoupmapper.core.TypeConvertor;
+
 /**
  * Get the name of the tag for this element. E.g. div
  * 
@@ -29,5 +31,5 @@ public @interface TagName {
     
     boolean optional() default false;
     
-    
+    Class<? extends TypeConvertor> converter() default TypeConvertor.VOID.class;
 }

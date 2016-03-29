@@ -7,6 +7,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import btheu.jsoupmapper.core.TypeConvertor;
+
 /**
  * Get the value of a form element (input, textarea, etc).
  * 
@@ -29,4 +31,5 @@ public @interface Val {
     
     boolean optional() default false;
 	
+    Class<? extends TypeConvertor> converter() default TypeConvertor.VOID.class;
 }
