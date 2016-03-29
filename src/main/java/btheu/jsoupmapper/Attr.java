@@ -20,8 +20,20 @@ import java.lang.annotation.Target;
  */
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JSoupAttr {
+public @interface Attr {
 
     String value();
 
+	String select() default "";
+
+    int index() default -1;
+    
+    boolean unique() default false;
+    
+    boolean first() default false;
+
+    boolean last() default false;
+    
+    boolean optional() default false;
+	
 }

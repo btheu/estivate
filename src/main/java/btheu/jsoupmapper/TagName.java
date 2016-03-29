@@ -8,13 +8,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Get the string contents of the document's title element
+ * Get the name of the tag for this element. E.g. div
  * 
  * @author NeoMcFly
  *
  */
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JSoupTitle {
+public @interface TagName {
 
+    String select() default "";
+    
+    int index() default -1;
+    
+    boolean unique() default false;
+    
+    boolean first() default false;
+
+    boolean last() default false;
+    
+    boolean optional() default false;
+    
+    
 }

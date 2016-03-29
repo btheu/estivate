@@ -25,8 +25,10 @@ import java.lang.annotation.Target;
  */
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JSoupText {
+public @interface Text {
 
+	String select() default "";
+	
     /**
      * When <code>true</code>, equivalent to JSoup's element.ownText()
      * 
@@ -40,5 +42,16 @@ public @interface JSoupText {
      */
     @AliasFor("value")
     boolean own() default false;
+
+    int index() default -1;
+    
+    boolean unique() default false;
+    
+    boolean first() default false;
+
+    boolean last() default false;
+    
+    boolean optional() default false;
+    
 
 }

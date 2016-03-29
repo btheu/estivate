@@ -5,9 +5,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import btheu.jsoupmapper.JSoupMapper;
-import btheu.jsoupmapper.JSoupSelect;
-import btheu.jsoupmapper.JSoupText;
 import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -67,12 +64,12 @@ public class JSoupMapperRecursiveTest {
     @Data
     public static class ResultSingle {
 
-        @JSoupSelect("#div2")
+        @Select("#div2")
         public SubResult subResult;
         
 		public SubResult subResult2;
         
-        @JSoupSelect("#div2")
+        @Select("#div2")
         public void setSubResult2(SubResult subResult2){
 			this.subResult2 = subResult2;
         }
@@ -82,12 +79,12 @@ public class JSoupMapperRecursiveTest {
     @Data
     public static class ResultList {
 
-        @JSoupSelect(".someClass")
+        @Select(".someClass")
         public List<SubResult> subResults;
 
 		public List<SubResult> subResults2;
         
-		@JSoupSelect(".someClass")
+		@Select(".someClass")
         public void setSubResult2(List<SubResult> subResults){
 			subResults2 = subResults;
         }
@@ -97,8 +94,7 @@ public class JSoupMapperRecursiveTest {
     @Data
     public static class SubResult {
 
-        @JSoupSelect(".name")
-        @JSoupText
+    	@Text(select=".name")
         public String name;
 
     }

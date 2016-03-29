@@ -6,10 +6,6 @@ import java.util.Collection;
 import org.jsoup.nodes.Element;
 import org.junit.Test;
 
-import btheu.jsoupmapper.JSoupListSelect;
-import btheu.jsoupmapper.JSoupMapper;
-import btheu.jsoupmapper.JSoupSelect;
-import btheu.jsoupmapper.JSoupText;
 import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -61,12 +57,12 @@ public class JSoupMapperSelectTest {
     @Data
     public static class ResultElement {
 
-        @JSoupSelect("#id1 input")
+        @Select("#id1 input")
         public Element input1;
 
         public Element input2;
 
-        @JSoupSelect("#id1 input")
+        @Select("#id1 input")
         public void setName2(Element input) {
             this.input2 = input;
         }
@@ -74,17 +70,15 @@ public class JSoupMapperSelectTest {
     }
 
     @Data
-    @JSoupListSelect(".someClass")
+    @Select(".someClass")
     public static class ResultList {
 
-        @JSoupSelect(".name")
-        @JSoupText
+        @Select(".name")
         public String name1;
 
         public String name2;
 
-        @JSoupSelect(".name")
-        @JSoupText
+        @Select(".name")
         public void setName2(String name) {
             this.name2 = name;
         }

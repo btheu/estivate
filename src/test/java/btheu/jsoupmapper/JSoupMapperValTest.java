@@ -4,9 +4,6 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import btheu.jsoupmapper.JSoupMapper;
-import btheu.jsoupmapper.JSoupSelect;
-import btheu.jsoupmapper.JSoupVal;
 import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +31,12 @@ public class JSoupMapperValTest {
     @Data
     public static class Result {
 
-        @JSoupSelect("#name")
-        @JSoupVal
+    	@Val(select="#name")
         public String value1;
 
         public String value2;
 
-        @JSoupSelect("#name")
-        @JSoupVal
+        @Val(select="#name")
         public void setValue2(String value2) {
             this.value2 = value2;
         }

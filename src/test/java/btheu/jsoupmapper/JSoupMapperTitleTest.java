@@ -4,9 +4,6 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import btheu.jsoupmapper.JSoupMapper;
-import btheu.jsoupmapper.JSoupSelect;
-import btheu.jsoupmapper.JSoupTitle;
 import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -50,14 +47,12 @@ public class JSoupMapperTitleTest {
     @Data
     public static class Result {
 
-        @JSoupSelect("#content")
-        @JSoupTitle
+        @Title
         public String title1;
 
         public String title2;
 
-        @JSoupSelect("#content")
-        @JSoupTitle
+        @Title
         public void setValue2(String title2) {
             this.title2 = title2;
         }
@@ -67,7 +62,7 @@ public class JSoupMapperTitleTest {
     @Data
     public static class ResultPage {
 
-        @JSoupSelect("#content")
+        @Select("#content")
         public ResultContent content;
 
     }
@@ -75,12 +70,12 @@ public class JSoupMapperTitleTest {
     @Data
     public static class ResultContent {
 
-        @JSoupTitle
+        @Title
         public String title1;
 
         public String title2;
 
-        @JSoupTitle
+        @Title
         public void setValue2(String title2) {
             this.title2 = title2;
         }

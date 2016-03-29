@@ -4,11 +4,6 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import btheu.jsoupmapper.JSoupFirst;
-import btheu.jsoupmapper.JSoupLast;
-import btheu.jsoupmapper.JSoupMapper;
-import btheu.jsoupmapper.JSoupSelect;
-import btheu.jsoupmapper.JSoupText;
 import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -51,16 +46,12 @@ public class JSoupMapperDiversTest {
     @Data
     public static class ResultFirst {
 
-        @JSoupSelect(".someClass")
-        @JSoupFirst
-        @JSoupText
+        @Text(select=".someClass", first=true)
         public String value1;
 
         public String value2;
 
-        @JSoupSelect(".someClass")
-        @JSoupFirst
-        @JSoupText
+        @Text(select=".someClass", first=true)
         public void setValue2(String value2) {
             this.value2 = value2;
         }
@@ -70,16 +61,12 @@ public class JSoupMapperDiversTest {
     @Data
     public static class ResultLast {
     	
-    	@JSoupSelect(".someClass")
-    	@JSoupLast
-    	@JSoupText
+    	@Text(select=".someClass", last=true)
     	public String value1;
     	
     	public String value2;
     	
-    	@JSoupSelect(".someClass")
-    	@JSoupLast
-    	@JSoupText
+    	@Text(select=".someClass", last=true)
     	public void setValue2(String value2) {
     		this.value2 = value2;
     	}

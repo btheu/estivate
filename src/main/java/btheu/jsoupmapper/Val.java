@@ -8,13 +8,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Get the name of the tag for this element. E.g. div
+ * Get the value of a form element (input, textarea, etc).
  * 
  * @author NeoMcFly
  *
  */
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JSoupTagName {
+public @interface Val {
 
+	String select() default "";
+	
+    int index() default -1;
+    
+    boolean unique() default false;
+    
+    boolean first() default false;
+
+    boolean last() default false;
+    
+    boolean optional() default false;
+	
 }

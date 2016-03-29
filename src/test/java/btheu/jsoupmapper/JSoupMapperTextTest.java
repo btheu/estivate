@@ -4,9 +4,6 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import btheu.jsoupmapper.JSoupMapper;
-import btheu.jsoupmapper.JSoupSelect;
-import btheu.jsoupmapper.JSoupText;
 import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +41,6 @@ public class JSoupMapperTextTest {
 
         TestCase.assertEquals("John", result.getName1());
         TestCase.assertEquals("John", result.getName2());
-        TestCase.assertEquals("John", result.getName3());
-        TestCase.assertEquals("John", result.getName4());
 
         log.info(result.toString());
 
@@ -54,14 +49,12 @@ public class JSoupMapperTextTest {
     @Data
     public static class Result {
 
-        @JSoupSelect("#name")
-        @JSoupText
+        @Text(select="#name")
         public String name1;
 
         public String name2;
 
-        @JSoupSelect("#name")
-        @JSoupText
+        @Text(select="#name")
         public void setName2(String name2) {
             this.name2 = name2;
         }
@@ -71,28 +64,14 @@ public class JSoupMapperTextTest {
     @Data
     public static class ResultOwn {
 
-        @JSoupSelect("#name")
-        @JSoupText(own = true)
+        @Text(select="#name", own=true)
         public String name1;
 
-        @JSoupSelect("#name")
-        @JSoupText(true)
         public String name2;
 
-        public String name3;
-
-        public String name4;
-
-        @JSoupSelect("#name")
-        @JSoupText(own = true)
-        public void setName3(String name) {
-            this.name3 = name;
-        }
-
-        @JSoupSelect("#name")
-        @JSoupText(true)
-        public void setName4(String name) {
-            this.name4 = name;
+        @Text(select="#name", own=true)
+        public void setName2(String name) {
+            this.name2 = name;
         }
 
     }

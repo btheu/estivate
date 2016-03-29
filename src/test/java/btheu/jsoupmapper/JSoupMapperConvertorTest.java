@@ -6,9 +6,6 @@ import java.math.BigInteger;
 
 import org.junit.Test;
 
-import btheu.jsoupmapper.JSoupMapper;
-import btheu.jsoupmapper.JSoupSelect;
-import btheu.jsoupmapper.JSoupText;
 import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -70,12 +67,10 @@ public class JSoupMapperConvertorTest {
 	@Data
 	public static class ResultBig {
 		
-		@JSoupSelect("#bigIntId")
-		@JSoupText
+		@Text(select="#bigIntId")
 		public BigInteger int1;
 		
-		@JSoupSelect("#bigDecId")
-		@JSoupText
+		@Text(select="#bigDecId")
 		public BigDecimal dec1;
 		
 	}
@@ -83,73 +78,56 @@ public class JSoupMapperConvertorTest {
 	@Data
 	public static class Result {
 
-		@JSoupSelect("#intId")
-		@JSoupText
+		@Text(select="#intId")
 		public Integer int1;
 
-		@JSoupSelect("#intId")
-		@JSoupText
+		@Text(select="#intId")
 		public int int2;
 
-		@JSoupSelect("#charId")
-		@JSoupText
+		@Text(select="#charId")
 		public Character char1;
 
-		@JSoupSelect("#charId")
-		@JSoupText
+		@Text(select="#charId")
 		public char char2;
 
 
-		@JSoupSelect("#byteId")
-		@JSoupText
+		@Text(select="#byteId")
 		public Byte byte1;
 
-		@JSoupSelect("#byteId")
-		@JSoupText
+		@Text(select="#byteId")
 		public byte byte2;
 
-		@JSoupSelect("#boolId")
-		@JSoupText
+		@Text(select="#boolId")
 		public Boolean bool1;
 
-		@JSoupSelect("#boolId")
-		@JSoupText
+		@Text(select="#boolId")
 		public boolean bool2;
 
 
-
-		@JSoupSelect("#floatId")
-		@JSoupText
+		@Text(select="#floatId")
 		public Float float1;
 
-		@JSoupSelect("#floatId")
-		@JSoupText
+		@Text(select="#floatId")
 		public float float2;
 
-		@JSoupSelect("#doubleId")
-		@JSoupText
+		@Text(select="#doubleId")
 		public Double double1;
 
-		@JSoupSelect("#doubleId")
-		@JSoupText
+		@Text(select="#doubleId")
 		public double double2;
 
 
-		@JSoupSelect("#longId")
-		@JSoupText
+		@Text(select="#longId")
 		public Long long1;
 
-		@JSoupSelect("#longId")
-		@JSoupText
+		@Text(select="#longId")
 		public long long2;
 
 
-		@JSoupSelect("#shortId")
-		@JSoupText
+		@Text(select="#shortId")
 		public Short short1;
 
-		@JSoupSelect("#shortId")
-		@JSoupText
+		@Text(select="#shortId")
 		public short short2;
 
 	}

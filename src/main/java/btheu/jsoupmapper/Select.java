@@ -34,11 +34,11 @@ import org.jsoup.select.Selector;
  */
 @Target({ TYPE, FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JSoupSelect {
+public @interface Select {
 
-    String value();
+    String value() default "";
 
-    boolean unique() default false;
+    String select() default "";
 
     /**
      * -1 means no access by index to an item of Elements collection.
@@ -46,6 +46,8 @@ public @interface JSoupSelect {
      * @return
      */
     int index() default -1;
+    
+    boolean unique() default false;
     
     boolean first() default false;
 

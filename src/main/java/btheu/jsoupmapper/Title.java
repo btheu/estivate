@@ -1,22 +1,22 @@
 package btheu.jsoupmapper;
 
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicate that JSoupMapper wont throw a exception if the mapping of this field
- * or method is not satisfied.
+ * Get the string contents of the document's title element
  * 
  * @author NeoMcFly
  *
  */
-@Target({ FIELD })
+@Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface JSoupOptional {
+public @interface Title {
 
-    boolean value() default true;
-
+	boolean optional() default false;
+	
 }

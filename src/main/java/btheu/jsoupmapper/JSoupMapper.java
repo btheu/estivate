@@ -41,7 +41,7 @@ public class JSoupMapper {
     @Setter
     protected String baseURI = "/";
 
-    protected static final String PACKAGE_NAME = JSoupSelect.class.getPackage()
+    protected static final String PACKAGE_NAME = Select.class.getPackage()
             .getName();
 
     public Object map(InputStream document, Type type) {
@@ -94,7 +94,7 @@ public class JSoupMapper {
 
         log.debug(element.toString());
 
-        JSoupListSelect selector = clazz.getAnnotation(JSoupListSelect.class);
+        Select selector = clazz.getAnnotation(Select.class);
         if (selector != null) {
             log.debug(selector.value());
 
@@ -146,7 +146,7 @@ public class JSoupMapper {
         if (hasOneAnnotationMapper(member)) {
             Boolean optional = false;
 
-            JSoupOptional aOptional = member.getAnnotation(JSoupOptional.class);
+            Optional aOptional = member.getAnnotation(Optional.class);
             if (aOptional != null) {
                 optional = aOptional.value();
             }
@@ -181,7 +181,7 @@ public class JSoupMapper {
     /**
      * Apply all rules (annotations) of type select
      * 
-     * @see JSoupSelect
+     * @see Select
      * 
      * @param element
      * @param member
@@ -192,24 +192,14 @@ public class JSoupMapper {
 
         Elements elementsCurr = elements;
 
-        JSoupSelect aSelect = member.getAnnotation(JSoupSelect.class);
+        Select aSelect = member.getAnnotation(Select.class);
         if (aSelect != null) {
             log.debug("select '{}' for '{}'", aSelect.value(), getName(member));
             log.trace("select in  '{}'", elementsCurr.toString());
             elementsCurr = elements.select(aSelect.value());
             log.trace("select out '{}'", elementsCurr.toString());
         } else {
-            log.debug("no JSoupSelect found, using root element");
-        }
-
-        JSoupFirst aFirst = member.getAnnotation(JSoupFirst.class);
-        if (aFirst != null) {
-            elementsCurr = new Elements(elementsCurr.first());
-        }
-
-        JSoupLast aLast = member.getAnnotation(JSoupLast.class);
-        if (aLast != null) {
-            elementsCurr = new Elements(elementsCurr.last());
+            log.debug("no Select found, using root element");
         }
 
         return elementsCurr;
@@ -218,11 +208,11 @@ public class JSoupMapper {
     /**
      * Apply all rules (annotations) of type reduce.
      * 
-     * @see JSoupAttr
-     * @see JSoupText
-     * @see JSoupTitle
-     * @see JSoupTagName
-     * @see JSoupVal
+     * @see Attr
+     * @see Text
+     * @see Title
+     * @see TagName
+     * @see Val
      * 
      * @param elementSelected
      * @param member
@@ -233,7 +223,7 @@ public class JSoupMapper {
 
         Object value = elements;
 
-        JSoupAttr aAttr = member.getAnnotation(JSoupAttr.class);
+        Attr aAttr = member.getAnnotation(Attr.class);
         if (aAttr != null) {
 
             log.debug("'{}' attr", getName(member));
@@ -243,7 +233,7 @@ public class JSoupMapper {
             value = elements.attr(aAttr.value());
         }
 
-        JSoupVal aVal = member.getAnnotation(JSoupVal.class);
+        Val aVal = member.getAnnotation(Val.class);
         if (aVal != null) {
 
             log.debug("'{}' val", getName(member));
@@ -253,7 +243,7 @@ public class JSoupMapper {
             value = elements.val();
         }
 
-        JSoupTagName aTagName = member.getAnnotation(JSoupTagName.class);
+        TagName aTagName = member.getAnnotation(TagName.class);
         if (aTagName != null) {
 
             log.debug("'{}' tagName", getName(member));
@@ -263,7 +253,7 @@ public class JSoupMapper {
             value = elements.first().tagName();
         }
 
-        JSoupTitle aTitle = member.getAnnotation(JSoupTitle.class);
+        Title aTitle = member.getAnnotation(Title.class);
         if (aTitle != null) {
 
             log.debug("'{}' title", getName(member));
@@ -273,7 +263,7 @@ public class JSoupMapper {
             value = document.title();
         }
 
-        JSoupText aText = member.getAnnotation(JSoupText.class);
+        Text aText = member.getAnnotation(Text.class);
         if (aText != null) {
             log.debug("'{}' text", getName(member));
 

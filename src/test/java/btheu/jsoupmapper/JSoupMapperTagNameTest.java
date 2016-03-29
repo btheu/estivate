@@ -4,9 +4,6 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import btheu.jsoupmapper.JSoupMapper;
-import btheu.jsoupmapper.JSoupSelect;
-import btheu.jsoupmapper.JSoupTagName;
 import junit.framework.TestCase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +31,12 @@ public class JSoupMapperTagNameTest {
     @Data
     public static class Result {
 
-        @JSoupSelect("#name")
-        @JSoupTagName
+    	@TagName(select="#name")
         public String tagName1;
 
         public String tagName2;
 
-        @JSoupSelect("#name")
-        @JSoupTagName
+        @TagName(select="#name")
         public void setTagName2(String tagName2) {
             this.tagName2 = tagName2;
         }
