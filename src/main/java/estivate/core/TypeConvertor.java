@@ -1,4 +1,4 @@
-package btheu.jsoupmapper.core;
+package estivate.core;
 
 public interface TypeConvertor {
 

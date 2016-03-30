@@ -1,4 +1,4 @@
-package btheu.jsoupmapper.core;
+package estivate.core;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -6,11 +6,11 @@ import java.lang.reflect.AnnotatedElement;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.select.Elements;
 
-import btheu.jsoupmapper.Attr;
-import btheu.jsoupmapper.Select;
-import btheu.jsoupmapper.TagName;
-import btheu.jsoupmapper.Text;
-import btheu.jsoupmapper.Val;
+import estivate.annotations.Attr;
+import estivate.annotations.Select;
+import estivate.annotations.TagName;
+import estivate.annotations.Text;
+import estivate.annotations.Val;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

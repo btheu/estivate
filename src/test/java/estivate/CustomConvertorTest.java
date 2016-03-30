@@ -1,4 +1,4 @@
-package btheu.jsoupmapper;
+package estivate;
 
 import java.io.InputStream;
 import java.text.ParseException;
@@ -10,14 +10,17 @@ import org.jsoup.select.Elements;
 import org.junit.Assert;
 import org.junit.Test;
 
-import btheu.jsoupmapper.core.TypeConvertor;
+import estivate.EstivateMapper;
+import estivate.annotations.Convert;
+import estivate.annotations.Text;
+import estivate.core.TypeConvertor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class JSoupMapperCustomConvertorTest {
+public class CustomConvertorTest {
 
-    JSoupMapper mapper = new JSoupMapper();
+    EstivateMapper mapper = new EstivateMapper();
 
     @Test
     public void convertorCustom1() {
@@ -61,7 +64,7 @@ public class JSoupMapperCustomConvertorTest {
     }
 
     private InputStream read(String string) {
-        InputStream resourceAsStream = JSoupMapper.class
+        InputStream resourceAsStream = EstivateMapper.class
                 .getResourceAsStream(string);
         Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;

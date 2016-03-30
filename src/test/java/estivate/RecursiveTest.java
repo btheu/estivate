@@ -1,4 +1,4 @@
-package btheu.jsoupmapper;
+package estivate;
 
 import java.io.InputStream;
 import java.util.List;
@@ -6,13 +6,16 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import estivate.EstivateMapper;
+import estivate.annotations.Select;
+import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class JSoupMapperRecursiveTest {
+public class RecursiveTest {
 
-    JSoupMapper mapper = new JSoupMapper();
+    EstivateMapper mapper = new EstivateMapper();
 
     @Test
     public void selectRec1() {
@@ -100,7 +103,7 @@ public class JSoupMapperRecursiveTest {
     }
 
     private InputStream read(String string) {
-        InputStream resourceAsStream = JSoupMapper.class
+        InputStream resourceAsStream = EstivateMapper.class
                 .getResourceAsStream(string);
         Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;

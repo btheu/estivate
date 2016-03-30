@@ -1,4 +1,4 @@
-package btheu.jsoupmapper;
+package estivate.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -8,21 +8,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * <p>
- * Get an attribute's value by its key. To get an absolute URL from an attribute
- * that may be a relative URL, prefix the key with abs, which is a shortcut to
- * the absUrl method. E.g.:
- * <p>
- * <code>String url = a.attr("abs:href");<code>
+ * Get the value of a form element (input, textarea, etc).
  * 
  * @author Benoit Theunissen
  *
  */
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface Attr {
-
-    String value();
+public @interface Val {
 
     String select() default "";
 
@@ -35,5 +28,4 @@ public @interface Attr {
     boolean last() default false;
 
     boolean optional() default false;
-
 }

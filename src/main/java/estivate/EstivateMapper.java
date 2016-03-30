@@ -1,4 +1,4 @@
-package btheu.jsoupmapper;
+package estivate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,18 +20,26 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import btheu.jsoupmapper.core.ClassUtils;
-import btheu.jsoupmapper.core.ConvertorContext;
-import btheu.jsoupmapper.core.PrimitiveTypeConvertor;
-import btheu.jsoupmapper.core.SelectEvaluator;
-import btheu.jsoupmapper.core.StandardTypeConvertor;
-import btheu.jsoupmapper.core.TypeConvertor;
+import estivate.annotations.Attr;
+import estivate.annotations.Convert;
+import estivate.annotations.Optional;
+import estivate.annotations.Select;
+import estivate.annotations.TagName;
+import estivate.annotations.Text;
+import estivate.annotations.Title;
+import estivate.annotations.Val;
+import estivate.core.ClassUtils;
+import estivate.core.ConvertorContext;
+import estivate.core.PrimitiveTypeConvertor;
+import estivate.core.SelectEvaluator;
+import estivate.core.StandardTypeConvertor;
+import estivate.core.TypeConvertor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class JSoupMapper {
+public class EstivateMapper {
 
     @Getter
     @Setter

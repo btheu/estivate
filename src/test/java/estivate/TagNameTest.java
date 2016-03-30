@@ -1,17 +1,19 @@
-package btheu.jsoupmapper;
+package estivate;
 
 import java.io.InputStream;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import estivate.EstivateMapper;
+import estivate.annotations.TagName;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class JSoupMapperTagNameTest {
+public class TagNameTest {
 
-    JSoupMapper mapper = new JSoupMapper();
+    EstivateMapper mapper = new EstivateMapper();
 
     @Test
     public void tagName() {
@@ -44,7 +46,7 @@ public class JSoupMapperTagNameTest {
     }
 
     private InputStream read(String string) {
-        InputStream resourceAsStream = JSoupMapper.class
+        InputStream resourceAsStream = EstivateMapper.class
                 .getResourceAsStream(string);
         Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;
