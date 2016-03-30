@@ -171,13 +171,13 @@ public class JSoupMapper {
 
             Object value = reduce(document, elementsCurr, member);
 
-            if (!optional && value == null) {
+            if (optional || value != null) {
+                mapFieldOrArgument(document, elementsCurr, target, member,
+                        value);
+            } else {
                 throw new IllegalStateException(
                         "No value matched and not optional for "
                                 + getName(member));
-            } else {
-                mapFieldOrArgument(document, elementsCurr, target, member,
-                        value);
             }
         }
 
@@ -222,6 +222,7 @@ public class JSoupMapper {
             log.debug("using attr()", getName(member));
 
             value = currElts.attr(aAttr.value());
+
         }
 
         Val aVal = member.getAnnotation(Val.class);
@@ -295,7 +296,11 @@ public class JSoupMapper {
             // set the value to the target
             Type[] memberType = getMemberType(member);
 
-            Object[] values = evaluateArguments(document, elements, value,
+            List<TypeConvertor> t = new ArrayList<>();
+            t.add(getConverter(member));
+            t.addAll(convertors);
+
+            Object[] values = evaluateArguments(document, elements, value, t,
                     memberType);
 
             if (member instanceof Field) {
@@ -317,6 +322,23 @@ public class JSoupMapper {
                     e);
         }
 
+    }
+
+    private static TypeConvertor getConverter(AccessibleObject member) {
+
+        Class<? extends TypeConvertor> converterClass = TypeConvertor.VOID.class;
+
+        Convert aConvert = member.getAnnotation(Convert.class);
+        if (aConvert != null) {
+            converterClass = aConvert.value();
+        }
+        try {
+            return converterClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return null;
     }
 
     public static Type[] getMemberType(AccessibleObject member) {
@@ -354,7 +376,8 @@ public class JSoupMapper {
      *         <code>
      */
     protected static Object[] evaluateArguments(Document document,
-            Elements elements, Object value, Type... targetsType) {
+            Elements elements, Object value, List<TypeConvertor> convertors,
+            Type... targetsType) {
         Object[] arguments = new Object[targetsType.length];
 
         for (int i = 0; i < targetsType.length; i++) {
@@ -370,9 +393,7 @@ public class JSoupMapper {
                     convertorContext.setGenericTargetType(targetType);
                 }
                 if (convertor.canConvert(targetRawType, value)) {
-
                     arguments[i] = convertor.convert(targetRawType, value);
-
                     break;
                 }
             }

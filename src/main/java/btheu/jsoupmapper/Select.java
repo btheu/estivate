@@ -10,8 +10,6 @@ import java.lang.annotation.Target;
 
 import org.jsoup.select.Selector;
 
-import btheu.jsoupmapper.core.TypeConvertor;
-
 /**
  * Find elements that match the {@link Selector} CSS query, with this element as
  * the starting context. Matched elements may include this element, or any of
@@ -48,14 +46,13 @@ public @interface Select {
      * @return
      */
     int index() default -1;
-    
+
     boolean unique() default false;
-    
+
     boolean first() default false;
 
     boolean last() default false;
-    
+
     boolean optional() default false;
 
-    Class<? extends TypeConvertor> converter() default TypeConvertor.VOID.class;
 }

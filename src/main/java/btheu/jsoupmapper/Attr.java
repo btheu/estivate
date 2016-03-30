@@ -7,8 +7,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import btheu.jsoupmapper.core.TypeConvertor;
-
 /**
  * <p>
  * Get an attribute's value by its key. To get an absolute URL from an attribute
@@ -26,17 +24,16 @@ public @interface Attr {
 
     String value();
 
-	String select() default "";
+    String select() default "";
 
     int index() default -1;
-    
+
     boolean unique() default false;
-    
+
     boolean first() default false;
 
     boolean last() default false;
-    
+
     boolean optional() default false;
-	
-    Class<? extends TypeConvertor> converter() default TypeConvertor.VOID.class;
+
 }

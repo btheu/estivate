@@ -7,8 +7,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import btheu.jsoupmapper.core.TypeConvertor;
-
 /**
  * Gets the combined text of this element and all its children. Whitespace is
  * normalized and trimmed.
@@ -34,18 +32,17 @@ public @interface Text {
      * 
      */
     boolean own() default false;
-    
+
     String select() default "";
 
     int index() default -1;
-    
+
     boolean unique() default false;
-    
+
     boolean first() default false;
 
     boolean last() default false;
-    
+
     boolean optional() default false;
-    
-    Class<? extends TypeConvertor> converter() default TypeConvertor.VOID.class;
+
 }
