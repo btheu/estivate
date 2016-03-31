@@ -9,10 +9,9 @@
 	<groupId>com.github.btheu.estivate</groupId>
 	<artifactId>estivate</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
-
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
+	<url>http://github.com/btheu/estivate/</url>
+	<inceptionYear>2016</inceptionYear>
+	<description>Estivate fills pojo from HTML with CSS Query Syntax and annotations</description>
 
 	<licenses>
 		<license>
@@ -22,6 +21,14 @@
 		</license>
 	</licenses>
 
+	<issueManagement>
+		<system>GitHub</system>
+		<url>http://github.com/btheu/estivate/issues</url>
+	</issueManagement>
+
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -79,5 +86,17 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<developers>
+		<developer>
+			<id>btheu</id>
+			<name>Benoit Theunissen</name>
+			<email>benoit.theunissen@gmail.com</email>
+			<roles>
+				<role>Lead Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
 
 </project>
