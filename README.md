@@ -1,35 +1,12 @@
-# JSoupMapper
+# Estivate
 
-Mapping from DOM to POJO with <a href="http://jsoup.org/">JSoup API</a>
+Mapping from DOM to POJO with CSS Query Syntax and annotations.
+
+Estivate use <a href="http://jsoup.org/">JSoup API</a> for inside CSS queries.
 
 # Getting Started
 
-Mapping a DOM document to a POJO is very easy.
-
-```java
-InputStream document = ...
-
-JsoupMapper mapper = new JsoupMapper();
-
-Result result = mapper.map(document, Result.class);
-```
-
-Definition of Result class POJO definition which is:
-
-1. Select an JSoup Element with cssQuery ``` "#nameId" ```  on the document.
-* Apply JSoup ``` element.text() ``` on the Element selected.
-* Set the result to the ``` name ``` field.
-
-```java
-public class Result {
-
-	@Text(select="#nameId")
-	public String name;
-
-}
-```
-
-Giving this simple HTML, the POJO's ```name``` field will be set with ```"This is my name" ```
+Giving this simple HTML, we want to the POJO's ```name``` field set with the body of ```#nameId``` element. 
 
 ```html
 <html>
@@ -40,12 +17,41 @@ Giving this simple HTML, the POJO's ```name``` field will be set with ```"This i
 </html>
 ```
 
+```java
+public class Result {
+
+	@Text(select="#nameId")
+	public String name;
+
+}
+```
+
+Mapping a DOM document to a POJO is very easy.
+
+```java
+InputStream document = ...
+
+EstivateMapper mapper = new EstivateMapper();
+
+Result result = mapper.map(document, Result.class);
+```
+
+Definition of Result class POJO definition which is:
+
+1. Select an JSoup Element with cssQuery ``` "#nameId" ```  on the document.
+* Apply JSoup ``` element.text() ``` on the Element selected.
+* Set the result to the ``` name ``` field.
+
+
+
+
+
 ### Mapping of collection
 
 ```java
 InputStream document = ...
 
-JsoupMapper mapper = new JsoupMapper();
+EstivateMapper mapper = new EstivateMapper();
 
 List<Result> result = mapper.mapToList(document, Result.class);
 ```
@@ -62,7 +68,7 @@ public class Result {
 
 ### Annotation on methods
 
-JSoupMapper's annotations can be used directly on methods. 
+Estivate's annotations can be used directly on methods. 
 This provides a way to implement custom operations just after mapping.
 
 ```java
@@ -168,9 +174,9 @@ public class Result {
 }
 ```
 
-### ```@Optional```
+### ```Optional```
 
-Indicate that JSoupMapper wont throw a exception if the mapping of this field
+Indicate that Estivate wont throw a exception if the mapping of this field
 or method is not satisfied.
 
 ```java
@@ -187,6 +193,15 @@ public class Result {
 Makes JSoup's ``` element.TagName() ``` operation on the DOM Element.
 
 Maps the name of the tag for this element. E.g. div
+
+```java
+public class Result {
+
+	@TagName(select=".picture", first=true)
+	public String pictureTagName;
+
+}
+```
 
 ### ```@Title```
 
@@ -338,7 +353,7 @@ This will perfectly macht all aticles giving this HTML DOM.
 
 #### Primitive types
 
-JSoupMapper handle primitive types for fields or methods arguments mapping.
+Estivate handles primitive types for fields or methods arguments mapping.
 
 ```java
 public class Rapport {
