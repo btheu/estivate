@@ -13,7 +13,6 @@ import org.junit.Test;
 import estivate.EstivateMapper;
 import estivate.annotations.Convert;
 import estivate.annotations.Text;
-import estivate.core.TypeConvertor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

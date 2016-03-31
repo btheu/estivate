@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import estivate.TypeConvertor;
 import lombok.Setter;
 
 public class StandardTypeConvertor implements TypeConvertor, ConvertorContext {

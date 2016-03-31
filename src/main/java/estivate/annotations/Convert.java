@@ -7,7 +7,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import estivate.core.TypeConvertor;
+import estivate.TypeConvertor;
 
 /**
  * @author Benoit Theunissen

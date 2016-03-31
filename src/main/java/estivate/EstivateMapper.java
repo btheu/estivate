@@ -33,7 +33,6 @@ import estivate.core.ConvertorContext;
 import estivate.core.PrimitiveTypeConvertor;
 import estivate.core.SelectEvaluator;
 import estivate.core.StandardTypeConvertor;
-import estivate.core.TypeConvertor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

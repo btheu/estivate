@@ -1,4 +1,4 @@
-package estivate.core;
+package estivate;
 
 public interface TypeConvertor {
 
