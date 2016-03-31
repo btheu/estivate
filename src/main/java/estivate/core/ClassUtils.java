@@ -39,7 +39,6 @@ public abstract class ClassUtils {
 	 * @param rhsType
 	 *            the value type that should be assigned to the target type
 	 * @return if the target type is assignable from the value type
-	 * @see TypeUtils#isAssignable
 	 */
 	public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
 		if (lhsType.isAssignableFrom(rhsType)) {

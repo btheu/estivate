@@ -370,19 +370,21 @@ public class EstivateMapper {
         convertors.add(new RecursiveMappingTypeConvertor());
     }
 
-    /**
-     * Prepares futures method arguments (or field value) depending of ordered
-     * expected types.
-     * 
-     * @param document
-     * @param elements
-     * @param value
-     *            The current value of the DOM after selects and reduces
-     * @param targetsType
-     * 
-     * @return Arguments ordered giving method signature aka <code>argumentsType
-     *         <code>
-     */
+	/**
+	 * Prepares futures method arguments (or field value) depending of ordered
+	 * expected types.
+	 * 
+	 * @param document
+	 * @param elements
+	 * @param value
+	 *            The current value of the DOM after selects and reduces
+	 * @param convertors
+	 *            Convertors to use for this evaluation
+	 * @param targetsType
+	 * 
+	 * @return Arguments ordered giving method signature aka <code>argumentsType
+	 *         </code>
+	 */
     protected static Object[] evaluateArguments(Document document,
             Elements elements, Object value, List<TypeConvertor> convertors,
             Type... targetsType) {

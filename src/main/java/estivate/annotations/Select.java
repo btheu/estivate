@@ -29,8 +29,6 @@ import org.jsoup.select.Selector;
  * See the query syntax documentation in {@link org.jsoup.select.Selector}.
  * </p>
  * 
- * @param value
- *            a {@link Selector} CSS-like query
  */
 @Target({ TYPE, FIELD, METHOD })
 @Retention(RUNTIME)

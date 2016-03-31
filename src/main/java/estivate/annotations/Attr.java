@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * that may be a relative URL, prefix the key with abs, which is a shortcut to
  * the absUrl method. E.g.:
  * <p>
- * <code>String url = a.attr("abs:href");<code>
+ * <code>String url = a.attr("abs:href");</code>
  * 
  * @author Benoit Theunissen
  *

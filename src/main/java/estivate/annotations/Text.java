@@ -19,9 +19,6 @@ import java.lang.annotation.Target;
 </p>
  * }, {@code p.text()} returns {@code "Hello there now!"}
  *
- * @return unencoded text, or empty string if none.
- * @see #ownText()
- * @see #textNodes()
  */
 @Target({ FIELD, METHOD })
 @Retention(RUNTIME)
