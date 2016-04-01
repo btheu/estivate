@@ -50,7 +50,7 @@ Definition of Result class POJO definition which is:
 	<groupId>com.github.btheu.estivate</groupId>
 	<artifactId>estivate</artifactId>
 	<version>0.1.0</version>
-<dependency>
+</dependency>
 ```
 
 ### Mapping of collection
