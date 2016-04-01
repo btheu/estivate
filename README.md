@@ -43,8 +43,15 @@ Definition of Result class POJO definition which is:
 * Set the result to the ``` name ``` field.
 
 
+## Download
 
-
+```xml
+<dependency>
+	<groupId>com.github.btheu.estivate</groupId>
+	<artifactId>estivate</artifactId>
+	<version>0.1.0</version>
+<dependency>
+```
 
 ### Mapping of collection
 
