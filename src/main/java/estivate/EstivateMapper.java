@@ -289,6 +289,12 @@ public class EstivateMapper {
 
             Elements currElts = SelectEvaluator.select(aText, elements, member);
 
+            if (elements.size() > 1) {
+                log.warn(
+                        "'{}' text using first element. Consider fixing the select expression to get only one element.",
+                        getName(member));
+            }
+
             log.trace("text in  '{}'", currElts);
             if (aText.own()) {
                 log.debug("using first().owntext()");
