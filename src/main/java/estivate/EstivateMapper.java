@@ -19,21 +19,20 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import estivate.annotations.Attr;
 import estivate.annotations.Convert;
 import estivate.annotations.Optional;
 import estivate.annotations.Select;
-import estivate.annotations.TagName;
-import estivate.annotations.Text;
-import estivate.annotations.Title;
-import estivate.annotations.Val;
 import estivate.core.ClassUtils;
 import estivate.core.ConvertorContext;
 import estivate.core.MembersFinder;
 import estivate.core.PrimitiveTypeConvertor;
+import estivate.core.Reductor;
 import estivate.core.SelectEvaluator;
+import estivate.core.Selector;
 import estivate.core.StandardTypeConvertor;
 import estivate.core.impl.DefaultMembersFinder;
+import estivate.core.impl.DefaultReductor;
+import estivate.core.impl.DefaultSelector;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +40,10 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * <li>browse members and call tasks implementing speciifc interfaces
  * <li>get members ordered to evaluate
- * <li>evaluate members
+ * <li>evaluate select elements
+ * <li>evaluate reduce value
+ * <li>converts value
+ * <li>sets value to target
  * 
  * 
  * @author Benoit Theunissen
@@ -62,6 +64,9 @@ public class EstivateMapper {
             .getName();
 
     protected static MembersFinder membersFinder = new DefaultMembersFinder();
+
+    protected static Selector selector = new DefaultSelector();
+    protected static Reductor reductor = new DefaultReductor();
 
     public Object map(InputStream document, Type type) {
         Document parseDocument = parseDocument(document);
@@ -175,25 +180,18 @@ public class EstivateMapper {
             AccessibleObject member, T target) {
 
         if (hasOneAnnotationMapper(member)) {
+
+            Elements elementsCurr = selector.select(document, elements, member);
+
+            Object value = reductor.reduce(document, elementsCurr, member);
+
+            // Handle optional on member scope
             Boolean optional = false;
 
             Optional aOptional = member.getAnnotation(Optional.class);
             if (aOptional != null) {
                 optional = aOptional.value();
             }
-
-            Elements elementsCurr = elements;
-
-            Select aSelect = member.getAnnotation(Select.class);
-            if (aSelect != null) {
-                elementsCurr = SelectEvaluator.select(aSelect, elements,
-                        member);
-            } else {
-                log.debug("No Select found, using root element");
-            }
-
-            Object value = reduce(document, elementsCurr, member);
-
             if (optional || value != null) {
                 mapFieldOrArgument(document, elementsCurr, target, member,
                         value);
@@ -215,99 +213,6 @@ public class EstivateMapper {
             }
         }
         return false;
-    }
-
-    /**
-     * Apply all rules (annotations) of type reduce.
-     * 
-     * @see Attr
-     * @see Text
-     * @see Title
-     * @see TagName
-     * @see Val
-     * 
-     * @param elementSelected
-     * @param member
-     * @return
-     */
-    private static Object reduce(Document document, Elements elements,
-            AnnotatedElement member) {
-
-        Object value = elements;
-
-        Attr aAttr = member.getAnnotation(Attr.class);
-        if (aAttr != null) {
-
-            Elements currElts = SelectEvaluator.select(aAttr, elements, member);
-
-            log.debug("'{}' attr", getName(member));
-
-            log.debug("using attr()", getName(member));
-
-            value = currElts.attr(aAttr.value());
-
-        }
-
-        Val aVal = member.getAnnotation(Val.class);
-        if (aVal != null) {
-
-            Elements currElts = SelectEvaluator.select(aVal, elements, member);
-
-            log.debug("'{}' val", getName(member));
-
-            log.debug("using val()", getName(member));
-
-            value = currElts.val();
-        }
-
-        TagName aTagName = member.getAnnotation(TagName.class);
-        if (aTagName != null) {
-
-            Elements currElts = SelectEvaluator.select(aTagName, elements,
-                    member);
-
-            log.debug("'{}' tagName", getName(member));
-
-            log.debug("using tagName()", getName(member));
-
-            value = currElts.first().tagName();
-        }
-
-        Title aTitle = member.getAnnotation(Title.class);
-        if (aTitle != null) {
-
-            log.debug("'{}' title", getName(member));
-
-            log.debug("using title()", getName(member));
-
-            value = document.title();
-        }
-
-        Text aText = member.getAnnotation(Text.class);
-        if (aText != null) {
-            log.debug("'{}' text", getName(member));
-
-            Elements currElts = SelectEvaluator.select(aText, elements, member);
-
-            if (elements.size() > 1) {
-                log.warn(
-                        "'{}' text using first element. Consider fixing the select expression to get only one element.",
-                        getName(member));
-            }
-
-            log.trace("text in  '{}'", currElts);
-            if (aText.own()) {
-                log.debug("using first().owntext()");
-                value = currElts.first().ownText();
-            } else {
-                log.debug("using text()");
-                value = currElts.text();
-            }
-
-            log.trace("text out  '{}'", value);
-        }
-
-        return value;
     }
 
     protected static Object getName(AnnotatedElement member) {
