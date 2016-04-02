@@ -1,8 +1,11 @@
-package estivate.core;
+package estivate.core.impl;
 
 import org.jsoup.select.Elements;
 
-public class StandardTypeConverter implements Converter {
+import estivate.core.ClassUtils;
+import estivate.core.Converter;
+
+public class StandardConverter implements Converter {
 
     @Override
     public boolean canConvert(Object value, Class<?> targetType) {

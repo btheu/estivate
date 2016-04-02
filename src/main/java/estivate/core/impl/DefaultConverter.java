@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import estivate.core.Converter;
-import estivate.core.PrimitiveTypeConverter;
-import estivate.core.StandardTypeConverter;
 
 public class DefaultConverter implements Converter {
 
     public static final List<Converter> convertors = new ArrayList<>();
     static {
-        convertors.add(new PrimitiveTypeConverter());
-        convertors.add(new StandardTypeConverter());
+        convertors.add(new PrimitiveConverter());
+        convertors.add(new StandardConverter());
     }
 
     @Override

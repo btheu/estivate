@@ -1,4 +1,4 @@
-package estivate.core;
+package estivate.core.impl;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -7,13 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import estivate.core.Converter;
+import estivate.core.Function;
+
 /**
  * Handles primitives types or their respective object definition class type
  * 
  * @author Benoit Theunissen
  *
  */
-public class PrimitiveTypeConverter implements Converter {
+public class PrimitiveConverter implements Converter {
 
     @Override
     public boolean canConvert(Object value, Class<?> targetType) {
