@@ -190,12 +190,20 @@ public class EstivateMapper {
 
         if (hasOneAnnotationMapper(member)) {
 
+            // find all types arguments for method member
+            Type[] valueTypes = getMemberTypes(member);
+
+            Type valueTypeTarget = getValueTypeTarget(valueTypes);
+
+            boolean isValueTypeList = checkListNature(valueTypeTarget);
+
             // select
             Elements elementsOut = selecter.select(document, elementsIn,
                     member);
 
             // reduce
-            Object valueIn = reducter.reduce(document, elementsOut, member);
+            Object valueIn = reducter.reduce(document, elementsOut, member,
+                    isValueTypeList);
 
             // Handle optional on member scope
             Boolean optional = false;
@@ -210,16 +218,11 @@ public class EstivateMapper {
                                 + getName(member));
             }
 
-            // find all types arguments for method member
-            Type[] valueTypes = getMemberTypes(member);
-
             List<Object> valuesOut = new ArrayList<>();
 
             for (Type valueType : valueTypes) {
 
                 Class<?> valueClass = ClassUtils.rawType(valueType);
-
-                // TODO converts all types for contexte
 
                 // find custom converter
                 Converter customConverter = findCustomConverter(member);
@@ -248,6 +251,22 @@ public class EstivateMapper {
             setValueToTarget(document, elementsOut, target, member, valuesOut);
         }
 
+    }
+
+    private static Type getValueTypeTarget(Type[] valueTypes) {
+
+        for (Type type : valueTypes) {
+            if (!STANDARD_TARGET_TYPES.contains(type)) {
+                return type;
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean checkListNature(Type valueType) {
+        return valueType == null ? false
+                : ClassUtils.rawType(valueType).equals(List.class);
     }
 
     private static Object standardConverter(Document document,
@@ -318,7 +337,7 @@ public class EstivateMapper {
                     arguments[i] = valueIn;
                 }
             }
-            // if i filled already filled
+            // if [i] is already filled: next
             if (arguments[i] != null) {
                 continue;
             }

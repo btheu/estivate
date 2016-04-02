@@ -20,7 +20,7 @@ import org.jsoup.select.Elements;
  */
 public interface Reducter {
 
-    Object reduce(Document document, Elements elementsCurr,
-            AccessibleObject member);
+    Object reduce(Document document, Elements elementsIn,
+            AccessibleObject member, boolean isTargetList);
 
 }

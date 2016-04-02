@@ -2,8 +2,11 @@ package estivate.core.impl;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import estivate.annotations.Attr;
@@ -34,7 +37,7 @@ public class DefaultReducter implements Reducter {
      */
     @Override
     public Object reduce(Document document, Elements elementsIn,
-            AccessibleObject member) {
+            AccessibleObject member, boolean isTargetList) {
 
         Object value = elementsIn;
 
@@ -92,22 +95,42 @@ public class DefaultReducter implements Reducter {
         if (aText != null) {
             log.debug("'{}' text", getName(member));
 
-            Elements currElts = SelectEvaluater.select(aText, elementsIn,
+            Elements elementsOut = SelectEvaluater.select(aText, elementsIn,
                     member);
-
-            if (currElts.size() > 1) {
-                log.warn(
-                        "'{}' text using first element. Consider fixing the select expression to get only one element.",
-                        getName(member));
-            }
-
-            log.trace("text in  '{}'", currElts);
-            if (aText.own()) {
-                log.debug("using first().owntext()");
-                value = currElts.first().ownText();
+            if (isTargetList) {
+                List<String> list = new ArrayList<>();
+                if (aText.own()) {
+                    for (Element element : elementsOut) {
+                        list.add(element.ownText());
+                    }
+                } else {
+                    for (Element element : elementsOut) {
+                        list.add(element.text());
+                    }
+                }
+                value = list;
             } else {
-                log.debug("using text()");
-                value = currElts.text();
+                if (elementsOut.size() > 1) {
+                    log.warn(
+                            "'{}' text using first element. Consider fixing the select expression to get only one element.",
+                            getName(member));
+                }
+                log.trace("text in  '{}'", elementsOut);
+                if (aText.own()) {
+                    log.debug("using simple owntext()");
+
+                    StringBuilder sb = new StringBuilder(50);
+                    for (Element element : elementsOut) {
+                        if (sb.length() != 0)
+                            sb.append(" ");
+                        sb.append(element.ownText());
+                    }
+
+                    value = sb.toString();
+                } else {
+                    log.debug("using simple text()");
+                    value = elementsOut.text();
+                }
             }
 
             log.trace("text out  '{}'", value);
