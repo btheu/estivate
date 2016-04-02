@@ -33,15 +33,16 @@ public class DefaultReducter implements Reducter {
      * @return
      */
     @Override
-    public Object reduce(Document document, Elements elements,
+    public Object reduce(Document document, Elements elementsIn,
             AccessibleObject member) {
 
-        Object value = elements;
+        Object value = elementsIn;
 
         Attr aAttr = member.getAnnotation(Attr.class);
         if (aAttr != null) {
 
-            Elements currElts = SelectEvaluater.select(aAttr, elements, member);
+            Elements currElts = SelectEvaluater.select(aAttr, elementsIn,
+                    member);
 
             log.debug("'{}' attr", getName(member));
 
@@ -54,7 +55,8 @@ public class DefaultReducter implements Reducter {
         Val aVal = member.getAnnotation(Val.class);
         if (aVal != null) {
 
-            Elements currElts = SelectEvaluater.select(aVal, elements, member);
+            Elements currElts = SelectEvaluater.select(aVal, elementsIn,
+                    member);
 
             log.debug("'{}' val", getName(member));
 
@@ -66,7 +68,7 @@ public class DefaultReducter implements Reducter {
         TagName aTagName = member.getAnnotation(TagName.class);
         if (aTagName != null) {
 
-            Elements currElts = SelectEvaluater.select(aTagName, elements,
+            Elements currElts = SelectEvaluater.select(aTagName, elementsIn,
                     member);
 
             log.debug("'{}' tagName", getName(member));
@@ -90,9 +92,10 @@ public class DefaultReducter implements Reducter {
         if (aText != null) {
             log.debug("'{}' text", getName(member));
 
-            Elements currElts = SelectEvaluater.select(aText, elements, member);
+            Elements currElts = SelectEvaluater.select(aText, elementsIn,
+                    member);
 
-            if (elements.size() > 1) {
+            if (currElts.size() > 1) {
                 log.warn(
                         "'{}' text using first element. Consider fixing the select expression to get only one element.",
                         getName(member));
