@@ -23,6 +23,7 @@ import estivate.annotations.Convert;
 import estivate.annotations.Optional;
 import estivate.annotations.Select;
 import estivate.core.ClassUtils;
+import estivate.core.Convertor;
 import estivate.core.ConvertorContext;
 import estivate.core.MembersFinder;
 import estivate.core.PrimitiveTypeConvertor;
@@ -30,6 +31,7 @@ import estivate.core.Reductor;
 import estivate.core.SelectEvaluator;
 import estivate.core.Selector;
 import estivate.core.StandardTypeConvertor;
+import estivate.core.impl.DefaultConvertor;
 import estivate.core.impl.DefaultMembersFinder;
 import estivate.core.impl.DefaultReductor;
 import estivate.core.impl.DefaultSelector;
@@ -64,9 +66,9 @@ public class EstivateMapper {
             .getName();
 
     protected static MembersFinder membersFinder = new DefaultMembersFinder();
-
     protected static Selector selector = new DefaultSelector();
     protected static Reductor reductor = new DefaultReductor();
+    protected static Convertor convertor = new DefaultConvertor();
 
     public Object map(InputStream document, Type type) {
         Document parseDocument = parseDocument(document);
@@ -181,8 +183,10 @@ public class EstivateMapper {
 
         if (hasOneAnnotationMapper(member)) {
 
+            // select
             Elements elementsCurr = selector.select(document, elements, member);
 
+            // reduce
             Object value = reductor.reduce(document, elementsCurr, member);
 
             // Handle optional on member scope
@@ -192,14 +196,17 @@ public class EstivateMapper {
             if (aOptional != null) {
                 optional = aOptional.value();
             }
-            if (optional || value != null) {
-                mapFieldOrArgument(document, elementsCurr, target, member,
-                        value);
-            } else {
+            if (!optional && value == null) {
                 throw new IllegalStateException(
                         "No value matched and not optional for "
                                 + getName(member));
             }
+
+            // convert
+            // value = convertor.convert(member, value);
+
+            // set value to target
+            setValueToTarget(document, elementsCurr, target, member, value);
         }
 
     }
@@ -219,9 +226,8 @@ public class EstivateMapper {
         return ClassUtils.getName(member);
     }
 
-    protected static void mapFieldOrArgument(Document document,
-            Elements elements, Object target, AccessibleObject member,
-            Object value) {
+    protected static void setValueToTarget(Document document, Elements elements,
+            Object target, AccessibleObject member, Object value) {
         try {
             // Get target Type of
             // - Field
@@ -230,12 +236,12 @@ public class EstivateMapper {
             // set the value to the target
             Type[] memberType = getMemberType(member);
 
-            List<TypeConvertor> t = new ArrayList<>();
-            t.add(getConverter(member));
-            t.addAll(convertors);
+            List<TypeConvertor> lConvertors = new ArrayList<>();
+            lConvertors.add(getConverter(member));
+            lConvertors.addAll(convertors);
 
-            Object[] values = evaluateArguments(document, elements, value, t,
-                    memberType);
+            Object[] values = evaluateArguments(document, elements, value,
+                    lConvertors, memberType);
 
             if (member instanceof Field) {
                 Field field = (Field) member;
