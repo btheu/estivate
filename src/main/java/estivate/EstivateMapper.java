@@ -65,14 +65,21 @@ public class EstivateMapper {
     protected static final String PACKAGE_NAME = Select.class.getPackage()
             .getName();
 
+    protected static final List<Class<?>> STANDARD_TARGET_TYPES = new ArrayList<>();
+    static {
+        STANDARD_TARGET_TYPES.add(Document.class);
+        STANDARD_TARGET_TYPES.add(Elements.class);
+        STANDARD_TARGET_TYPES.add(Element.class);
+    }
+
     protected static MembersFinder membersFinder = new DefaultMembersFinder();
     protected static Selector selector = new DefaultSelector();
     protected static Reductor reductor = new DefaultReductor();
     protected static Convertor convertor = new DefaultConvertor();
 
-    public Object map(InputStream document, Type type) {
+    public <T> T map(InputStream document, Class<T> clazz) {
         Document parseDocument = parseDocument(document);
-        return map(parseDocument, new Elements(parseDocument), type);
+        return map(parseDocument, new Elements(parseDocument), clazz);
     }
 
     public <T> List<T> mapToList(InputStream document, Class<T> clazz) {
@@ -80,11 +87,14 @@ public class EstivateMapper {
         return mapToList(parseDocument, new Elements(parseDocument), clazz);
     }
 
-    public <T> T map(InputStream document, Class<T> clazz) {
-        Document parseDocument = parseDocument(document);
-        return map(parseDocument, new Elements(parseDocument), clazz);
-    }
-
+    /**
+     * Entry Point of Recursive
+     * 
+     * @param document
+     * @param elements
+     * @param type
+     * @return
+     */
     public static Object map(Document document, Elements elements, Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -178,16 +188,17 @@ public class EstivateMapper {
         return target;
     }
 
-    private static <T> void map(Document document, Elements elements,
+    protected static <T> void map(Document document, Elements elementsIn,
             AccessibleObject member, T target) {
 
         if (hasOneAnnotationMapper(member)) {
 
             // select
-            Elements elementsCurr = selector.select(document, elements, member);
+            Elements elementsOut = selector.select(document, elementsIn,
+                    member);
 
             // reduce
-            Object value = reductor.reduce(document, elementsCurr, member);
+            Object valueIn = reductor.reduce(document, elementsOut, member);
 
             // Handle optional on member scope
             Boolean optional = false;
@@ -196,19 +207,200 @@ public class EstivateMapper {
             if (aOptional != null) {
                 optional = aOptional.value();
             }
-            if (!optional && value == null) {
+            if (!optional && valueIn == null) {
                 throw new IllegalStateException(
                         "No value matched and not optional for "
                                 + getName(member));
             }
 
-            // convert
-            // value = convertor.convert(member, value);
+            // find all types arguments for method member
+            Type[] valueTypes = getMemberTypes(member);
+
+            List<Object> valuesOut = new ArrayList<>();
+
+            for (Type valueType : valueTypes) {
+
+                Class<?> valueClass = ClassUtils.rawType(valueType);
+
+                // TODO converts all types for contexte
+
+                // find custom convertor
+                TypeConvertor customConverter = findCustomConverter(member);
+
+                if (customConverter.canConvert(valueClass, valueIn)) {
+                    // custom converter
+                    log.debug("Convert with custom converter");
+                    valuesOut.add(customConverter.convert(valueClass, valueIn));
+                } else if (isStandardType(valueIn, valueClass)) {
+                    // standard converter
+                    log.debug("Convert with standard converter");
+                    valuesOut.add(standardConverter(document, elementsOut,
+                            valueIn, valueClass));
+                } else if (convertor.canConvert(valueIn, valueClass)) {
+                    // inner converter
+                    log.debug("Convert with inner converter");
+                    valuesOut.add(convertor.convert(valueIn, valueClass));
+                } else {
+                    // recursive converter (fallback)
+                    log.debug("Convert by recursive mapping");
+                    valuesOut.add(map(document, elementsOut, valueType));
+                }
+            }
 
             // set value to target
-            setValueToTarget(document, elementsCurr, target, member, value);
+            setValueToTarget3(document, elementsOut, target, member, valuesOut);
         }
 
+    }
+
+    private static Object standardConverter(Document document,
+            Elements elementsIn, Object valueIn, Class<?> valueClass) {
+        if (valueClass.equals(Document.class)) {
+            return document;
+        }
+        if (valueClass.equals(Elements.class)) {
+            return elementsIn;
+        }
+        if (valueClass.equals(Element.class)) {
+            if (elementsIn.size() == 1) {
+                return elementsIn.first();
+            } else {
+                throw new IllegalArgumentException(
+                        "Cant set 'Element' object with Elements of size:"
+                                + elementsIn.size());
+            }
+        }
+        return null;
+    }
+
+    private static boolean isStandardType(Object valueIn, Class<?> valueClass) {
+        return STANDARD_TARGET_TYPES.contains(valueClass);
+    }
+
+    private static <T> void setValueToTarget3(Document document,
+            Elements elementsIn, T target, AccessibleObject member,
+            List<Object> valuesIn) {
+        try {
+
+            Object[] values = prepareArgumentValues2(document, elementsIn,
+                    member, valuesIn);
+
+            if (member instanceof Field) {
+                Field field = (Field) member;
+
+                setValue(document, elementsIn, target, field, values[0]);
+
+            } else if (member instanceof Method) {
+                Method method = (Method) member;
+
+                setValue(document, elementsIn, target, method, values);
+            }
+
+        } catch (IllegalArgumentException | IllegalAccessException
+                | InvocationTargetException e) {
+            throw new IllegalArgumentException("Cannot set values [" + valuesIn
+                    + "] for member [" + getName(member) + "]", e);
+        }
+
+    }
+
+    private static Object[] prepareArgumentValues2(Document document,
+            Elements elementsIn, AccessibleObject member,
+            List<Object> valuesIn) {
+        Type[] memberTypes = getMemberTypes(member);
+
+        Object[] arguments = new Object[memberTypes.length];
+
+        for (int i = 0; i < memberTypes.length; i++) {
+            Type targetType = memberTypes[i];
+
+            Class<?> targetRawType = ClassUtils.rawType(targetType);
+
+            for (Object valueIn : valuesIn) {
+                if (ClassUtils.isAssignableValue(targetRawType, valueIn)) {
+                    arguments[i] = valueIn;
+                }
+            }
+            // if i filled already filled
+            if (arguments[i] != null) {
+                continue;
+            }
+
+            if (ClassUtils.isAssignableValue(targetRawType, elementsIn)) {
+                arguments[i] = elementsIn;
+            } else if (ClassUtils.isAssignableValue(targetRawType, document)) {
+                arguments[i] = document;
+            }
+        }
+
+        return arguments;
+    }
+
+    private static TypeConvertor findCustomConverter(AccessibleObject member) {
+
+        Class<? extends TypeConvertor> custom = TypeConvertor.VOID.class;
+
+        Convert aConvert = member.getAnnotation(Convert.class);
+        if (aConvert != null) {
+            custom = aConvert.value();
+        }
+
+        return ClassUtils.newInstance(custom);
+    }
+
+    @Deprecated
+    private static <T> void setValueToTarget2(Document document,
+            Elements elementsIn, T target, AccessibleObject member,
+            Object value) {
+        try {
+
+            Object[] values = prepareArgumentValues(document, elementsIn,
+                    member, value);
+
+            if (member instanceof Field) {
+                Field field = (Field) member;
+
+                setValue(document, elementsIn, target, field, values[0]);
+
+            } else if (member instanceof Method) {
+                Method method = (Method) member;
+
+                setValue(document, elementsIn, target, method, values);
+            }
+
+        } catch (IllegalArgumentException | IllegalAccessException
+                | InvocationTargetException e) {
+            throw new IllegalArgumentException(
+                    "Cannot set value [" + value + "|" + value.getClass()
+                            + "] for member [" + getName(member) + "]",
+                    e);
+        }
+
+    }
+
+    @Deprecated
+    private static Object[] prepareArgumentValues(Document document,
+            Elements elementsIn, AccessibleObject member, Object value) {
+
+        Type[] memberTypes = getMemberTypes(member);
+
+        Object[] arguments = new Object[memberTypes.length];
+
+        for (int i = 0; i < memberTypes.length; i++) {
+            Type targetType = memberTypes[i];
+
+            Class<?> targetRawType = ClassUtils.rawType(targetType);
+
+            if (ClassUtils.isAssignableValue(targetRawType, value)) {
+                arguments[i] = value;
+            } else if (ClassUtils.isAssignableValue(targetRawType,
+                    elementsIn)) {
+                arguments[i] = elementsIn;
+            } else if (ClassUtils.isAssignableValue(targetRawType, document)) {
+                arguments[i] = document;
+            }
+        }
+        return arguments;
     }
 
     private static boolean hasOneAnnotationMapper(AccessibleObject member) {
@@ -222,10 +414,19 @@ public class EstivateMapper {
         return false;
     }
 
-    protected static Object getName(AnnotatedElement member) {
-        return ClassUtils.getName(member);
+    @Deprecated
+    private static Type findTypeOfMemberValue(AccessibleObject member) {
+
+        Type[] memberType = getMemberTypes(member);
+        for (Type type : memberType) {
+            if (!STANDARD_TARGET_TYPES.contains(type)) {
+                return type;
+            }
+        }
+        return null;
     }
 
+    @Deprecated
     protected static void setValueToTarget(Document document, Elements elements,
             Object target, AccessibleObject member, Object value) {
         try {
@@ -234,7 +435,7 @@ public class EstivateMapper {
             // - Method arguments
             // Evaluate target type, trigger recursive evaluation if necessary
             // set the value to the target
-            Type[] memberType = getMemberType(member);
+            Type[] memberType = getMemberTypes(member);
 
             List<TypeConvertor> lConvertors = new ArrayList<>();
             lConvertors.add(getConverter(member));
@@ -281,7 +482,7 @@ public class EstivateMapper {
         return null;
     }
 
-    public static Type[] getMemberType(AccessibleObject member) {
+    public static Type[] getMemberTypes(AccessibleObject member) {
         if (member instanceof Field) {
             Field field = (Field) member;
 
@@ -295,6 +496,7 @@ public class EstivateMapper {
         return null;
     }
 
+    @Deprecated
     public static final List<TypeConvertor> convertors = new ArrayList<>();
     static {
         convertors.add(new PrimitiveTypeConvertor());
@@ -317,6 +519,7 @@ public class EstivateMapper {
      * @return Arguments ordered giving method signature aka <code>argumentsType
      *         </code>
      */
+    @Deprecated
     protected static Object[] evaluateArguments(Document document,
             Elements elements, Object value, List<TypeConvertor> convertors,
             Type... targetsType) {
@@ -343,13 +546,31 @@ public class EstivateMapper {
         return arguments;
     }
 
+    protected Document parseDocument(InputStream document) {
+        try {
+            return Jsoup.parse(document, encoding, baseURI);
+        } catch (IOException e) {
+            throw new RuntimeException("Cant parse document.", e);
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param document
+     * @param element
+     * @param target
+     * @param field
+     * @param value
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     */
     protected static void setValue(Document document, Elements element,
             Object target, Field field, Object value)
             throws IllegalArgumentException, IllegalAccessException {
 
         log.debug("set value on field ['{}' => '{}']", value, field.getName());
 
-        // If both types matchs
         if (ClassUtils.isAssignableValue(field.getType(), value)) {
 
             boolean accessibleBack = field.isAccessible();
@@ -361,7 +582,8 @@ public class EstivateMapper {
             field.setAccessible(accessibleBack);
 
         } else {
-            log.error("set value is not assignable with field");
+            log.error("set value is not assignable with field '{}'",
+                    field.getName());
             throw new IllegalArgumentException(
                     "Cant set " + value.toString() + " to " + field.getName());
         }
@@ -378,15 +600,7 @@ public class EstivateMapper {
         method.invoke(target, values);
     }
 
-    protected Document parseDocument(InputStream document) {
-        try {
-            return Jsoup.parse(document, encoding, baseURI);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
+    @Deprecated
     public static class RecursiveMappingTypeConvertor
             implements TypeConvertor, ConvertorContext {
 
@@ -408,5 +622,9 @@ public class EstivateMapper {
             return map(document, elements, genericTargetType);
         }
 
+    }
+
+    protected static Object getName(AnnotatedElement member) {
+        return ClassUtils.getName(member);
     }
 }
