@@ -7,7 +7,7 @@ package estivate.core;
  * @author Benoit Theunissen
  *
  */
-public interface Convertor {
+public interface Converter {
 
     boolean canConvert(Object value, Class<?> targetType);
 

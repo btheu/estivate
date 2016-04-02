@@ -12,12 +12,12 @@ import estivate.annotations.Text;
 import estivate.annotations.Title;
 import estivate.annotations.Val;
 import estivate.core.ClassUtils;
-import estivate.core.Reductor;
-import estivate.core.SelectEvaluator;
+import estivate.core.Reducter;
+import estivate.core.SelectEvaluater;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DefaultReductor implements Reductor {
+public class DefaultReducter implements Reducter {
 
     /**
      * Apply all rules (annotations) of type reduce.
@@ -41,7 +41,7 @@ public class DefaultReductor implements Reductor {
         Attr aAttr = member.getAnnotation(Attr.class);
         if (aAttr != null) {
 
-            Elements currElts = SelectEvaluator.select(aAttr, elements, member);
+            Elements currElts = SelectEvaluater.select(aAttr, elements, member);
 
             log.debug("'{}' attr", getName(member));
 
@@ -54,7 +54,7 @@ public class DefaultReductor implements Reductor {
         Val aVal = member.getAnnotation(Val.class);
         if (aVal != null) {
 
-            Elements currElts = SelectEvaluator.select(aVal, elements, member);
+            Elements currElts = SelectEvaluater.select(aVal, elements, member);
 
             log.debug("'{}' val", getName(member));
 
@@ -66,7 +66,7 @@ public class DefaultReductor implements Reductor {
         TagName aTagName = member.getAnnotation(TagName.class);
         if (aTagName != null) {
 
-            Elements currElts = SelectEvaluator.select(aTagName, elements,
+            Elements currElts = SelectEvaluater.select(aTagName, elements,
                     member);
 
             log.debug("'{}' tagName", getName(member));
@@ -90,7 +90,7 @@ public class DefaultReductor implements Reductor {
         if (aText != null) {
             log.debug("'{}' text", getName(member));
 
-            Elements currElts = SelectEvaluator.select(aText, elements, member);
+            Elements currElts = SelectEvaluater.select(aText, elements, member);
 
             if (elements.size() > 1) {
                 log.warn(

@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Slf4j
-public abstract class SelectEvaluator {
+public abstract class SelectEvaluater {
 
 	public static Elements select(SelectBean bean, Elements elementsIn, AnnotatedElement member) {
 

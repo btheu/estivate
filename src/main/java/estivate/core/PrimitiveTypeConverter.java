@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import estivate.TypeConvertor;
+import estivate.TypeConverter;
 
 /**
  * Handles primitives types or their respective object definition class type
@@ -15,7 +15,7 @@ import estivate.TypeConvertor;
  * @author Benoit Theunissen
  *
  */
-public class PrimitiveTypeConvertor implements TypeConvertor {
+public class PrimitiveTypeConverter implements TypeConverter {
 
 	@Override
 	public boolean canConvert(Class<?> targetType, Object value) {

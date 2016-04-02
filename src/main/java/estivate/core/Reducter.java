@@ -7,19 +7,20 @@ import org.jsoup.select.Elements;
 
 /**
  * <p>
- * Handle annotation of type 'select', aka. returns a list of elements.
+ * Handle annotation of type 'reduce', aka. returns a final result like text()
+ * or attr().
  * 
  * <p>
- * Thoses selectors will be called before {@link Reductor}
+ * Thoses reductors will be called after {@link Selecter}
  * 
- * @see Reductor
+ * @see Selecter
  * 
  * @author Benoit Theunissen
  *
  */
-public interface Selector {
+public interface Reducter {
 
-    Elements select(Document document, Elements elements,
+    Object reduce(Document document, Elements elementsCurr,
             AccessibleObject member);
 
 }

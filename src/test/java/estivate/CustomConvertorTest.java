@@ -24,7 +24,7 @@ public class CustomConvertorTest {
     @Test
     public void convertorCustom1() {
 
-        InputStream document = read("/convertor/u3.html");
+        InputStream document = read("/converter/u3.html");
 
         ResultDate result = mapper.map(document, ResultDate.class);
 
@@ -69,7 +69,7 @@ public class CustomConvertorTest {
         return resourceAsStream;
     }
 
-    public static class DateConvertor implements TypeConvertor {
+    public static class DateConvertor implements TypeConverter {
 
         SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

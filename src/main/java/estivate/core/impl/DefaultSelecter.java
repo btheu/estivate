@@ -6,12 +6,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import estivate.annotations.Select;
-import estivate.core.SelectEvaluator;
-import estivate.core.Selector;
+import estivate.core.SelectEvaluater;
+import estivate.core.Selecter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DefaultSelector implements Selector {
+public class DefaultSelecter implements Selecter {
 
     @Override
     public Elements select(Document document, Elements elements,
@@ -23,7 +23,7 @@ public class DefaultSelector implements Selector {
         if (aSelect == null) {
             log.debug("No Select found, using root element");
         } else {
-            results = SelectEvaluator.select(aSelect, elements, member);
+            results = SelectEvaluater.select(aSelect, elements, member);
         }
 
         return results;

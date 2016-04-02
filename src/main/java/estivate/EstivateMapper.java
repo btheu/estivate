@@ -23,18 +23,17 @@ import estivate.annotations.Convert;
 import estivate.annotations.Optional;
 import estivate.annotations.Select;
 import estivate.core.ClassUtils;
-import estivate.core.Convertor;
-import estivate.core.ConvertorContext;
+import estivate.core.Converter;
 import estivate.core.MembersFinder;
-import estivate.core.PrimitiveTypeConvertor;
-import estivate.core.Reductor;
-import estivate.core.SelectEvaluator;
-import estivate.core.Selector;
-import estivate.core.StandardTypeConvertor;
-import estivate.core.impl.DefaultConvertor;
+import estivate.core.PrimitiveTypeConverter;
+import estivate.core.Reducter;
+import estivate.core.SelectEvaluater;
+import estivate.core.Selecter;
+import estivate.core.StandardTypeConverter;
+import estivate.core.impl.DefaultConverter;
 import estivate.core.impl.DefaultMembersFinder;
-import estivate.core.impl.DefaultReductor;
-import estivate.core.impl.DefaultSelector;
+import estivate.core.impl.DefaultReducter;
+import estivate.core.impl.DefaultSelecter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -73,9 +72,9 @@ public class EstivateMapper {
     }
 
     protected static MembersFinder membersFinder = new DefaultMembersFinder();
-    protected static Selector selector = new DefaultSelector();
-    protected static Reductor reductor = new DefaultReductor();
-    protected static Convertor convertor = new DefaultConvertor();
+    protected static Selecter selecter = new DefaultSelecter();
+    protected static Reducter reducter = new DefaultReducter();
+    protected static Converter converter = new DefaultConverter();
 
     public <T> T map(InputStream document, Class<T> clazz) {
         Document parseDocument = parseDocument(document);
@@ -152,7 +151,7 @@ public class EstivateMapper {
 
             Select aSelect = clazz.getAnnotation(Select.class);
             if (aSelect != null) {
-                elementsCurr = SelectEvaluator.select(aSelect, elements, clazz);
+                elementsCurr = SelectEvaluater.select(aSelect, elements, clazz);
             } else {
                 log.debug("no Select found, using root element");
             }
@@ -194,11 +193,11 @@ public class EstivateMapper {
         if (hasOneAnnotationMapper(member)) {
 
             // select
-            Elements elementsOut = selector.select(document, elementsIn,
+            Elements elementsOut = selecter.select(document, elementsIn,
                     member);
 
             // reduce
-            Object valueIn = reductor.reduce(document, elementsOut, member);
+            Object valueIn = reducter.reduce(document, elementsOut, member);
 
             // Handle optional on member scope
             Boolean optional = false;
@@ -224,8 +223,8 @@ public class EstivateMapper {
 
                 // TODO converts all types for contexte
 
-                // find custom convertor
-                TypeConvertor customConverter = findCustomConverter(member);
+                // find custom converter
+                TypeConverter customConverter = findCustomConverter(member);
 
                 if (customConverter.canConvert(valueClass, valueIn)) {
                     // custom converter
@@ -236,10 +235,10 @@ public class EstivateMapper {
                     log.debug("Convert with standard converter");
                     valuesOut.add(standardConverter(document, elementsOut,
                             valueIn, valueClass));
-                } else if (convertor.canConvert(valueIn, valueClass)) {
+                } else if (converter.canConvert(valueIn, valueClass)) {
                     // inner converter
                     log.debug("Convert with inner converter");
-                    valuesOut.add(convertor.convert(valueIn, valueClass));
+                    valuesOut.add(converter.convert(valueIn, valueClass));
                 } else {
                     // recursive converter (fallback)
                     log.debug("Convert by recursive mapping");
@@ -336,9 +335,9 @@ public class EstivateMapper {
         return arguments;
     }
 
-    private static TypeConvertor findCustomConverter(AccessibleObject member) {
+    private static TypeConverter findCustomConverter(AccessibleObject member) {
 
-        Class<? extends TypeConvertor> custom = TypeConvertor.VOID.class;
+        Class<? extends TypeConverter> custom = TypeConverter.VOID.class;
 
         Convert aConvert = member.getAnnotation(Convert.class);
         if (aConvert != null) {
@@ -426,48 +425,9 @@ public class EstivateMapper {
         return null;
     }
 
-    @Deprecated
-    protected static void setValueToTarget(Document document, Elements elements,
-            Object target, AccessibleObject member, Object value) {
-        try {
-            // Get target Type of
-            // - Field
-            // - Method arguments
-            // Evaluate target type, trigger recursive evaluation if necessary
-            // set the value to the target
-            Type[] memberType = getMemberTypes(member);
+    private static TypeConverter getConverter(AccessibleObject member) {
 
-            List<TypeConvertor> lConvertors = new ArrayList<>();
-            lConvertors.add(getConverter(member));
-            lConvertors.addAll(convertors);
-
-            Object[] values = evaluateArguments(document, elements, value,
-                    lConvertors, memberType);
-
-            if (member instanceof Field) {
-                Field field = (Field) member;
-
-                setValue(document, elements, target, field, values[0]);
-
-            } else if (member instanceof Method) {
-                Method method = (Method) member;
-
-                setValue(document, elements, target, method, values);
-            }
-
-        } catch (IllegalArgumentException | IllegalAccessException
-                | InvocationTargetException e) {
-            throw new IllegalArgumentException(
-                    "Cannot set value [" + value + "|" + value.getClass()
-                            + "] for member [" + getName(member) + "]",
-                    e);
-        }
-
-    }
-
-    private static TypeConvertor getConverter(AccessibleObject member) {
-
-        Class<? extends TypeConvertor> converterClass = TypeConvertor.VOID.class;
+        Class<? extends TypeConverter> converterClass = TypeConverter.VOID.class;
 
         Convert aConvert = member.getAnnotation(Convert.class);
         if (aConvert != null) {
@@ -497,53 +457,10 @@ public class EstivateMapper {
     }
 
     @Deprecated
-    public static final List<TypeConvertor> convertors = new ArrayList<>();
+    public static final List<TypeConverter> convertors = new ArrayList<>();
     static {
-        convertors.add(new PrimitiveTypeConvertor());
-        convertors.add(new StandardTypeConvertor());
-        convertors.add(new RecursiveMappingTypeConvertor());
-    }
-
-    /**
-     * Prepares futures method arguments (or field value) depending of ordered
-     * expected types.
-     * 
-     * @param document
-     * @param elements
-     * @param value
-     *            The current value of the DOM after selects and reduces
-     * @param convertors
-     *            Convertors to use for this evaluation
-     * @param targetsType
-     * 
-     * @return Arguments ordered giving method signature aka <code>argumentsType
-     *         </code>
-     */
-    @Deprecated
-    protected static Object[] evaluateArguments(Document document,
-            Elements elements, Object value, List<TypeConvertor> convertors,
-            Type... targetsType) {
-        Object[] arguments = new Object[targetsType.length];
-
-        for (int i = 0; i < targetsType.length; i++) {
-            Type targetType = targetsType[i];
-
-            Class<?> targetRawType = ClassUtils.rawType(targetType);
-
-            for (TypeConvertor convertor : convertors) {
-                if (convertor instanceof ConvertorContext) {
-                    ConvertorContext convertorContext = (ConvertorContext) convertor;
-                    convertorContext.setDocument(document);
-                    convertorContext.setElements(elements);
-                    convertorContext.setGenericTargetType(targetType);
-                }
-                if (convertor.canConvert(targetRawType, value)) {
-                    arguments[i] = convertor.convert(targetRawType, value);
-                    break;
-                }
-            }
-        }
-        return arguments;
+        convertors.add(new PrimitiveTypeConverter());
+        convertors.add(new StandardTypeConverter());
     }
 
     protected Document parseDocument(InputStream document) {
@@ -598,30 +515,6 @@ public class EstivateMapper {
         log.debug("set value by method [{} ({})]", method.getName(), values);
 
         method.invoke(target, values);
-    }
-
-    @Deprecated
-    public static class RecursiveMappingTypeConvertor
-            implements TypeConvertor, ConvertorContext {
-
-        @Setter
-        private Document document;
-        @Setter
-        private Elements elements;
-        @Setter
-        private Type genericTargetType;
-
-        @Override
-        public boolean canConvert(Class<?> targetType, Object value) {
-            return true;
-        }
-
-        @Override
-        public Object convert(Class<?> targetType, Object value) {
-            log.debug("evaluate argument by recursive mapping");
-            return map(document, elements, genericTargetType);
-        }
-
     }
 
     protected static Object getName(AnnotatedElement member) {

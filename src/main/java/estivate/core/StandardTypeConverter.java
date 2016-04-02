@@ -2,9 +2,9 @@ package estivate.core;
 
 import org.jsoup.select.Elements;
 
-import estivate.TypeConvertor;
+import estivate.TypeConverter;
 
-public class StandardTypeConvertor implements TypeConvertor {
+public class StandardTypeConverter implements TypeConverter {
 
     @Override
     public boolean canConvert(Class<?> targetType, Object value) {

@@ -20,7 +20,7 @@ public class ConvertorTest {
 	@Test
 	public void convertorPrimitive1() {
 
-		InputStream document = read("/convertor/u1.html");
+		InputStream document = read("/converter/u1.html");
 
 		Result result = mapper.map(document, Result.class);
 
@@ -56,7 +56,7 @@ public class ConvertorTest {
 
 	@Test
 	public void convertorBigNumber1() {
-		InputStream document = read("/convertor/u2.html");
+		InputStream document = read("/converter/u2.html");
 
 		ResultBig result = mapper.map(document, ResultBig.class);
 

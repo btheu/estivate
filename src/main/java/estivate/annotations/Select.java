@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 import org.jsoup.select.Selector;
 
 /**
- * Find elements that match the {@link Selector} CSS query, with this element as
+ * Find elements that match the {@link Selecter} CSS query, with this element as
  * the starting context. Matched elements may include this element, or any of
  * its children.
  * <p>
