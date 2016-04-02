@@ -10,19 +10,18 @@ import org.jsoup.select.Elements;
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.EstivateMapper;
 import estivate.annotations.Convert;
 import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CustomConvertorTest {
+public class CustomConverterTest {
 
     EstivateMapper mapper = new EstivateMapper();
 
     @Test
-    public void convertorCustom1() {
+    public void converterCustom1() {
 
         InputStream document = read("/converter/u3.html");
 
@@ -63,7 +62,7 @@ public class CustomConvertorTest {
     }
 
     private InputStream read(String string) {
-        InputStream resourceAsStream = EstivateMapper.class
+        InputStream resourceAsStream = CustomConverterTest.class
                 .getResourceAsStream(string);
         Assert.assertNotNull(resourceAsStream);
         return resourceAsStream;

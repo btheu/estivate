@@ -8,7 +8,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jsoup.select.Selector;
+import estivate.core.Selecter;
 
 /**
  * Find elements that match the {@link Selecter} CSS query, with this element as

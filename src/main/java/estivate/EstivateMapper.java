@@ -25,11 +25,9 @@ import estivate.annotations.Select;
 import estivate.core.ClassUtils;
 import estivate.core.Converter;
 import estivate.core.MembersFinder;
-import estivate.core.PrimitiveTypeConverter;
 import estivate.core.Reducter;
 import estivate.core.SelectEvaluater;
 import estivate.core.Selecter;
-import estivate.core.StandardTypeConverter;
 import estivate.core.impl.DefaultConverter;
 import estivate.core.impl.DefaultMembersFinder;
 import estivate.core.impl.DefaultReducter;
@@ -247,7 +245,7 @@ public class EstivateMapper {
             }
 
             // set value to target
-            setValueToTarget3(document, elementsOut, target, member, valuesOut);
+            setValueToTarget(document, elementsOut, target, member, valuesOut);
         }
 
     }
@@ -276,12 +274,12 @@ public class EstivateMapper {
         return STANDARD_TARGET_TYPES.contains(valueClass);
     }
 
-    private static <T> void setValueToTarget3(Document document,
+    private static <T> void setValueToTarget(Document document,
             Elements elementsIn, T target, AccessibleObject member,
             List<Object> valuesIn) {
         try {
 
-            Object[] values = prepareArgumentValues2(document, elementsIn,
+            Object[] values = prepareArgumentValues(document, elementsIn,
                     member, valuesIn);
 
             if (member instanceof Field) {
@@ -303,7 +301,7 @@ public class EstivateMapper {
 
     }
 
-    private static Object[] prepareArgumentValues2(Document document,
+    private static Object[] prepareArgumentValues(Document document,
             Elements elementsIn, AccessibleObject member,
             List<Object> valuesIn) {
         Type[] memberTypes = getMemberTypes(member);
@@ -347,61 +345,6 @@ public class EstivateMapper {
         return ClassUtils.newInstance(custom);
     }
 
-    @Deprecated
-    private static <T> void setValueToTarget2(Document document,
-            Elements elementsIn, T target, AccessibleObject member,
-            Object value) {
-        try {
-
-            Object[] values = prepareArgumentValues(document, elementsIn,
-                    member, value);
-
-            if (member instanceof Field) {
-                Field field = (Field) member;
-
-                setValue(document, elementsIn, target, field, values[0]);
-
-            } else if (member instanceof Method) {
-                Method method = (Method) member;
-
-                setValue(document, elementsIn, target, method, values);
-            }
-
-        } catch (IllegalArgumentException | IllegalAccessException
-                | InvocationTargetException e) {
-            throw new IllegalArgumentException(
-                    "Cannot set value [" + value + "|" + value.getClass()
-                            + "] for member [" + getName(member) + "]",
-                    e);
-        }
-
-    }
-
-    @Deprecated
-    private static Object[] prepareArgumentValues(Document document,
-            Elements elementsIn, AccessibleObject member, Object value) {
-
-        Type[] memberTypes = getMemberTypes(member);
-
-        Object[] arguments = new Object[memberTypes.length];
-
-        for (int i = 0; i < memberTypes.length; i++) {
-            Type targetType = memberTypes[i];
-
-            Class<?> targetRawType = ClassUtils.rawType(targetType);
-
-            if (ClassUtils.isAssignableValue(targetRawType, value)) {
-                arguments[i] = value;
-            } else if (ClassUtils.isAssignableValue(targetRawType,
-                    elementsIn)) {
-                arguments[i] = elementsIn;
-            } else if (ClassUtils.isAssignableValue(targetRawType, document)) {
-                arguments[i] = document;
-            }
-        }
-        return arguments;
-    }
-
     private static boolean hasOneAnnotationMapper(AccessibleObject member) {
         Annotation[] annotations = member.getAnnotations();
         for (Annotation annotation : annotations) {
@@ -411,35 +354,6 @@ public class EstivateMapper {
             }
         }
         return false;
-    }
-
-    @Deprecated
-    private static Type findTypeOfMemberValue(AccessibleObject member) {
-
-        Type[] memberType = getMemberTypes(member);
-        for (Type type : memberType) {
-            if (!STANDARD_TARGET_TYPES.contains(type)) {
-                return type;
-            }
-        }
-        return null;
-    }
-
-    private static TypeConverter getConverter(AccessibleObject member) {
-
-        Class<? extends TypeConverter> converterClass = TypeConverter.VOID.class;
-
-        Convert aConvert = member.getAnnotation(Convert.class);
-        if (aConvert != null) {
-            converterClass = aConvert.value();
-        }
-        try {
-            return converterClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            log.error(e.getMessage(), e);
-        }
-
-        return null;
     }
 
     public static Type[] getMemberTypes(AccessibleObject member) {
@@ -454,13 +368,6 @@ public class EstivateMapper {
             return method.getGenericParameterTypes();
         }
         return null;
-    }
-
-    @Deprecated
-    public static final List<TypeConverter> convertors = new ArrayList<>();
-    static {
-        convertors.add(new PrimitiveTypeConverter());
-        convertors.add(new StandardTypeConverter());
     }
 
     protected Document parseDocument(InputStream document) {

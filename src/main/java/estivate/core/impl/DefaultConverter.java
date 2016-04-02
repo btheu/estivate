@@ -7,9 +7,7 @@ import estivate.TypeConverter;
 import estivate.core.Converter;
 import estivate.core.PrimitiveTypeConverter;
 import estivate.core.StandardTypeConverter;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class DefaultConverter implements Converter {
 
     public static final List<TypeConverter> convertors = new ArrayList<>();
