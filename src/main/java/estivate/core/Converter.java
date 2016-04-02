@@ -22,4 +22,16 @@ public interface Converter {
      */
     Object convert(Object value, Class<?> targetType);
 
+    public static final class VOID implements Converter {
+        @Override
+        public boolean canConvert(Object value, Class<?> targetType) {
+            return false;
+        }
+
+        @Override
+        public Object convert(Object value, Class<?> targetType) {
+            return value;
+        }
+    }
+
 }

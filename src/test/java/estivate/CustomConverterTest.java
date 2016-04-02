@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import estivate.annotations.Convert;
 import estivate.annotations.Text;
+import estivate.core.Converter;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -68,18 +69,18 @@ public class CustomConverterTest {
         return resourceAsStream;
     }
 
-    public static class DateConvertor implements TypeConverter {
+    public static class DateConvertor implements Converter {
 
         SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         @Override
-        public boolean canConvert(Class<?> targetType, Object value) {
+        public boolean canConvert(Object value, Class<?> targetType) {
             return targetType.isAssignableFrom(Date.class)
                     && value.getClass().equals(String.class);
         }
 
         @Override
-        public Object convert(Class<?> targetType, Object value) {
+        public Object convert(Object value, Class<?> targetType) {
             try {
                 log.info("converting Date with custom converter");
                 Date parse = SDF.parse((String) value);

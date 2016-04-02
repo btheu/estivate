@@ -7,7 +7,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import estivate.TypeConverter;
+import estivate.core.Converter;
 
 /**
  * @author Benoit Theunissen
@@ -17,6 +17,6 @@ import estivate.TypeConverter;
 @Retention(RUNTIME)
 public @interface Convert {
 
-    Class<? extends TypeConverter> value();
+    Class<? extends Converter> value();
 
 }

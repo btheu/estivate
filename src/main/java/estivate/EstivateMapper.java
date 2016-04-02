@@ -222,12 +222,12 @@ public class EstivateMapper {
                 // TODO converts all types for contexte
 
                 // find custom converter
-                TypeConverter customConverter = findCustomConverter(member);
+                Converter customConverter = findCustomConverter(member);
 
-                if (customConverter.canConvert(valueClass, valueIn)) {
+                if (customConverter.canConvert(valueIn, valueClass)) {
                     // custom converter
                     log.debug("Convert with custom converter");
-                    valuesOut.add(customConverter.convert(valueClass, valueIn));
+                    valuesOut.add(customConverter.convert(valueIn, valueClass));
                 } else if (isStandardType(valueIn, valueClass)) {
                     // standard converter
                     log.debug("Convert with standard converter");
@@ -333,9 +333,9 @@ public class EstivateMapper {
         return arguments;
     }
 
-    private static TypeConverter findCustomConverter(AccessibleObject member) {
+    private static Converter findCustomConverter(AccessibleObject member) {
 
-        Class<? extends TypeConverter> custom = TypeConverter.VOID.class;
+        Class<? extends Converter> custom = Converter.VOID.class;
 
         Convert aConvert = member.getAnnotation(Convert.class);
         if (aConvert != null) {
