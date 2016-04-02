@@ -5,7 +5,6 @@ import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.EstivateMapper;
 import estivate.annotations.Select;
 import estivate.annotations.Title;
 import lombok.Data;
@@ -32,7 +31,7 @@ public class TitleTest {
     }
 
     @Test
-    public void title2() {
+    public void title2Rec() {
 
         InputStream document = read("/title/u1.html");
 

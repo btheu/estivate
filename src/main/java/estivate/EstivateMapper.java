@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,13 +29,24 @@ import estivate.annotations.Title;
 import estivate.annotations.Val;
 import estivate.core.ClassUtils;
 import estivate.core.ConvertorContext;
+import estivate.core.MembersFinder;
 import estivate.core.PrimitiveTypeConvertor;
 import estivate.core.SelectEvaluator;
 import estivate.core.StandardTypeConvertor;
+import estivate.core.impl.DefaultMembersFinder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <li>browse members and call tasks implementing speciifc interfaces
+ * <li>get members ordered to evaluate
+ * <li>evaluate members
+ * 
+ * 
+ * @author Benoit Theunissen
+ *
+ */
 @Slf4j
 public class EstivateMapper {
 
@@ -50,6 +60,8 @@ public class EstivateMapper {
 
     protected static final String PACKAGE_NAME = Select.class.getPackage()
             .getName();
+
+    protected static MembersFinder membersFinder = new DefaultMembersFinder();
 
     public Object map(InputStream document, Type type) {
         Document parseDocument = parseDocument(document);
@@ -139,17 +151,21 @@ public class EstivateMapper {
         }
     }
 
+    /**
+     * Entry Point of core mapping.
+     * 
+     * @param document
+     * @param element
+     * @param clazz
+     * @param target
+     * @return
+     */
     public static <T> T map(Document document, Elements element, Class<T> clazz,
             T target) {
 
-        List<Field> allFields = getAllFields(target.getClass());
-        for (Field field : allFields) {
-            map(document, element, field, target);
-        }
-
-        Method[] methods = target.getClass().getMethods();
-        for (Method method : methods) {
-            map(document, element, method, target);
+        List<AccessibleObject> members = membersFinder.list(clazz);
+        for (AccessibleObject member : members) {
+            map(document, element, member, target);
         }
 
         return target;
@@ -369,21 +385,21 @@ public class EstivateMapper {
         convertors.add(new RecursiveMappingTypeConvertor());
     }
 
-	/**
-	 * Prepares futures method arguments (or field value) depending of ordered
-	 * expected types.
-	 * 
-	 * @param document
-	 * @param elements
-	 * @param value
-	 *            The current value of the DOM after selects and reduces
-	 * @param convertors
-	 *            Convertors to use for this evaluation
-	 * @param targetsType
-	 * 
-	 * @return Arguments ordered giving method signature aka <code>argumentsType
-	 *         </code>
-	 */
+    /**
+     * Prepares futures method arguments (or field value) depending of ordered
+     * expected types.
+     * 
+     * @param document
+     * @param elements
+     * @param value
+     *            The current value of the DOM after selects and reduces
+     * @param convertors
+     *            Convertors to use for this evaluation
+     * @param targetsType
+     * 
+     * @return Arguments ordered giving method signature aka <code>argumentsType
+     *         </code>
+     */
     protected static Object[] evaluateArguments(Document document,
             Elements elements, Object value, List<TypeConvertor> convertors,
             Type... targetsType) {
@@ -443,20 +459,6 @@ public class EstivateMapper {
         log.debug("set value by method [{} ({})]", method.getName(), values);
 
         method.invoke(target, values);
-    }
-
-    public static List<Field> getAllFields(Class<?> clazz) {
-
-        List<Field> res = new ArrayList<Field>();
-
-        Class<?> index = clazz;
-        while (index != Object.class) {
-            res.addAll(Arrays.asList(index.getDeclaredFields()));
-
-            index = index.getSuperclass();
-        }
-
-        return res;
     }
 
     protected Document parseDocument(InputStream document) {
