@@ -80,9 +80,17 @@ public class EstivateMapper {
         return map(parseDocument, new Elements(parseDocument), clazz);
     }
 
+    public <T> T map(Document document, Class<T> clazz) {
+        return map(document, new Elements(document), clazz);
+    }
+
     public <T> List<T> mapToList(InputStream document, Class<T> clazz) {
         Document parseDocument = parseDocument(document);
         return mapToList(parseDocument, new Elements(parseDocument), clazz);
+    }
+
+    public <T> List<T> mapToList(Document document, Class<T> clazz) {
+        return mapToList(document, new Elements(document), clazz);
     }
 
     /**
@@ -447,4 +455,5 @@ public class EstivateMapper {
     protected static Object getName(AnnotatedElement member) {
         return ClassUtils.getName(member);
     }
+
 }
