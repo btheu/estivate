@@ -44,15 +44,39 @@ public class DefaultReducter implements Reducter {
         Attr aAttr = member.getAnnotation(Attr.class);
         if (aAttr != null) {
 
-            Elements currElts = SelectEvaluater.select(aAttr, elementsIn,
+            Elements elementsOut = SelectEvaluater.select(aAttr, elementsIn,
                     member);
 
             log.debug("'{}' attr", getName(member));
 
-            log.debug("using attr()", getName(member));
+            if (isTargetList) {
+                List<String> list = new ArrayList<>();
 
-            value = currElts.attr(aAttr.value());
+                for (Element element : elementsOut) {
+                    list.add(element.attr(aAttr.value()));
+                }
 
+                value = list;
+            } else {
+                if (elementsOut.size() > 1) {
+                    log.warn(
+                            "'{}' attr using first element. Consider fixing the select expression to get only one element.",
+                            getName(member));
+                }
+                log.trace("attr in  '{}'", elementsOut);
+
+                log.debug("using attr()", getName(member));
+
+                StringBuilder sb = new StringBuilder(50);
+                for (Element element : elementsOut) {
+                    if (sb.length() != 0)
+                        sb.append(" ");
+                    sb.append(element.attr(aAttr.value()));
+                }
+
+                value = sb.toString();
+            }
+            log.trace("attr out  '{}'", value);
         }
 
         Val aVal = member.getAnnotation(Val.class);
