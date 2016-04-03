@@ -40,6 +40,7 @@ public class TagNameTest {
         @TagName(select = ".tag")
         public String tagName;
 
+        @TagName(select = ".tag")
         public List<String> tagNames;
 
     }

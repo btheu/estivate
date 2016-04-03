@@ -82,27 +82,77 @@ public class DefaultReducter implements Reducter {
         Val aVal = member.getAnnotation(Val.class);
         if (aVal != null) {
 
-            Elements currElts = SelectEvaluater.select(aVal, elementsIn,
+            Elements elementsOut = SelectEvaluater.select(aVal, elementsIn,
                     member);
 
             log.debug("'{}' val", getName(member));
 
-            log.debug("using val()", getName(member));
+            if (isTargetList) {
+                List<String> list = new ArrayList<>();
 
-            value = currElts.val();
+                for (Element element : elementsOut) {
+                    list.add(element.val());
+                }
+
+                value = list;
+            } else {
+                if (elementsOut.size() > 1) {
+                    log.warn(
+                            "'{}' val using first element. Consider fixing the select expression to get only one element.",
+                            getName(member));
+                }
+                log.trace("val in  '{}'", elementsOut);
+
+                log.debug("using val()", getName(member));
+
+                StringBuilder sb = new StringBuilder(50);
+                for (Element element : elementsOut) {
+                    if (sb.length() != 0)
+                        sb.append(" ");
+                    sb.append(element.val());
+                }
+
+                value = sb.toString();
+            }
+            log.trace("val out  '{}'", value);
         }
 
         TagName aTagName = member.getAnnotation(TagName.class);
         if (aTagName != null) {
 
-            Elements currElts = SelectEvaluater.select(aTagName, elementsIn,
+            Elements elementsOut = SelectEvaluater.select(aTagName, elementsIn,
                     member);
 
             log.debug("'{}' tagName", getName(member));
 
-            log.debug("using tagName()", getName(member));
+            if (isTargetList) {
+                List<String> list = new ArrayList<>();
 
-            value = currElts.first().tagName();
+                for (Element element : elementsOut) {
+                    list.add(element.tagName());
+                }
+
+                value = list;
+            } else {
+                if (elementsOut.size() > 1) {
+                    log.warn(
+                            "'{}' tagName using first element. Consider fixing the select expression to get only one element.",
+                            getName(member));
+                }
+                log.trace("tagName in  '{}'", elementsOut);
+
+                log.debug("using tagName()", getName(member));
+
+                StringBuilder sb = new StringBuilder(50);
+                for (Element element : elementsOut) {
+                    if (sb.length() != 0)
+                        sb.append(" ");
+                    sb.append(element.tagName());
+                }
+
+                value = sb.toString();
+            }
+            log.trace("tagName out  '{}'", value);
         }
 
         Title aTitle = member.getAnnotation(Title.class);
