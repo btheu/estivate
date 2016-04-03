@@ -49,7 +49,7 @@ Definition of Result class POJO definition which is:
 <dependency>
 	<groupId>com.github.btheu.estivate</groupId>
 	<artifactId>estivate</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 </dependency>
 ```
 

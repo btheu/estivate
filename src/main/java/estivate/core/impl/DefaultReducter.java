@@ -22,18 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefaultReducter implements Reducter {
 
-    /**
-     * Apply all rules (annotations) of type reduce.
+    /*
+     * (non-Javadoc)
      * 
-     * @see Attr
-     * @see Text
-     * @see Title
-     * @see TagName
-     * @see Val
-     * 
-     * @param elementSelected
-     * @param member
-     * @return
+     * @see estivate.core.Reducter#reduce(org.jsoup.nodes.Document,
+     * org.jsoup.select.Elements, java.lang.reflect.AccessibleObject, boolean)
      */
     @Override
     public Object reduce(Document document, Elements elementsIn,

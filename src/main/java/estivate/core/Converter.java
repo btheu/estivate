@@ -16,7 +16,7 @@ public interface Converter {
      * 
      * @param value
      *            The value to be converted
-     * @param target
+     * @param targetType
      *            The target type to which the value have to be converted
      * @return the value converted
      */

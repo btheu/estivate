@@ -37,13 +37,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <li>browse members and call tasks implementing speciifc interfaces
- * <li>get members ordered to evaluate
- * <li>evaluate select elements
- * <li>evaluate reduce value
- * <li>converts value
- * <li>sets value to target
- * 
+ * <ul>
+ * <li>browse members and call tasks implementing speciifc interfaces</li>
+ * <li>get members ordered to evaluate</li>
+ * <li>evaluate select elements</li>
+ * <li>evaluate reduce value</li>
+ * <li>converts value</li>
+ * <li>sets value to target</li>
+ * </ul>
  * 
  * @author Benoit Theunissen
  *
