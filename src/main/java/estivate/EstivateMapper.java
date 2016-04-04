@@ -38,7 +38,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * <ul>
- * <li>browse members and call tasks implementing speciifc interfaces</li>
+ * <li>parse members and call registered implementation</li>
+ * <li>use dialect JSoup by default</li>
  * <li>get members ordered to evaluate</li>
  * <li>evaluate select elements</li>
  * <li>evaluate reduce value</li>
