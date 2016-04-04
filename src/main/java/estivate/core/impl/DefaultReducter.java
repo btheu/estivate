@@ -36,6 +36,9 @@ public class DefaultReducter implements Reducter {
 		if (aAttr != null) {
 
 			Elements elementsOut = SelectEvaluater.select(aAttr, elementsIn, member);
+			if (elementsOut.isEmpty()) {
+				return null;
+			}
 
 			log.debug("'{}' attr", getName(member));
 
@@ -73,6 +76,9 @@ public class DefaultReducter implements Reducter {
 		if (aVal != null) {
 
 			Elements elementsOut = SelectEvaluater.select(aVal, elementsIn, member);
+			if (elementsOut.isEmpty()) {
+				return null;
+			}
 
 			log.debug("'{}' val", getName(member));
 
@@ -110,6 +116,9 @@ public class DefaultReducter implements Reducter {
 		if (aTagName != null) {
 
 			Elements elementsOut = SelectEvaluater.select(aTagName, elementsIn, member);
+			if (elementsOut.isEmpty()) {
+				return null;
+			}
 
 			log.debug("'{}' tagName", getName(member));
 
@@ -155,9 +164,14 @@ public class DefaultReducter implements Reducter {
 
 		Text aText = member.getAnnotation(Text.class);
 		if (aText != null) {
-			log.debug("'{}' text", getName(member));
 
 			Elements elementsOut = SelectEvaluater.select(aText, elementsIn, member);
+			if (elementsOut.isEmpty()) {
+				return null;
+			}
+
+			log.debug("'{}' text", getName(member));
+
 			if (isTargetList) {
 				List<String> list = new ArrayList<String>();
 				if (aText.own()) {

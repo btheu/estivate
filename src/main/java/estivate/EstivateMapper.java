@@ -211,6 +211,9 @@ public class EstivateMapper {
 			if (!optional && valueIn == null) {
 				throw new IllegalStateException("No value matched and not optional for " + getName(member));
 			}
+			if (optional && valueIn == null) {
+				return;
+			}
 
 			List<Object> valuesOut = new ArrayList<Object>();
 
