@@ -13,20 +13,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefaultSelecter implements Selecter {
 
-    @Override
-    public Elements select(Document document, Elements elements,
-            AccessibleObject member) {
+	public Elements select(Document document, Elements elements, AccessibleObject member) {
 
-        Elements results = elements;
+		Elements results = elements;
 
-        Select aSelect = member.getAnnotation(Select.class);
-        if (aSelect == null) {
-            log.debug("No Select found, using root element");
-        } else {
-            results = SelectEvaluater.select(aSelect, elements, member);
-        }
+		Select aSelect = member.getAnnotation(Select.class);
+		if (aSelect == null) {
+			log.debug("No Select found, using root element");
+		} else {
+			results = SelectEvaluater.select(aSelect, elements, member);
+		}
 
-        return results;
-    }
+		return results;
+	}
 
 }
