@@ -2,9 +2,9 @@ package estivate.core.eval;
 
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.parser.SelectQueryAST;
-import estivate.core.eval.EstivateEvaluater.EvalContext;
+import estivate.core.eval.EstivateEvaluator.EvalContext;
 
-public class SelectQueryEvaluater implements QueryASTEvaluater {
+public class SelectQueryEvaluator implements QueryASTEvaluator {
 
 	public EvalContext eval(EvalContext context, QueryAST query) {
 		SelectQueryAST select = (SelectQueryAST) query;
@@ -16,11 +16,11 @@ public class SelectQueryEvaluater implements QueryASTEvaluater {
 		return result;
 	}
 
-	public static QueryASTEvaluater.Factory factory = new Factory() {
+	public static QueryASTEvaluator.Factory factory = new Factory() {
 		@Override
-		public QueryASTEvaluater expressionEvaluater(QueryAST query) {
+		public QueryASTEvaluator expressionEvaluater(QueryAST query) {
 			if(query instanceof SelectQueryAST){
-				return new SelectQueryEvaluater();
+				return new SelectQueryEvaluator();
 			}
 			return super.expressionEvaluater(query);
 		}

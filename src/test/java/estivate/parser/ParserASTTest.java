@@ -10,7 +10,7 @@ import estivate.annotations.Select;
 import estivate.annotations.Text;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.parser.EstivateParser;
-import estivate.core.eval.EstivateEvaluater;
+import estivate.core.eval.EstivateEvaluator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +39,7 @@ public class ParserASTTest extends EstivateTest {
 
 		log.info(ast.toString());
 
-		Object result = EstivateEvaluater.eval(document, ast, Result1.class);
+		Object result = EstivateEvaluator.eval(document, ast, Result1.class);
 		
 		log.info(ast.toString());
 

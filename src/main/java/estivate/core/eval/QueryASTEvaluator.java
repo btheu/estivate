@@ -1,9 +1,9 @@
 package estivate.core.eval;
 
 import estivate.core.ast.QueryAST;
-import estivate.core.eval.EstivateEvaluater.EvalContext;
+import estivate.core.eval.EstivateEvaluator.EvalContext;
 
-public interface QueryASTEvaluater {
+public interface QueryASTEvaluator {
 
 	/**
 	 * Give a new context after eval of the query
@@ -16,7 +16,7 @@ public interface QueryASTEvaluater {
 
 	public abstract class Factory {
 
-		public QueryASTEvaluater expressionEvaluater(QueryAST query) {
+		public QueryASTEvaluator expressionEvaluater(QueryAST query) {
 			return null;
 		}
 	}

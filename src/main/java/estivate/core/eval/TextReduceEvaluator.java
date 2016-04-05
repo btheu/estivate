@@ -4,9 +4,9 @@ import org.jsoup.nodes.Element;
 
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.parser.TextReduceAST;
-import estivate.core.eval.EstivateEvaluater.EvalContext;
+import estivate.core.eval.EstivateEvaluator.EvalContext;
 
-public class TextReduceEvaluater implements ReduceASTEvaluater {
+public class TextReduceEvaluator implements ReduceASTEvaluator {
 
     public ReduceResult eval(EvalContext context, ReduceAST reduce) {
         
@@ -30,12 +30,12 @@ public class TextReduceEvaluater implements ReduceASTEvaluater {
         return ReduceResult.builder().value(value).build();
     }
 
-    public static estivate.core.eval.ReduceASTEvaluater.Factory factory = new Factory() {
+    public static estivate.core.eval.ReduceASTEvaluator.Factory factory = new Factory() {
 
         @Override
-        public ReduceASTEvaluater expressionEvaluater(ReduceAST reduce) {
+        public ReduceASTEvaluator expressionEvaluater(ReduceAST reduce) {
             if(reduce instanceof TextReduceAST){
-                return new TextReduceEvaluater();
+                return new TextReduceEvaluator();
             }
             return super.expressionEvaluater(reduce);
         }

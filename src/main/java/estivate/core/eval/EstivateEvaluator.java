@@ -14,25 +14,25 @@ import estivate.core.ast.FieldExpressionAST;
 import estivate.core.ast.MethodExpressionAST;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
-import estivate.core.eval.ReduceASTEvaluater.ReduceResult;
+import estivate.core.eval.ReduceASTEvaluator.ReduceResult;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class EstivateEvaluater {
+public class EstivateEvaluator {
 
-    public static final List<QueryASTEvaluater.Factory> queryEvalFacts = new ArrayList<QueryASTEvaluater.Factory>();
+    public static final List<QueryASTEvaluator.Factory> queryEvalFacts = new ArrayList<QueryASTEvaluator.Factory>();
     static {
-        queryEvalFacts.add(EmptyQueryEvaluater.factory);
-        queryEvalFacts.add(SelectQueryEvaluater.factory);
+        queryEvalFacts.add(EmptyQueryEvaluator.factory);
+        queryEvalFacts.add(SelectQueryEvaluator.factory);
     }
-    public static final List<ReduceASTEvaluater.Factory> reduceEvalFacts = new ArrayList<ReduceASTEvaluater.Factory>();
+    public static final List<ReduceASTEvaluator.Factory> reduceEvalFacts = new ArrayList<ReduceASTEvaluator.Factory>();
     static {
-        reduceEvalFacts.add(TextReduceEvaluater.factory);
-        reduceEvalFacts.add(AttrReduceEvaluater.factory);
+        reduceEvalFacts.add(TextReduceEvaluator.factory);
+        reduceEvalFacts.add(AttrReduceEvaluator.factory);
     }
-    public static final List<ExpressionASTEvaluater.Factory> expressionEvalFacts = new ArrayList<ExpressionASTEvaluater.Factory>();
+    public static final List<ExpressionASTEvaluator.Factory> expressionEvalFacts = new ArrayList<ExpressionASTEvaluator.Factory>();
     static {
         expressionEvalFacts.add(FieldExpEvaluater.factory);
         expressionEvalFacts.add(MethodExpEvaluater.factory);
@@ -66,8 +66,8 @@ public class EstivateEvaluater {
 
     private static void evalExpression(EvalContext context, ExpressionAST expression) {
         boolean noFound = true;
-        for (ExpressionASTEvaluater.Factory evalFact : expressionEvalFacts) {
-            ExpressionASTEvaluater eval = evalFact.expressionEvaluater(expression);
+        for (ExpressionASTEvaluator.Factory evalFact : expressionEvalFacts) {
+            ExpressionASTEvaluator eval = evalFact.expressionEvaluater(expression);
             if(eval != null){
                 eval.eval(context.toBuilder().build(), expression);
                 noFound = false;
@@ -79,8 +79,8 @@ public class EstivateEvaluater {
     }
 
     private static EvalContext evalQuery(EvalContext context, QueryAST query) {
-        for (QueryASTEvaluater.Factory factory : queryEvalFacts) {
-            QueryASTEvaluater eval = factory.expressionEvaluater(query);
+        for (QueryASTEvaluator.Factory factory : queryEvalFacts) {
+            QueryASTEvaluator eval = factory.expressionEvaluater(query);
             if(eval != null){
                 
                 
@@ -100,8 +100,8 @@ public class EstivateEvaluater {
     }
 
     private static ReduceResult evalReduce(EvalContext context, ReduceAST reduce) {
-        for (ReduceASTEvaluater.Factory factory : reduceEvalFacts) {
-            ReduceASTEvaluater eval = factory.expressionEvaluater(reduce);
+        for (ReduceASTEvaluator.Factory factory : reduceEvalFacts) {
+            ReduceASTEvaluator eval = factory.expressionEvaluater(reduce);
             if(eval != null){
                 log.debug("> Eval '{}' with dom '{}'",
                         reduce.getClass().getSimpleName(),context.getDom());
@@ -118,7 +118,7 @@ public class EstivateEvaluater {
         return ReduceResult.builder().build();
     }
 
-    public static class FieldExpEvaluater implements ExpressionASTEvaluater{
+    public static class FieldExpEvaluater implements ExpressionASTEvaluator{
 
         public void eval(EvalContext context, ExpressionAST expression) {
             FieldExpressionAST exp = (FieldExpressionAST) expression;
@@ -135,10 +135,10 @@ public class EstivateEvaluater {
             log.trace("< eval field");
         }
 
-        public static ExpressionASTEvaluater.Factory factory = new ExpressionASTEvaluater.Factory() {
+        public static ExpressionASTEvaluator.Factory factory = new ExpressionASTEvaluator.Factory() {
 
             @Override
-            public ExpressionASTEvaluater expressionEvaluater(ExpressionAST expression) {
+            public ExpressionASTEvaluator expressionEvaluater(ExpressionAST expression) {
                 if(expression instanceof FieldExpressionAST){
                     return new FieldExpEvaluater();
                 }
@@ -150,7 +150,7 @@ public class EstivateEvaluater {
 
 
 
-    public static class MethodExpEvaluater implements ExpressionASTEvaluater{
+    public static class MethodExpEvaluater implements ExpressionASTEvaluator{
 
         public void eval(EvalContext context, ExpressionAST expression) {
             MethodExpressionAST exp = (MethodExpressionAST) expression;
@@ -165,10 +165,10 @@ public class EstivateEvaluater {
             log.trace("< eval method");
         }
 
-        public static Factory factory = new ExpressionASTEvaluater.Factory() {
+        public static Factory factory = new ExpressionASTEvaluator.Factory() {
 
             @Override
-            public ExpressionASTEvaluater expressionEvaluater(ExpressionAST expression) {
+            public ExpressionASTEvaluator expressionEvaluater(ExpressionAST expression) {
                 if(expression instanceof MethodExpressionAST){
                     return new MethodExpEvaluater();
                 }
