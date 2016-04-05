@@ -13,6 +13,7 @@ import estivate.annotations.ast.FieldExpressionAST;
 import estivate.annotations.ast.MethodExpressionAST;
 import estivate.annotations.ast.QueryAST;
 import estivate.annotations.ast.ReduceAST;
+import estivate.core.ClassUtils;
 import estivate.core.eval.ReduceASTEvaluater.ReduceResult;
 import lombok.Builder;
 import lombok.Data;
@@ -37,18 +38,22 @@ public class EstivateEvaluater {
         expressionEvalFacts.add(MethodExpEvaluater.factory);
     }
 
+    
+    public static <T> T eval(Document document, EstivateAST ast,
+            Class<T> clazz) {
 
-    public static Object eval(Document document, EstivateAST ast) {
-
+        T target = ClassUtils.newInstance(clazz);
+        
         EvalContext context = new EvalContext.EvalContextBuilder()
                 .document(document)
                 .dom(new Elements(document))
+                .target(target)
                 .optional(ast.isOptional())
                 .build();
 
         evalExpressions(context, ast);
 
-        return null;
+        return target;
     }
 
     public static void evalExpressions(EvalContext context, ExpressionsAST ast) {
@@ -113,7 +118,6 @@ public class EstivateEvaluater {
         return ReduceResult.builder().build();
     }
 
-
     public static class FieldExpEvaluater implements ExpressionASTEvaluater{
 
         public void eval(EvalContext context, ExpressionAST expression) {
@@ -125,6 +129,8 @@ public class EstivateEvaluater {
             ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
 
             exp.setValue(evalReduce.getValue());
+            
+            ClassUtils.setValue(exp.getField(),contextSelect.getTarget(),evalReduce.getValue());
             
             log.trace("< eval field");
         }
@@ -152,8 +158,10 @@ public class EstivateEvaluater {
 
             EvalContext contextSelect = evalQuery(context.toBuilder().build(),exp.getQuery());
 
-            evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
+            ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
 
+            ClassUtils.setValue(exp.getMethod(),contextSelect.getTarget(),evalReduce.getValue());
+            
             log.trace("< eval method");
         }
 
@@ -179,6 +187,10 @@ public class EstivateEvaluater {
 
         protected Elements dom;
 
+        protected Object target;
+        
     }
+
+  
 
 }

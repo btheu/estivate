@@ -3,6 +3,7 @@ package estivate.parser;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
 
+import estivate.EstivateMapper2;
 import estivate.EstivateTest;
 import estivate.annotations.Attr;
 import estivate.annotations.Select;
@@ -16,6 +17,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ParserASTTest extends EstivateTest {
 
+    @Test
+    public void parse2() {
+        
+        Document document = readDocument("/attr/u2.html");
+        
+        EstivateMapper2 mapper = new EstivateMapper2();
+        
+        Result1 result = mapper.map(document, Result1.class);
+        
+        log.info(result.toString());
+        
+    }
+    
 	@Test
 	public void parse1() {
 
@@ -25,7 +39,7 @@ public class ParserASTTest extends EstivateTest {
 
 		log.info(ast.toString());
 
-		Object result = EstivateEvaluater.eval(document, ast);
+		Object result = EstivateEvaluater.eval(document, ast, Result1.class);
 		
 		log.info(ast.toString());
 
