@@ -5,7 +5,7 @@ import estivate.annotations.ast.ExpressionAST;
 
 public interface ExpressionASTEvaluater {
 
-	void eval(EvalContext context, ExpressionAST expression);
+	public void eval(EvalContext context, ExpressionAST expression);
 	
 	public abstract class Factory {
 

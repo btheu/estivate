@@ -46,6 +46,10 @@ public class ParserASTTest extends EstivateTest {
 		@Select("#famousId")
 		@Text
 		public String valueOfFamous3;
+		
+		@Select("div")
+		@Attr("role")
+		public String tust;
 	}
 
 }

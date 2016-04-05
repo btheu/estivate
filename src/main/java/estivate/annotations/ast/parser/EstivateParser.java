@@ -73,7 +73,6 @@ public class EstivateParser {
 		parseQueryAndReduce(exp, field.getAnnotations());
 
 		// is not list
-		exp.setIsTargetList(false);
 
 		// is list
 

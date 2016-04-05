@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 public class ExpressionsAST {
 
+	protected QueryAST query;
+	
 	protected List<ExpressionAST> expressions = new ArrayList<ExpressionAST>();
 
 }

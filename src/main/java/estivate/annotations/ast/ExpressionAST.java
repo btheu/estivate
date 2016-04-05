@@ -11,6 +11,4 @@ public abstract class ExpressionAST {
 
 	protected Boolean optional;
 
-	protected Boolean isTargetList = false;
-
 }
