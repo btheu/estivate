@@ -1,12 +1,12 @@
-package estivate.annotations.ast.parser;
+package estivate.core.ast.parser;
 
 import java.lang.annotation.Annotation;
 
 import org.jsoup.helper.StringUtil;
 
 import estivate.annotations.Select;
-import estivate.annotations.ast.QueryAST;
-import estivate.annotations.ast.parser.EstivateParser.QueryParser;
+import estivate.core.ast.QueryAST;
+import estivate.core.ast.parser.EstivateParser.QueryParser;
 import estivate.utils.AnnotationsUtils;
 
 /**

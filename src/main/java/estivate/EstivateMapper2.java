@@ -8,8 +8,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import estivate.annotations.Select;
-import estivate.annotations.ast.EstivateAST;
-import estivate.annotations.ast.parser.EstivateParser;
+import estivate.core.ast.EstivateAST;
+import estivate.core.ast.parser.EstivateParser;
 import estivate.core.eval.EstivateEvaluater;
 import lombok.Getter;
 import lombok.Setter;

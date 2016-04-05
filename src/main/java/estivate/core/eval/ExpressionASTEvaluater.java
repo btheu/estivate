@@ -1,6 +1,6 @@
 package estivate.core.eval;
 
-import estivate.annotations.ast.ExpressionAST;
+import estivate.core.ast.ExpressionAST;
 import estivate.core.eval.EstivateEvaluater.EvalContext;
 
 public interface ExpressionASTEvaluater {

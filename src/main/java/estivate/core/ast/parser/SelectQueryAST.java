@@ -1,6 +1,6 @@
-package estivate.annotations.ast.parser;
+package estivate.core.ast.parser;
 
-import estivate.annotations.ast.QueryAST;
+import estivate.core.ast.QueryAST;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

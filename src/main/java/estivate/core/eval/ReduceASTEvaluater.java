@@ -1,6 +1,6 @@
 package estivate.core.eval;
 
-import estivate.annotations.ast.ReduceAST;
+import estivate.core.ast.ReduceAST;
 import estivate.core.eval.EstivateEvaluater.EvalContext;
 import lombok.Builder;
 import lombok.Data;

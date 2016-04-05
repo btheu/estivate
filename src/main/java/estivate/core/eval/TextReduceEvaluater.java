@@ -2,8 +2,8 @@ package estivate.core.eval;
 
 import org.jsoup.nodes.Element;
 
-import estivate.annotations.ast.ReduceAST;
-import estivate.annotations.ast.parser.TextReduceAST;
+import estivate.core.ast.ReduceAST;
+import estivate.core.ast.parser.TextReduceAST;
 import estivate.core.eval.EstivateEvaluater.EvalContext;
 
 public class TextReduceEvaluater implements ReduceASTEvaluater {

@@ -1,6 +1,6 @@
 package estivate.core.eval;
 
-import estivate.annotations.ast.QueryAST;
+import estivate.core.ast.QueryAST;
 import estivate.core.eval.EstivateEvaluater.EvalContext;
 
 public interface QueryASTEvaluater {

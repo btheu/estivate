@@ -1,6 +1,5 @@
-package estivate.annotations.ast;
+package estivate.core.ast;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 import lombok.Data;
@@ -10,13 +9,12 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class FieldExpressionAST extends ExpressionAST {
-
-	protected Field field;
+public class EstivateAST extends ExpressionsAST {
 
 	protected Type targetType;
 
 	protected Class<?> targetRawClass;
 
-	protected Object value;
+	protected boolean optional = false;
+
 }

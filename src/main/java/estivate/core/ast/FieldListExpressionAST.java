@@ -1,4 +1,4 @@
-package estivate.annotations.ast;
+package estivate.core.ast;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,7 +7,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class MethodListExpressionAST extends MethodExpressionAST {
+public class FieldListExpressionAST extends FieldExpressionAST {
 
 	protected ExpressionsAST expressions;
 

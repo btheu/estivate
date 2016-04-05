@@ -1,4 +1,4 @@
-package estivate.annotations.ast;
+package estivate.core.ast;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

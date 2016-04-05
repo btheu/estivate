@@ -1,12 +1,12 @@
-package estivate.annotations.ast.parser;
+package estivate.core.ast.parser;
 
 import java.lang.annotation.Annotation;
 
 import estivate.annotations.Attr;
-import estivate.annotations.ast.QueryAST;
-import estivate.annotations.ast.ReduceAST;
-import estivate.annotations.ast.parser.EstivateParser.QueryParser;
-import estivate.annotations.ast.parser.EstivateParser.ReduceParser;
+import estivate.core.ast.QueryAST;
+import estivate.core.ast.ReduceAST;
+import estivate.core.ast.parser.EstivateParser.QueryParser;
+import estivate.core.ast.parser.EstivateParser.ReduceParser;
 import estivate.utils.AnnotationsUtils;
 
 /**

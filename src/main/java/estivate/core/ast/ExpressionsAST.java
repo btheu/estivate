@@ -1,4 +1,4 @@
-package estivate.annotations.ast;
+package estivate.core.ast;
 
 import java.util.ArrayList;
 import java.util.List;

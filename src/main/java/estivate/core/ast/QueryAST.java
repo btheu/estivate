@@ -1,4 +1,4 @@
-package estivate.annotations.ast;
+package estivate.core.ast;
 
 import lombok.Data;
 
