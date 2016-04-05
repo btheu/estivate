@@ -1,13 +1,30 @@
 package estivate.core;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
 import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ClassUtils {
+
+	public static Type[] getMemberTypes(AccessibleObject member) {
+		if (member instanceof Field) {
+			Field field = (Field) member;
+
+			return new Type[] { field.getGenericType() };
+
+		} else if (member instanceof Method) {
+			Method method = (Method) member;
+
+			return method.getGenericParameterTypes();
+		}
+		return null;
+	}
 
 	/**
 	 * 

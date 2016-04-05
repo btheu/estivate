@@ -190,7 +190,7 @@ public class EstivateMapper {
 		if (hasOneAnnotationMapper(member)) {
 
 			// find all types arguments for method member
-			Type[] valueTypes = getMemberTypes(member);
+			Type[] valueTypes = ClassUtils.getMemberTypes(member);
 
 			Type valueTypeTarget = getValueTypeTarget(valueTypes);
 
@@ -314,7 +314,7 @@ public class EstivateMapper {
 
 	private static Object[] prepareArgumentValues(Document document, Elements elementsIn, AccessibleObject member,
 			List<Object> valuesIn) {
-		Type[] memberTypes = getMemberTypes(member);
+		Type[] memberTypes = ClassUtils.getMemberTypes(member);
 
 		Object[] arguments = new Object[memberTypes.length];
 
@@ -363,20 +363,6 @@ public class EstivateMapper {
 			}
 		}
 		return false;
-	}
-
-	public static Type[] getMemberTypes(AccessibleObject member) {
-		if (member instanceof Field) {
-			Field field = (Field) member;
-
-			return new Type[] { field.getGenericType() };
-
-		} else if (member instanceof Method) {
-			Method method = (Method) member;
-
-			return method.getGenericParameterTypes();
-		}
-		return null;
 	}
 
 	protected Document parseDocument(InputStream document) {
