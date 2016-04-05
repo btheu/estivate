@@ -16,15 +16,19 @@ import estivate.core.MembersFinder;
  */
 public class DefaultMembersFinder implements MembersFinder {
 
+	public List<Field> listFields(Class<?> clazz) {
+		return getAllFields(clazz);
+	}
+
+	public List<Method> listMethods(Class<?> clazz) {
+		return Arrays.asList(clazz.getMethods());
+	}
+
 	public List<AccessibleObject> list(Class<?> clazz) {
 		List<AccessibleObject> members = new ArrayList<AccessibleObject>();
 
-		members.addAll(getAllFields(clazz));
-
-		Method[] methods = clazz.getMethods();
-		for (Method method : methods) {
-			members.add(method);
-		}
+		members.addAll(listFields(clazz));
+		members.addAll(listMethods(clazz));
 
 		return members;
 	}
