@@ -5,8 +5,8 @@ import java.lang.annotation.Annotation;
 import org.jsoup.helper.StringUtil;
 
 import estivate.annotations.Select;
-import estivate.annotations.ast.EstivateParserAST.QueryParser;
 import estivate.annotations.ast.QueryAST;
+import estivate.annotations.ast.parser.EstivateParser.QueryParser;
 import estivate.utils.AnnotationsUtils;
 
 /**

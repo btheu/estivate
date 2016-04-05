@@ -3,10 +3,10 @@ package estivate.annotations.ast.parser;
 import java.lang.annotation.Annotation;
 
 import estivate.annotations.Attr;
-import estivate.annotations.ast.EstivateParserAST.QueryParser;
-import estivate.annotations.ast.EstivateParserAST.ReduceParser;
 import estivate.annotations.ast.QueryAST;
 import estivate.annotations.ast.ReduceAST;
+import estivate.annotations.ast.parser.EstivateParser.QueryParser;
+import estivate.annotations.ast.parser.EstivateParser.ReduceParser;
 import estivate.utils.AnnotationsUtils;
 
 /**

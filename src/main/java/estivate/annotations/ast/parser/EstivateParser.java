@@ -1,4 +1,4 @@
-package estivate.annotations.ast;
+package estivate.annotations.ast.parser;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -6,14 +6,21 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import estivate.annotations.ast.parser.AttrParser;
-import estivate.annotations.ast.parser.SelectParser;
+import estivate.annotations.ast.EmptyQueryAST;
+import estivate.annotations.ast.EmptyReduceAST;
+import estivate.annotations.ast.EstivateAST;
+import estivate.annotations.ast.ExpressionAST;
+import estivate.annotations.ast.ExpressionsAST;
+import estivate.annotations.ast.FieldExpressionAST;
+import estivate.annotations.ast.MethodExpressionAST;
+import estivate.annotations.ast.QueryAST;
+import estivate.annotations.ast.ReduceAST;
 import estivate.core.MembersFinder;
 import estivate.core.impl.DefaultMembersFinder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class EstivateParserAST {
+public class EstivateParser {
 
 	protected static MembersFinder membersFinder = new DefaultMembersFinder();
 

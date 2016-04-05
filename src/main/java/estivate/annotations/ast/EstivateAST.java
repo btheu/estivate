@@ -15,6 +15,6 @@ public class EstivateAST extends ExpressionsAST {
 
 	protected Class<?> targetRawClass;
 
-	protected Boolean optional;
+	protected boolean optional = false;
 
 }

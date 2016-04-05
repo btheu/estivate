@@ -1,0 +1,26 @@
+package estivate;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Assert;
+
+public abstract class EstivateTest {
+
+	protected InputStream read(String string) {
+		InputStream resourceAsStream = EstivateMapper.class.getResourceAsStream(string);
+		Assert.assertNotNull(resourceAsStream);
+		return resourceAsStream;
+	}
+
+	protected Document readDocument(String string) {
+		try {
+			return Jsoup.parse(read(string), "UTF-8", "/");
+		} catch (IOException e) {
+			throw new RuntimeException("Cant parse document.", e);
+		}
+	}
+
+}
