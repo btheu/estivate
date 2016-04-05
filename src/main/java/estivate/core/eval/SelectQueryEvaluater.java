@@ -1,8 +1,8 @@
 package estivate.core.eval;
 
-import estivate.EstivateEvaluater.EvalContext;
 import estivate.annotations.ast.QueryAST;
 import estivate.annotations.ast.parser.SelectQueryAST;
+import estivate.core.eval.EstivateEvaluater.EvalContext;
 
 public class SelectQueryEvaluater implements QueryASTEvaluater {
 

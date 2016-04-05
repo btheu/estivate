@@ -1,19 +1,18 @@
 package estivate.core.eval;
 
-import estivate.EstivateEvaluater.EvalContext;
 import estivate.annotations.ast.ReduceAST;
 import estivate.annotations.ast.parser.AttrReduceAST;
+import estivate.core.eval.EstivateEvaluater.EvalContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AttrReduceEvaluater implements ReduceASTEvaluater {
 
-	public void eval(EvalContext context, ReduceAST reduce) {
+	public ReduceResult eval(EvalContext context, ReduceAST reduce) {
 
 		AttrReduceAST attr = (AttrReduceAST) reduce;
 		
-		log.debug("Attr found '{}'", context.getDom().attr(attr.getAttr()));
-		
+		return ReduceResult.builder().value(context.getDom().attr(attr.getAttr())).build();
 	}
 	
 	public static estivate.core.eval.ReduceASTEvaluater.Factory factory = new Factory() {

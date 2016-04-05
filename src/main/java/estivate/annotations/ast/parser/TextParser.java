@@ -21,21 +21,27 @@ public class TextParser implements QueryParser, ReduceParser {
 
 	public QueryAST parseQuery(Annotation[] annotations) {
 
-		Text aAttr = (Text) AnnotationsUtils.find(annotations, TYPE);
+		Text aText = (Text) AnnotationsUtils.find(annotations, TYPE);
 
 		SelectQueryAST query = new SelectQueryAST();
 
-		query.setUnique(aAttr.unique());
-		query.setIndex(aAttr.index());
-		query.setFirst(aAttr.first());
-		query.setLast(aAttr.last());
-		query.setQueryString(aAttr.select());
+		query.setUnique(aText.unique());
+		query.setIndex(aText.index());
+		query.setFirst(aText.first());
+		query.setLast(aText.last());
+		query.setQueryString(aText.select());
 
 		return query;
 	}
 
 	public ReduceAST parseReduce(Annotation[] annotations) {
-		return new TextReduceAST();
+	    
+	    Text aText = (Text) AnnotationsUtils.find(annotations, TYPE);
+	    
+	    TextReduceAST reduce = new TextReduceAST();
+	    reduce.setOwn(aText.own());
+	    
+		return reduce;
 	}
 
 	public static QueryParser.Factory queryFactory = new QueryParser.Factory() {

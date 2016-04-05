@@ -1,8 +1,8 @@
 package estivate.core.eval;
 
-import estivate.EstivateEvaluater.EvalContext;
 import estivate.annotations.ast.EmptyQueryAST;
 import estivate.annotations.ast.QueryAST;
+import estivate.core.eval.EstivateEvaluater.EvalContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

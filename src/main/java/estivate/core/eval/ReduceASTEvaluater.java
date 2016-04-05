@@ -1,11 +1,13 @@
 package estivate.core.eval;
 
-import estivate.EstivateEvaluater.EvalContext;
 import estivate.annotations.ast.ReduceAST;
+import estivate.core.eval.EstivateEvaluater.EvalContext;
+import lombok.Builder;
+import lombok.Data;
 
 public interface ReduceASTEvaluater {
 
-	public void eval(EvalContext context, ReduceAST reduce);
+    public ReduceResult eval(EvalContext context, ReduceAST reduce);
 
 	public abstract class Factory {
 
@@ -14,4 +16,10 @@ public interface ReduceASTEvaluater {
 		}
 	}
 
+	@Data
+	@Builder
+	public static class ReduceResult {
+	    protected Object value;
+	}
+	
 }

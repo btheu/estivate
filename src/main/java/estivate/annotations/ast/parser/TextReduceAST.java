@@ -10,4 +10,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class TextReduceAST extends ReduceAST {
 
+    protected boolean own = false;
+    
 }

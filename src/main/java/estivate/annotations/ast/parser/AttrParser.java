@@ -17,9 +17,11 @@ import estivate.utils.AnnotationsUtils;
  */
 public class AttrParser implements QueryParser, ReduceParser {
 
+    public static final Class<? extends Annotation> TYPE = Attr.class;
+    
 	public QueryAST parseQuery(Annotation[] annotations) {
 
-		Attr aAttr = AnnotationsUtils.find(annotations, Attr.class);
+		Attr aAttr = (Attr) AnnotationsUtils.find(annotations, TYPE);
 
 		SelectQueryAST query = new SelectQueryAST();
 
@@ -33,7 +35,8 @@ public class AttrParser implements QueryParser, ReduceParser {
 	}
 
 	public ReduceAST parseReduce(Annotation[] annotations) {
-		Attr aAttr = AnnotationsUtils.find(annotations, Attr.class);
+	    
+		Attr aAttr = (Attr) AnnotationsUtils.find(annotations, TYPE);
 
 		AttrReduceAST reduce = new AttrReduceAST();
 
@@ -45,7 +48,7 @@ public class AttrParser implements QueryParser, ReduceParser {
 	public static QueryParser.Factory queryFactory = new QueryParser.Factory() {
 		@Override
 		public QueryParser queryParser(Annotation[] annotations) {
-			if (AnnotationsUtils.contains(annotations, Attr.class)) {
+			if (AnnotationsUtils.contains(annotations, TYPE)) {
 				return new AttrParser();
 			}
 			return super.queryParser(annotations);
@@ -55,7 +58,7 @@ public class AttrParser implements QueryParser, ReduceParser {
 	public static ReduceParser.Factory reduceFactory = new ReduceParser.Factory() {
 		@Override
 		public ReduceParser reduceParser(Annotation[] annotations) {
-			if (AnnotationsUtils.contains(annotations, Attr.class)) {
+			if (AnnotationsUtils.contains(annotations, TYPE)) {
 				return new AttrParser();
 			}
 			return super.reduceParser(annotations);

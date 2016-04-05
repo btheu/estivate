@@ -28,11 +28,12 @@ public class EstivateParser {
 	static {
 		queryParserFactories.add(SelectParser.queryFactory);
 		queryParserFactories.add(AttrParser.queryFactory);
+		queryParserFactories.add(TextParser.queryFactory);
 	}
 	protected static List<ReduceParser.Factory> reduceParserFactories = new ArrayList<ReduceParser.Factory>();
 	static {
 		reduceParserFactories.add(AttrParser.reduceFactory);
-
+		reduceParserFactories.add(TextParser.reduceFactory);
 	}
 
 	public static EstivateAST parse(Class<?> clazz) {
