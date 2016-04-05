@@ -3,6 +3,6 @@ package estivate.annotations.ast;
 import lombok.Data;
 
 @Data
-public abstract class SelectAST {
+public abstract class QueryAST {
 
 }

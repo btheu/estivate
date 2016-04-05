@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public abstract class ExpressionAST {
 
-	protected SelectAST select;
+	protected QueryAST query;
 
 	protected ReduceAST reduce;
 

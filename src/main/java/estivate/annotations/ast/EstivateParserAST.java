@@ -6,21 +6,25 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import estivate.annotations.ast.parser.AttrParser;
+import estivate.annotations.ast.parser.SelectParser;
 import estivate.core.MembersFinder;
 import estivate.core.impl.DefaultMembersFinder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ParserAST {
+public class EstivateParserAST {
 
 	protected static MembersFinder membersFinder = new DefaultMembersFinder();
 
-	protected static List<SelectPaser.Factory> selectParserFactories = new ArrayList<ParserAST.SelectPaser.Factory>();
+	protected static List<QueryParser.Factory> queryParserFactories = new ArrayList<QueryParser.Factory>();
 	static {
-
+		queryParserFactories.add(SelectParser.queryFactory);
+		queryParserFactories.add(AttrParser.queryFactory);
 	}
-	protected static List<ReducePaser.Factory> reduceParserFactories = new ArrayList<ParserAST.ReducePaser.Factory>();
+	protected static List<ReduceParser.Factory> reduceParserFactories = new ArrayList<ReduceParser.Factory>();
 	static {
+		reduceParserFactories.add(AttrParser.reduceFactory);
 
 	}
 
@@ -59,7 +63,7 @@ public class ParserAST {
 		exp.setField(field);
 
 		// common properties
-		parseSelectAndReduce(exp, field.getAnnotations());
+		parseQueryAndReduce(exp, field.getAnnotations());
 
 		// is not list
 		exp.setIsTargetList(false);
@@ -69,26 +73,26 @@ public class ParserAST {
 		return exp;
 	}
 
-	private static void parseSelectAndReduce(ExpressionAST exp, Annotation[] annotations) {
-		exp.setSelect(parseSelect(annotations));
+	private static void parseQueryAndReduce(ExpressionAST exp, Annotation[] annotations) {
+		exp.setQuery(parseQuery(annotations));
 		exp.setReduce(parseReduce(annotations));
 	}
 
-	private static SelectAST parseSelect(Annotation[] annotations) {
-		for (SelectPaser.Factory factory : selectParserFactories) {
-			SelectPaser selectParser = factory.selectParser(annotations);
-			if (selectParser != null) {
-				return selectParser.parse(annotations);
+	private static QueryAST parseQuery(Annotation[] annotations) {
+		for (QueryParser.Factory factory : queryParserFactories) {
+			QueryParser queryParser = factory.queryParser(annotations);
+			if (queryParser != null) {
+				return queryParser.parseQuery(annotations);
 			}
 		}
-		return new EmptySelectAST();
+		return new EmptyQueryAST();
 	}
 
 	private static ReduceAST parseReduce(Annotation[] annotations) {
-		for (ReducePaser.Factory factory : reduceParserFactories) {
-			ReducePaser reduceParser = factory.reduceParser(annotations);
+		for (ReduceParser.Factory factory : reduceParserFactories) {
+			ReduceParser reduceParser = factory.reduceParser(annotations);
 			if (reduceParser != null) {
-				return reduceParser.parse(annotations);
+				return reduceParser.parseReduce(annotations);
 			}
 		}
 		return new EmptyReduceAST();
@@ -108,18 +112,18 @@ public class ParserAST {
 		MethodExpressionAST exp = new MethodExpressionAST();
 		exp.setMethod(method);
 
-		parseSelectAndReduce(exp, method.getAnnotations());
+		parseQueryAndReduce(exp, method.getAnnotations());
 
 		return exp;
 	}
 
-	public static interface SelectPaser {
+	public static interface QueryParser {
 
-		SelectAST parse(Annotation[] annotations);
+		QueryAST parseQuery(Annotation[] annotations);
 
 		abstract class Factory {
 
-			SelectPaser selectParser(Annotation[] annotations) {
+			public QueryParser queryParser(Annotation[] annotations) {
 				return null;
 			}
 
@@ -127,13 +131,13 @@ public class ParserAST {
 
 	}
 
-	public static interface ReducePaser {
+	public static interface ReduceParser {
 
-		ReduceAST parse(Annotation[] annotations);
+		ReduceAST parseReduce(Annotation[] annotations);
 
 		abstract class Factory {
 
-			ReducePaser reduceParser(Annotation[] annotations) {
+			public ReduceParser reduceParser(Annotation[] annotations) {
 				return null;
 			}
 

@@ -7,6 +7,6 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class EmptySelectAST extends SelectAST {
+public class EmptyQueryAST extends QueryAST {
 
 }
