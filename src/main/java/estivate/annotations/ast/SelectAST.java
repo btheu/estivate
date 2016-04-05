@@ -1,5 +1,8 @@
 package estivate.annotations.ast;
 
-public class SelectAST {
+import lombok.Data;
+
+@Data
+public abstract class SelectAST {
 
 }

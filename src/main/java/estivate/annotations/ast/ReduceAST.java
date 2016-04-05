@@ -1,5 +1,8 @@
 package estivate.annotations.ast;
 
-public class ReduceAST {
+import lombok.Data;
+
+@Data
+public abstract class ReduceAST {
 
 }

@@ -70,33 +70,28 @@ public class ParserAST {
 	}
 
 	private static void parseSelectAndReduce(ExpressionAST exp, Annotation[] annotations) {
-		SelectAST selectAST = new SelectAST();
-		parseSelect(selectAST, annotations);
-
-		ReduceAST reduceAST = new ReduceAST();
-		parseReduce(reduceAST, annotations);
-
-		exp.setSelect(selectAST);
-		exp.setReduce(reduceAST);
-
+		exp.setSelect(parseSelect(annotations));
+		exp.setReduce(parseReduce(annotations));
 	}
 
-	private static void parseSelect(SelectAST selectAST, Annotation[] annotations) {
+	private static SelectAST parseSelect(Annotation[] annotations) {
 		for (SelectPaser.Factory factory : selectParserFactories) {
 			SelectPaser selectParser = factory.selectParser(annotations);
 			if (selectParser != null) {
-				selectParser.parse(selectAST, annotations);
+				return selectParser.parse(annotations);
 			}
 		}
+		return new EmptySelectAST();
 	}
 
-	private static void parseReduce(ReduceAST reduceAST, Annotation[] annotations) {
+	private static ReduceAST parseReduce(Annotation[] annotations) {
 		for (ReducePaser.Factory factory : reduceParserFactories) {
 			ReducePaser reduceParser = factory.reduceParser(annotations);
 			if (reduceParser != null) {
-				reduceParser.parse(reduceAST, annotations);
+				return reduceParser.parse(annotations);
 			}
 		}
+		return new EmptyReduceAST();
 	}
 
 	protected static List<ExpressionAST> parseMethods(Class<?> clazz) {
@@ -120,7 +115,7 @@ public class ParserAST {
 
 	public static interface SelectPaser {
 
-		void parse(SelectAST selectAst, Annotation[] annotations);
+		SelectAST parse(Annotation[] annotations);
 
 		abstract class Factory {
 
@@ -134,7 +129,7 @@ public class ParserAST {
 
 	public static interface ReducePaser {
 
-		void parse(ReduceAST reduceAst, Annotation[] annotations);
+		ReduceAST parse(Annotation[] annotations);
 
 		abstract class Factory {
 
