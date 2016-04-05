@@ -4,14 +4,13 @@ import java.lang.annotation.Annotation;
 
 import org.jsoup.helper.StringUtil;
 
-import estivate.annotations.Attr;
 import estivate.annotations.Select;
 import estivate.annotations.ast.EstivateParserAST.QueryParser;
 import estivate.annotations.ast.QueryAST;
 import estivate.utils.AnnotationsUtils;
 
 /**
- * Parse {@link Attr} annotation
+ * Parse {@link Select} annotation
  * 
  * @author Benoit Theunissen
  *
