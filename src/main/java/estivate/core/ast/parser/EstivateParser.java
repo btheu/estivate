@@ -94,8 +94,6 @@ public class EstivateParser {
 		
 		Type type = field.getGenericType();
 
-		Class<?> rawType = ClassUtils.rawType(type);
-		
 		// common properties
 		Annotation[] annotations = field.getAnnotations();
 
@@ -103,18 +101,12 @@ public class EstivateParser {
 		exp.setReduce(parseReduce(annotations));
 
 		// value
-		ValueAST value = ValueAST.builder()
-				.isValueList(rawType.equals(List.class))
-				.type(type)
-				.rawClass(rawType)
-				.build();
+		ValueAST value = createValue(type);
 
 		exp.setValue(value);
 
 		return exp;
 	}
-
-
 
 	private static MethodExpressionAST parseMethod(Method method) {
 		MethodExpressionAST exp = new MethodExpressionAST();
@@ -130,13 +122,7 @@ public class EstivateParser {
 		Type[] genericParameterTypes = method.getGenericParameterTypes();
 		for (Type type : genericParameterTypes) {
 			
-			Class<?> rawType = ClassUtils.rawType(type);
-			
-			ValueAST value = ValueAST.builder()
-					.isValueList(rawType.equals(List.class))
-					.type(type)
-					.rawClass(rawType)
-					.build();
+			ValueAST value = createValue(type);
 			
 			exp.getArguments().add(value);
 		}
@@ -144,6 +130,18 @@ public class EstivateParser {
 		return exp;
 	}
 
+	private static ValueAST createValue(Type type) {
+		Class<?> rawType = ClassUtils.rawType(type);
+		
+		ValueAST value = ValueAST.builder()
+				.isValueList(rawType.equals(List.class))
+				.type(type)
+				.rawClass(rawType)
+				.build();
+		
+		return value;
+	}
+	
 	public static interface QueryParser {
 
 		QueryAST parseQuery(Annotation[] annotations);

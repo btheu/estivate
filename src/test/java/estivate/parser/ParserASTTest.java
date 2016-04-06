@@ -9,14 +9,12 @@ import org.junit.Test;
 import estivate.EstivateTest;
 import estivate.annotations.Attr;
 import estivate.annotations.Select;
-import estivate.core.ast.EstivateAST;
-import estivate.core.ast.parser.EstivateParser;
-import estivate.core.eval.EstivateEvaluator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ParserASTTest extends EstivateTest {
+
 
 	@Test
 	public void parse2() {
@@ -25,24 +23,17 @@ public class ParserASTTest extends EstivateTest {
 
 		Result1 result = mapper.map(document, Result1.class);
 
+		List<SubResult> subs = result.getSubs();
+		for (SubResult subResult : subs) {
+			
+		}
+		
+		List<String> roleList = result.getRoleList();
+		for (String string : roleList) {
+			
+		}
+		
 		log.info(result.toString());
-
-	}
-
-	@Test
-	public void parse1() {
-
-		Document document = readDocument("/attr/u2.html");
-
-		EstivateAST ast = EstivateParser.parse(Result1.class);
-
-		log.info(ast.toString());
-
-		Result1 result = (Result1) EstivateEvaluator.eval(document, ast);
-
-		log.info(ast.toString());
-
-		// log.info(result.toString());
 
 	}
 
@@ -50,21 +41,33 @@ public class ParserASTTest extends EstivateTest {
 	public static class Result1 {
 
 		@Select("div")
+		public List<SubResult> subs;
+		
+		@Select("div")
 		@Attr("role")
-		public String role1;
+		public String roles1;
 
-		public String role2;
+		public String roles2;
 
 		@Select("div")
 		@Attr("role")
-		public void setRole(Document doc1, String role2, List<String> roles, Document doc2, Elements elt) {
-			this.role2 = role2;
+		public void setRole(Document doc1, String roles, List<String> roleList, Document doc2, Elements elt) {
+			this.roles2 = roles;
 		}
 
 		@Select("div")
 		@Attr("role")
-		public List<String> roles;
+		public List<String> roleList;
 
 	}
 
+	@Data
+	public static class SubResult {
+		
+		@Attr("role")
+		public String roles;
+		
+		@Attr("role")
+		public List<String> roleList;
+	}
 }
