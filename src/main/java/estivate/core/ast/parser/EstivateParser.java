@@ -61,23 +61,31 @@ public class EstivateParser {
 	}
 
 	protected static List<ExpressionAST> parseFields(Class<?> clazz) {
-
 		List<ExpressionAST> exps = new ArrayList<ExpressionAST>();
 		List<Field> fields = membersFinder.listFields(clazz);
 		for (Field field : fields) {
-			exps.add(parseField(field));
+			FieldExpressionAST exp = parseField(field);
+			if(!isEmptyExpression(exp)){
+				exps.add(exp);
+			}
 		}
 		return exps;
 	}
 
 	protected static List<ExpressionAST> parseMethods(Class<?> clazz) {
-
 		List<ExpressionAST> exps = new ArrayList<ExpressionAST>();
 		List<Method> methods = membersFinder.listMethods(clazz);
 		for (Method method : methods) {
-			exps.add(parseMethod(method));
+			MethodExpressionAST exp = parseMethod(method);
+			if(!isEmptyExpression(exp)){
+				exps.add(exp);
+			}
 		}
 		return exps;
+	}
+	
+	private static boolean isEmptyExpression(ExpressionAST exp) {
+		return exp.getReduce() instanceof EmptyReduceAST && exp.getQuery() instanceof EmptyQueryAST;
 	}
 	
 	private static FieldExpressionAST parseField(Field field) {
