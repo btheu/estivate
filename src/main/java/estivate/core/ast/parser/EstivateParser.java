@@ -63,8 +63,8 @@ public class EstivateParser {
 	protected static List<ExpressionAST> parseFields(Class<?> clazz) {
 
 		List<ExpressionAST> exps = new ArrayList<ExpressionAST>();
-		List<Field> list = membersFinder.listFields(clazz);
-		for (Field field : list) {
+		List<Field> fields = membersFinder.listFields(clazz);
+		for (Field field : fields) {
 			exps.add(parseField(field));
 		}
 		return exps;
@@ -73,8 +73,8 @@ public class EstivateParser {
 	protected static List<ExpressionAST> parseMethods(Class<?> clazz) {
 
 		List<ExpressionAST> exps = new ArrayList<ExpressionAST>();
-		List<Method> list = membersFinder.listMethods(clazz);
-		for (Method method : list) {
+		List<Method> methods = membersFinder.listMethods(clazz);
+		for (Method method : methods) {
 			exps.add(parseMethod(method));
 		}
 		return exps;
@@ -99,10 +99,6 @@ public class EstivateParser {
 				.build();
 
 		exp.setValue(value);
-		
-		// is not list
-
-		// is list
 
 		return exp;
 	}

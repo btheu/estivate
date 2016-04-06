@@ -85,7 +85,6 @@ public class EstivateEvaluator {
             QueryASTEvaluator eval = factory.expressionEvaluater(query);
             if(eval != null){
                 
-                
                 log.debug("> Eval '{}' with dom '{}'",
                         query.getClass().getSimpleName(),context.getDom());
                 
@@ -140,9 +139,27 @@ public class EstivateEvaluator {
 				throw new IllegalArgumentException("Cant eval single Element value. Size of the DOM was '"+dom.size()+"'"); 
 			}
 		}
-
+		
+		// TODO Convert
 	}
     
+	protected static void setValue(EvalContext context, FieldExpressionAST exp) {
+		ClassUtils.setValue(exp.getField(), context.getTarget(), exp.getValue().getValue());
+	}
+	
+	protected static void setValues(EvalContext context, MethodExpressionAST exp) {
+		Object[] arguments = new Object[exp.getArguments().size()];
+		
+		for (int i = 0; i < exp.getArguments().size(); i++) {
+			arguments[i] = exp.getArguments().get(i).getValue();
+		}
+		if(arguments.length == 0){
+			ClassUtils.setValue(exp.getMethod(), context.getTarget());
+		}else{
+			ClassUtils.setValue(exp.getMethod(), context.getTarget(), arguments);
+		}
+	}
+	
     public static class FieldExpEvaluater implements ExpressionASTEvaluator{
 
         public void eval(EvalContext context, ExpressionAST expression) {
@@ -155,10 +172,14 @@ public class EstivateEvaluator {
 
             evalValue(contextSelect, evalReduce, exp.getValue());
             
+            setValue(contextSelect, exp);
+            
             log.trace("< eval field");
         }
 
-        public static ExpressionASTEvaluator.Factory factory = new ExpressionASTEvaluator.Factory() {
+
+
+		public static ExpressionASTEvaluator.Factory factory = new ExpressionASTEvaluator.Factory() {
 
             @Override
             public ExpressionASTEvaluator expressionEvaluater(ExpressionAST expression) {
@@ -168,10 +189,7 @@ public class EstivateEvaluator {
                 return super.expressionEvaluater(expression);
             }
         };
-
     }
-
-
 
     public static class MethodExpEvaluater implements ExpressionASTEvaluator{
 
@@ -184,6 +202,8 @@ public class EstivateEvaluator {
             ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
 
             evalValues(contextSelect,evalReduce,exp.getArguments());
+            
+            setValues(contextSelect, exp);
             
             log.trace("< eval method");
         }
@@ -213,9 +233,5 @@ public class EstivateEvaluator {
         protected Object target;
         
     }
-
-
-
-  
 
 }
