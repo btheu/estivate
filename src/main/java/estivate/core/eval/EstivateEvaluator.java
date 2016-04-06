@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import estivate.core.ClassUtils;
@@ -14,6 +15,7 @@ import estivate.core.ast.FieldExpressionAST;
 import estivate.core.ast.MethodExpressionAST;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
+import estivate.core.ast.ValueAST;
 import estivate.core.eval.ReduceASTEvaluator.ReduceResult;
 import lombok.Builder;
 import lombok.Data;
@@ -42,7 +44,7 @@ public class EstivateEvaluator {
     
     public static Object eval(Document document, EstivateAST ast) {
 
-    	Object target = ClassUtils.newInstance(ast.getClass());
+    	Object target = ClassUtils.newInstance(ast.getTargetRawClass());
         
         EvalContext context = new EvalContext.EvalContextBuilder()
                 .document(document)
@@ -64,7 +66,7 @@ public class EstivateEvaluator {
         }
     }
 
-    private static void evalExpression(EvalContext context, ExpressionAST expression) {
+    protected static void evalExpression(EvalContext context, ExpressionAST expression) {
         boolean noFound = true;
         for (ExpressionASTEvaluator.Factory evalFact : expressionEvalFacts) {
             ExpressionASTEvaluator eval = evalFact.expressionEvaluater(expression);
@@ -78,7 +80,7 @@ public class EstivateEvaluator {
         }
     }
 
-    private static EvalContext evalQuery(EvalContext context, QueryAST query) {
+    protected static EvalContext evalQuery(EvalContext context, QueryAST query) {
         for (QueryASTEvaluator.Factory factory : queryEvalFacts) {
             QueryASTEvaluator eval = factory.expressionEvaluater(query);
             if(eval != null){
@@ -99,7 +101,7 @@ public class EstivateEvaluator {
         return null;
     }
 
-    private static ReduceResult evalReduce(EvalContext context, ReduceAST reduce) {
+    protected static ReduceResult evalReduce(EvalContext context, ReduceAST reduce) {
         for (ReduceASTEvaluator.Factory factory : reduceEvalFacts) {
             ReduceASTEvaluator eval = factory.expressionEvaluater(reduce);
             if(eval != null){
@@ -118,6 +120,29 @@ public class EstivateEvaluator {
         return ReduceResult.builder().build();
     }
 
+    protected static void evalValues(EvalContext context, ReduceResult reduceResult, List<ValueAST> values) {
+    	for (ValueAST value : values) {
+    		evalValue(context, reduceResult, value);
+		}
+    }
+
+	protected static void evalValue(EvalContext context, ReduceResult reduceResult, ValueAST value) {
+
+		if (value.getRawClass().equals(Document.class)) {
+			value.setValue(context.getDocument());
+		} else if (value.getRawClass().equals(Elements.class)) {
+			value.setValue(context.getDom());
+		} else if (value.getRawClass().equals(Element.class)) {
+			Elements dom = context.getDom();
+			if(dom.size() == 1){
+				value.setValue(dom);
+			}else{
+				throw new IllegalArgumentException("Cant eval single Element value. Size of the DOM was '"+dom.size()+"'"); 
+			}
+		}
+
+	}
+    
     public static class FieldExpEvaluater implements ExpressionASTEvaluator{
 
         public void eval(EvalContext context, ExpressionAST expression) {
@@ -128,9 +153,7 @@ public class EstivateEvaluator {
 
             ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
 
-            //evalValue(evalReduce, exp.getValue());
-            
-            //exp.getValue().setValue(evalReduce.getValue());
+            evalValue(contextSelect, evalReduce, exp.getValue());
             
             log.trace("< eval field");
         }
@@ -160,7 +183,7 @@ public class EstivateEvaluator {
 
             ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
 
-            ClassUtils.setValue(exp.getMethod(),contextSelect.getTarget(),evalReduce.getValue());
+            evalValues(contextSelect,evalReduce,exp.getArguments());
             
             log.trace("< eval method");
         }
@@ -190,6 +213,8 @@ public class EstivateEvaluator {
         protected Object target;
         
     }
+
+
 
   
 

@@ -43,7 +43,8 @@ public class EstivateParser {
 		EstivateAST ast = new EstivateAST();
 
 		ast.setTargetType(clazz);
-
+		ast.setTargetRawClass(ClassUtils.rawType(clazz));
+		
 		parseExpressions(ast, clazz);
 
 		return ast;

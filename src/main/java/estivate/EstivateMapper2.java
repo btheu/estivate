@@ -49,13 +49,14 @@ public class EstivateMapper2 {
 		STANDARD_TARGET_TYPES.add(Element.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T map(Document document, Class<T> clazz) {
-	    
-	    EstivateAST ast = EstivateParser.parse(clazz);
-	    
-	    log.debug("AST {}",ast.toString());
-	    
-		return (T)EstivateEvaluator.eval(document, ast);
+
+		EstivateAST ast = EstivateParser.parse(clazz);
+
+		log.debug("AST {}", ast.toString());
+
+		return (T) EstivateEvaluator.eval(document, ast);
 	}
 
 	
