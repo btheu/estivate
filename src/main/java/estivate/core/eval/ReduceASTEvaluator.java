@@ -7,7 +7,10 @@ import lombok.Data;
 
 public interface ReduceASTEvaluator {
 
+	@Deprecated
     public ReduceResult eval(EvalContext context, ReduceAST reduce);
+    
+    public ReduceResult eval(EvalContext context, ReduceAST reduce, boolean isValueList);
 
 	public abstract class Factory {
 

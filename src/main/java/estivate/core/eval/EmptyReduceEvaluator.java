@@ -3,7 +3,6 @@ package estivate.core.eval;
 import estivate.core.ast.EmptyReduceAST;
 import estivate.core.ast.ReduceAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Return the current DOM as result.
@@ -11,10 +10,13 @@ import lombok.extern.slf4j.Slf4j;
  * @author Benoit Theunissen
  *
  */
-@Slf4j
 public class EmptyReduceEvaluator implements ReduceASTEvaluator {
 
 	public ReduceResult eval(EvalContext context, ReduceAST reduce) {
+		return ReduceResult.builder().value(context.getDom()).build();
+	}
+	
+	public ReduceResult eval(EvalContext context, ReduceAST reduce, boolean isValueList) {
 		return ReduceResult.builder().value(context.getDom()).build();
 	}
 	
@@ -28,6 +30,8 @@ public class EmptyReduceEvaluator implements ReduceASTEvaluator {
 			return super.expressionEvaluater(reduce);
 		}
 	};
+
+
 
 
 }

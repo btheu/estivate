@@ -13,6 +13,8 @@ public class ValueAST {
 
 	protected Class<?> rawClass;
 
+	protected boolean isValueList = false;
+	
 	protected Object value;
 
 }

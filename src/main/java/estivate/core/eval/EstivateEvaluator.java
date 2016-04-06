@@ -100,14 +100,14 @@ public class EstivateEvaluator {
         return null;
     }
 
-    protected static ReduceResult evalReduce(EvalContext context, ReduceAST reduce) {
+    protected static ReduceResult evalReduce(EvalContext context, ReduceAST reduce, boolean isValueList) {
         for (ReduceASTEvaluator.Factory factory : reduceEvalFacts) {
             ReduceASTEvaluator eval = factory.expressionEvaluater(reduce);
             if(eval != null){
                 log.debug("> Eval '{}' with dom '{}'",
                         reduce.getClass().getSimpleName(),context.getDom());
                 
-                ReduceResult result = eval.eval(context, reduce);
+                ReduceResult result = eval.eval(context, reduce, isValueList);
                 
                 log.debug("< Eval '{}' got result '{}'",
                         reduce.getClass().getSimpleName(),result.getValue());
@@ -117,12 +117,6 @@ public class EstivateEvaluator {
         }
         log.error("No Reduce Evaluater found for '{}'",reduce.getClass().getSimpleName());
         return ReduceResult.builder().build();
-    }
-
-    protected static void evalValues(EvalContext context, ReduceResult reduceResult, List<ValueAST> values) {
-    	for (ValueAST value : values) {
-    		evalValue(context, reduceResult, value);
-		}
     }
 
 	protected static void evalValue(EvalContext context, ReduceResult reduceResult, ValueAST value) {
@@ -144,7 +138,7 @@ public class EstivateEvaluator {
 
 		// TODO Convert
 	}
-    
+	
 	protected static void setValue(EvalContext context, FieldExpressionAST exp) {
 		ClassUtils.setValue(exp.getField(), context.getTarget(), exp.getValue().getValue());
 	}
@@ -170,7 +164,7 @@ public class EstivateEvaluator {
 
 			EvalContext contextSelect = evalQuery(context.toBuilder().build(), exp.getQuery());
 
-			ReduceResult reduce = evalReduce(contextSelect.toBuilder().build(), exp.getReduce());
+			ReduceResult reduce = evalReduce(contextSelect.toBuilder().build(), exp.getReduce(), exp.getValue().isValueList());
 
 			evalValue(contextSelect, reduce, exp.getValue());
 
@@ -199,9 +193,12 @@ public class EstivateEvaluator {
 
 			EvalContext contextSelect = evalQuery(context.toBuilder().build(), exp.getQuery());
 
-			ReduceResult reduce = evalReduce(contextSelect.toBuilder().build(), exp.getReduce());
-
-			evalValues(contextSelect, reduce, exp.getArguments());
+			List<ValueAST> arguments = exp.getArguments();
+			for (ValueAST valueAST : arguments) {
+				ReduceResult reduce = evalReduce(contextSelect.toBuilder().build(), exp.getReduce(), valueAST.isValueList());
+				
+				evalValue(contextSelect, reduce, valueAST);
+			}
 
 			setValues(contextSelect, exp);
 

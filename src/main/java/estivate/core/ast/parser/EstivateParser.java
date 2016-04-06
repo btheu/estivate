@@ -92,8 +92,10 @@ public class EstivateParser {
 		FieldExpressionAST exp = new FieldExpressionAST();
 		exp.setField(field);
 		
-		Class<?> type = field.getType();
+		Type type = field.getGenericType();
 
+		Class<?> rawType = ClassUtils.rawType(type);
+		
 		// common properties
 		Annotation[] annotations = field.getAnnotations();
 
@@ -102,8 +104,9 @@ public class EstivateParser {
 
 		// value
 		ValueAST value = ValueAST.builder()
+				.isValueList(rawType.equals(List.class))
 				.type(type)
-				.rawClass(ClassUtils.rawType(type))
+				.rawClass(rawType)
 				.build();
 
 		exp.setValue(value);
@@ -127,9 +130,12 @@ public class EstivateParser {
 		Type[] genericParameterTypes = method.getGenericParameterTypes();
 		for (Type type : genericParameterTypes) {
 			
+			Class<?> rawType = ClassUtils.rawType(type);
+			
 			ValueAST value = ValueAST.builder()
+					.isValueList(rawType.equals(List.class))
 					.type(type)
-					.rawClass(ClassUtils.rawType(type))
+					.rawClass(rawType)
 					.build();
 			
 			exp.getArguments().add(value);
