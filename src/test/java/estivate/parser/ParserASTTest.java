@@ -6,7 +6,6 @@ import org.junit.Test;
 import estivate.EstivateTest;
 import estivate.annotations.Attr;
 import estivate.annotations.Select;
-import estivate.annotations.Text;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.parser.EstivateParser;
 import estivate.core.eval.EstivateEvaluator;
@@ -47,20 +46,18 @@ public class ParserASTTest extends EstivateTest {
 	@Data
 	public static class Result1 {
 
-		@Select("#famousId")
-		@Attr("value")
-		public String valueOfFamous1;
-
-		@Attr(select = "#famousId", value = "value")
-		public String valueOfFamous2;
-
-		@Select("#famousId")
-		@Text
-		public String valueOfFamous3;
+		@Select("div")
+		@Attr("role")
+		public String role1;
+		
+		public String role2;
 		
 		@Select("div")
 		@Attr("role")
-		public String tust;
+		public void setRole(String role2){
+			this.role2 = role2;
+		}
+		
 	}
 
 }

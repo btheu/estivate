@@ -133,13 +133,15 @@ public class EstivateEvaluator {
 			value.setValue(context.getDom());
 		} else if (value.getRawClass().equals(Element.class)) {
 			Elements dom = context.getDom();
-			if(dom.size() == 1){
+			if (dom.size() == 1) {
 				value.setValue(dom);
-			}else{
-				throw new IllegalArgumentException("Cant eval single Element value. Size of the DOM was '"+dom.size()+"'"); 
+			} else {
+				throw new IllegalArgumentException("Cant eval single Element value. Size of the DOM was '" + dom.size() + "'");
 			}
+		} else {
+			value.setValue(reduceResult.getValue());
 		}
-		
+
 		// TODO Convert
 	}
     
@@ -162,22 +164,20 @@ public class EstivateEvaluator {
 	
     public static class FieldExpEvaluater implements ExpressionASTEvaluator{
 
-        public void eval(EvalContext context, ExpressionAST expression) {
-            FieldExpressionAST exp = (FieldExpressionAST) expression;
-            log.trace("> eval field '{}'",exp.getField().getName());
+		public void eval(EvalContext context, ExpressionAST expression) {
+			FieldExpressionAST exp = (FieldExpressionAST) expression;
+			log.trace("> eval field '{}'", exp.getField().getName());
 
-            EvalContext contextSelect = evalQuery(context.toBuilder().build(),exp.getQuery());
+			EvalContext contextSelect = evalQuery(context.toBuilder().build(), exp.getQuery());
 
-            ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
+			ReduceResult reduce = evalReduce(contextSelect.toBuilder().build(), exp.getReduce());
 
-            evalValue(contextSelect, evalReduce, exp.getValue());
-            
-            setValue(contextSelect, exp);
-            
-            log.trace("< eval field");
-        }
+			evalValue(contextSelect, reduce, exp.getValue());
 
+			setValue(contextSelect, exp);
 
+			log.trace("< eval field");
+		}
 
 		public static ExpressionASTEvaluator.Factory factory = new ExpressionASTEvaluator.Factory() {
 
@@ -193,20 +193,20 @@ public class EstivateEvaluator {
 
     public static class MethodExpEvaluater implements ExpressionASTEvaluator{
 
-        public void eval(EvalContext context, ExpressionAST expression) {
-            MethodExpressionAST exp = (MethodExpressionAST) expression;
-            log.trace("> eval method '{}()'",exp.getMethod().getName());
+		public void eval(EvalContext context, ExpressionAST expression) {
+			MethodExpressionAST exp = (MethodExpressionAST) expression;
+			log.trace("> eval method '{}()'", exp.getMethod().getName());
 
-            EvalContext contextSelect = evalQuery(context.toBuilder().build(),exp.getQuery());
+			EvalContext contextSelect = evalQuery(context.toBuilder().build(), exp.getQuery());
 
-            ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
+			ReduceResult reduce = evalReduce(contextSelect.toBuilder().build(), exp.getReduce());
 
-            evalValues(contextSelect,evalReduce,exp.getArguments());
-            
-            setValues(contextSelect, exp);
-            
-            log.trace("< eval method");
-        }
+			evalValues(contextSelect, reduce, exp.getArguments());
+
+			setValues(contextSelect, exp);
+
+			log.trace("< eval method");
+		}
 
         public static Factory factory = new ExpressionASTEvaluator.Factory() {
 
