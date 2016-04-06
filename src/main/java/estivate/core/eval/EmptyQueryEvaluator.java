@@ -5,6 +5,12 @@ import estivate.core.ast.QueryAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Return the DOM as result
+ * 
+ * @author Benoit Theunissen
+ *
+ */
 @Slf4j
 public class EmptyQueryEvaluator implements QueryASTEvaluator {
 

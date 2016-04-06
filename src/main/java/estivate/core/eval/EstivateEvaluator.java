@@ -29,6 +29,7 @@ public class EstivateEvaluator {
     }
     public static final List<ReduceASTEvaluator.Factory> reduceEvalFacts = new ArrayList<ReduceASTEvaluator.Factory>();
     static {
+    	reduceEvalFacts.add(EmptyReduceEvaluator.factory);
         reduceEvalFacts.add(TextReduceEvaluator.factory);
         reduceEvalFacts.add(AttrReduceEvaluator.factory);
     }
@@ -127,9 +128,9 @@ public class EstivateEvaluator {
 
             ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
 
-            exp.getValue().setValue(evalReduce.getValue());
+            //evalValue(evalReduce, exp.getValue());
             
-            ClassUtils.setValue(exp.getField(),contextSelect.getTarget(),evalReduce.getValue());
+            //exp.getValue().setValue(evalReduce.getValue());
             
             log.trace("< eval field");
         }
