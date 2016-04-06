@@ -21,7 +21,7 @@ public class DefaultMembersFinder implements MembersFinder {
 	}
 
 	public List<Method> listMethods(Class<?> clazz) {
-		return Arrays.asList(clazz.getMethods());
+		return Arrays.asList(clazz.getDeclaredMethods());
 	}
 
 	public List<AccessibleObject> list(Class<?> clazz) {

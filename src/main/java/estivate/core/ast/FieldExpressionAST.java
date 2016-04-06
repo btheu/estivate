@@ -1,7 +1,6 @@
 package estivate.core.ast;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,9 +13,6 @@ public class FieldExpressionAST extends ExpressionAST {
 
 	protected Field field;
 
-	protected Type targetType;
-
-	protected Class<?> targetRawClass;
-
-	protected Object value;
+	protected ValueAST value;
+	
 }

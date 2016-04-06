@@ -39,10 +39,9 @@ public class EstivateEvaluator {
     }
 
     
-    public static <T> T eval(Document document, EstivateAST ast,
-            Class<T> clazz) {
+    public static Object eval(Document document, EstivateAST ast) {
 
-        T target = ClassUtils.newInstance(clazz);
+    	Object target = ClassUtils.newInstance(ast.getClass());
         
         EvalContext context = new EvalContext.EvalContextBuilder()
                 .document(document)
@@ -128,7 +127,7 @@ public class EstivateEvaluator {
 
             ReduceResult evalReduce = evalReduce(contextSelect.toBuilder().build(),exp.getReduce());
 
-            exp.setValue(evalReduce.getValue());
+            exp.getValue().setValue(evalReduce.getValue());
             
             ClassUtils.setValue(exp.getField(),contextSelect.getTarget(),evalReduce.getValue());
             

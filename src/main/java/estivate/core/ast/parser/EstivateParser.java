@@ -3,9 +3,11 @@ package estivate.core.ast.parser;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import estivate.core.ClassUtils;
 import estivate.core.MembersFinder;
 import estivate.core.ast.EmptyQueryAST;
 import estivate.core.ast.EmptyReduceAST;
@@ -16,6 +18,7 @@ import estivate.core.ast.FieldExpressionAST;
 import estivate.core.ast.MethodExpressionAST;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
+import estivate.core.ast.ValueAST;
 import estivate.core.impl.DefaultMembersFinder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,13 +69,36 @@ public class EstivateParser {
 		return exps;
 	}
 
+	protected static List<ExpressionAST> parseMethods(Class<?> clazz) {
+
+		List<ExpressionAST> exps = new ArrayList<ExpressionAST>();
+		List<Method> list = membersFinder.listMethods(clazz);
+		for (Method method : list) {
+			exps.add(parseMethod(method));
+		}
+		return exps;
+	}
+	
 	private static FieldExpressionAST parseField(Field field) {
 		FieldExpressionAST exp = new FieldExpressionAST();
 		exp.setField(field);
+		
+		Class<?> type = field.getType();
 
 		// common properties
-		parseQueryAndReduce(exp, field.getAnnotations());
+		Annotation[] annotations = field.getAnnotations();
 
+		exp.setQuery(parseQuery(annotations));
+		exp.setReduce(parseReduce(annotations));
+
+		// value
+		ValueAST value = ValueAST.builder()
+				.type(type)
+				.rawClass(ClassUtils.rawType(type))
+				.build();
+
+		exp.setValue(value);
+		
 		// is not list
 
 		// is list
@@ -80,11 +106,47 @@ public class EstivateParser {
 		return exp;
 	}
 
-	private static void parseQueryAndReduce(ExpressionAST exp, Annotation[] annotations) {
+
+
+	private static MethodExpressionAST parseMethod(Method method) {
+		MethodExpressionAST exp = new MethodExpressionAST();
+		exp.setMethod(method);
+
+		// common properties
+		Annotation[] annotations = method.getAnnotations();
+
 		exp.setQuery(parseQuery(annotations));
 		exp.setReduce(parseReduce(annotations));
+		
+		// values
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		for (Type type : genericParameterTypes) {
+			
+			ValueAST value = ValueAST.builder()
+					.type(type)
+					.rawClass(ClassUtils.rawType(type))
+					.build();
+			
+			exp.getArguments().add(value);
+		}
+		
+		return exp;
 	}
 
+	public static interface QueryParser {
+
+		QueryAST parseQuery(Annotation[] annotations);
+
+		abstract class Factory {
+
+			public QueryParser queryParser(Annotation[] annotations) {
+				return null;
+			}
+
+		}
+
+	}
+	
 	private static QueryAST parseQuery(Annotation[] annotations) {
 		for (QueryParser.Factory factory : queryParserFactories) {
 			QueryParser queryParser = factory.queryParser(annotations);
@@ -105,38 +167,7 @@ public class EstivateParser {
 		return new EmptyReduceAST();
 	}
 
-	protected static List<ExpressionAST> parseMethods(Class<?> clazz) {
 
-		List<ExpressionAST> exps = new ArrayList<ExpressionAST>();
-		List<Method> list = membersFinder.listMethods(clazz);
-		for (Method method : list) {
-			exps.add(parseMethod(method));
-		}
-		return exps;
-	}
-
-	private static MethodExpressionAST parseMethod(Method method) {
-		MethodExpressionAST exp = new MethodExpressionAST();
-		exp.setMethod(method);
-
-		parseQueryAndReduce(exp, method.getAnnotations());
-
-		return exp;
-	}
-
-	public static interface QueryParser {
-
-		QueryAST parseQuery(Annotation[] annotations);
-
-		abstract class Factory {
-
-			public QueryParser queryParser(Annotation[] annotations) {
-				return null;
-			}
-
-		}
-
-	}
 
 	public static interface ReduceParser {
 

@@ -53,7 +53,9 @@ public class EstivateMapper2 {
 	    
 	    EstivateAST ast = EstivateParser.parse(clazz);
 	    
-		return EstivateEvaluator.eval(document, ast, clazz);
+	    log.debug("AST {}",ast.toString());
+	    
+		return (T)EstivateEvaluator.eval(document, ast);
 	}
 
 	
