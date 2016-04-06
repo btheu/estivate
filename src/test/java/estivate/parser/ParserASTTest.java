@@ -40,6 +40,10 @@ public class ParserASTTest extends EstivateTest {
 	@Data
 	public static class Result1 {
 
+	    @Select("div")
+	    @Attr("role")
+	    public List<String> roleList;
+	    
 		@Select("div")
 		public List<SubResult> subs;
 		
@@ -55,9 +59,6 @@ public class ParserASTTest extends EstivateTest {
 			this.roles2 = roles;
 		}
 
-		@Select("div")
-		@Attr("role")
-		public List<String> roleList;
 
 	}
 

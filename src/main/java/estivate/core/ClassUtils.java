@@ -157,6 +157,21 @@ public abstract class ClassUtils {
         return (Class<?>) type;
     }
 
+    public static Class<?>[] typeArguments(Type type) {
+        
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            Class<?>[] types = new Class<?>[typeArguments.length];
+            for (int i = 0; i < typeArguments.length; i++) {
+               types[i] = rawType(typeArguments[i]);
+            }
+            return types;
+        }
+        
+        return null;
+    }
+    
     public static Object getName(AnnotatedElement member) {
         if (member instanceof Member) {
             return ((Member) member).getName();
@@ -175,4 +190,6 @@ public abstract class ClassUtils {
         }
 
     }
+
+
 }

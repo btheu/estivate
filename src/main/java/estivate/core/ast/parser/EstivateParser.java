@@ -101,7 +101,7 @@ public class EstivateParser {
 		exp.setReduce(parseReduce(annotations));
 
 		// value
-		ValueAST value = createValue(type);
+		ValueAST value = createValue(exp,type);
 
 		exp.setValue(value);
 
@@ -122,7 +122,7 @@ public class EstivateParser {
 		Type[] genericParameterTypes = method.getGenericParameterTypes();
 		for (Type type : genericParameterTypes) {
 			
-			ValueAST value = createValue(type);
+			ValueAST value = createValue(exp, type);
 			
 			exp.getArguments().add(value);
 		}
@@ -130,15 +130,31 @@ public class EstivateParser {
 		return exp;
 	}
 
-	private static ValueAST createValue(Type type) {
+	private static ValueAST createValue(ExpressionAST exp, Type type) {
+	    
 		Class<?> rawType = ClassUtils.rawType(type);
 		
-		ValueAST value = ValueAST.builder()
-				.isValueList(rawType.equals(List.class))
-				.type(type)
-				.rawClass(rawType)
-				.build();
+		Class<?>[] typeArguments = ClassUtils.typeArguments(type);
 		
+		boolean isValueList = rawType.equals(List.class);
+		
+		ValueAST value;
+		
+		if(! (exp.getQuery() instanceof EmptyQueryAST) 
+		        && (exp.getReduce() instanceof EmptyReduceAST)){
+		    // Tree Value
+		    value = null;
+		    // isList to ast
+		    
+		}else{
+		    
+		    // 1 Simple
+		    value = new ValueAST();
+		    value.setRawClass(rawType);
+		    value.setType(type);
+		    value.setValueList(isValueList);
+		}
+        
 		return value;
 	}
 	
