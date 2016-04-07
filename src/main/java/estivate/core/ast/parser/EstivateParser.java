@@ -42,6 +42,8 @@ public class EstivateParser {
 	public static EstivateAST parse(Class<?> clazz) {
 		EstivateAST ast = new EstivateAST();
 
+		
+		ast.setQuery(parseQuery(clazz.getAnnotations()));
 		ast.setTargetType(clazz);
 		ast.setTargetRawClass(ClassUtils.rawType(clazz));
 		
