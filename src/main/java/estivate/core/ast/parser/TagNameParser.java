@@ -2,37 +2,36 @@ package estivate.core.ast.parser;
 
 import java.lang.annotation.Annotation;
 
-import estivate.annotations.Text;
+import estivate.annotations.TagName;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
-import estivate.core.ast.lang.TextReduceAST;
+import estivate.core.ast.lang.TagNameReduceAST;
 import estivate.core.ast.parser.EstivateParser.QueryParser;
 import estivate.core.ast.parser.EstivateParser.ReduceParser;
 import estivate.utils.AnnotationsUtils;
 
 /**
- * Parse {@link Text} annotation
+ * Parse {@link TagName} annotation
  * 
  * @author Benoit Theunissen
  *
  */
-public class TextParser implements QueryParser, ReduceParser {
+public class TagNameParser implements QueryParser, ReduceParser {
 
-	public static final Class<? extends Annotation> TYPE = Text.class;
+	public static final Class<? extends Annotation> TYPE = TagName.class;
 
 	public QueryAST parseQuery(Annotation[] annotations) {
 
-		Text aText = (Text) AnnotationsUtils.find(annotations, TYPE);
+		TagName annotation = (TagName) AnnotationsUtils.find(annotations, TYPE);
 
-		return SelectParser.parse(aText);
+		return SelectParser.parse(annotation);
 	}
 
 	public ReduceAST parseReduce(Annotation[] annotations) {
 
-		Text aText = (Text) AnnotationsUtils.find(annotations, TYPE);
+		TagName aAttr = (TagName) AnnotationsUtils.find(annotations, TYPE);
 
-		TextReduceAST reduce = new TextReduceAST();
-		reduce.setOwn(aText.own());
+		TagNameReduceAST reduce = new TagNameReduceAST();
 
 		return reduce;
 	}
@@ -41,7 +40,7 @@ public class TextParser implements QueryParser, ReduceParser {
 		@Override
 		public QueryParser queryParser(Annotation[] annotations) {
 			if (AnnotationsUtils.contains(annotations, TYPE)) {
-				return new TextParser();
+				return new TagNameParser();
 			}
 			return super.queryParser(annotations);
 		}
@@ -51,7 +50,7 @@ public class TextParser implements QueryParser, ReduceParser {
 		@Override
 		public ReduceParser reduceParser(Annotation[] annotations) {
 			if (AnnotationsUtils.contains(annotations, TYPE)) {
-				return new TextParser();
+				return new TagNameParser();
 			}
 			return super.reduceParser(annotations);
 		}

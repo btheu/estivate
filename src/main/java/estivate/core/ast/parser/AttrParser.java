@@ -6,7 +6,6 @@ import estivate.annotations.Attr;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.lang.AttrReduceAST;
-import estivate.core.ast.lang.SelectQueryAST;
 import estivate.core.ast.parser.EstivateParser.QueryParser;
 import estivate.core.ast.parser.EstivateParser.ReduceParser;
 import estivate.utils.AnnotationsUtils;
@@ -19,25 +18,17 @@ import estivate.utils.AnnotationsUtils;
  */
 public class AttrParser implements QueryParser, ReduceParser {
 
-    public static final Class<? extends Annotation> TYPE = Attr.class;
-    
+	public static final Class<? extends Annotation> TYPE = Attr.class;
+
 	public QueryAST parseQuery(Annotation[] annotations) {
 
 		Attr aAttr = (Attr) AnnotationsUtils.find(annotations, TYPE);
 
-		SelectQueryAST query = new SelectQueryAST();
-
-		query.setUnique(aAttr.unique());
-		query.setIndex(aAttr.index());
-		query.setFirst(aAttr.first());
-		query.setLast(aAttr.last());
-		query.setQueryString(aAttr.select());
-
-		return query;
+		return SelectParser.parse(aAttr);
 	}
 
 	public ReduceAST parseReduce(Annotation[] annotations) {
-	    
+
 		Attr aAttr = (Attr) AnnotationsUtils.find(annotations, TYPE);
 
 		AttrReduceAST reduce = new AttrReduceAST();

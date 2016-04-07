@@ -21,7 +21,10 @@ import estivate.core.ast.parser.EstivateParser;
 import estivate.core.eval.ReduceASTEvaluator.ReduceResult;
 import estivate.core.eval.lang.AttrReduceEvaluator;
 import estivate.core.eval.lang.SelectQueryEvaluator;
+import estivate.core.eval.lang.TagNameReduceEvaluator;
 import estivate.core.eval.lang.TextReduceEvaluator;
+import estivate.core.eval.lang.TitleReduceEvaluator;
+import estivate.core.eval.lang.ValReduceEvaluator;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +40,11 @@ public class EstivateEvaluator {
     public static final List<ReduceASTEvaluator.Factory> reduceEvalFacts = new ArrayList<ReduceASTEvaluator.Factory>();
     static {
     	reduceEvalFacts.add(EmptyReduceEvaluator.factory);
+    	reduceEvalFacts.add(AttrReduceEvaluator.factory);
         reduceEvalFacts.add(TextReduceEvaluator.factory);
-        reduceEvalFacts.add(AttrReduceEvaluator.factory);
+        reduceEvalFacts.add(TagNameReduceEvaluator.factory);
+        reduceEvalFacts.add(TitleReduceEvaluator.factory);
+        reduceEvalFacts.add(ValReduceEvaluator.factory);
     }
     public static final List<ExpressionASTEvaluator.Factory> expressionEvalFacts = new ArrayList<ExpressionASTEvaluator.Factory>();
     static {

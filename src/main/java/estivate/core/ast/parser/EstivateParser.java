@@ -29,28 +29,33 @@ public class EstivateParser {
 
 	protected static List<QueryParser.Factory> queryParserFactories = new ArrayList<QueryParser.Factory>();
 	static {
-		queryParserFactories.add(SelectParser.queryFactory);
 		queryParserFactories.add(AttrParser.queryFactory);
+		queryParserFactories.add(SelectParser.queryFactory);
+		queryParserFactories.add(TagNameParser.queryFactory);
 		queryParserFactories.add(TextParser.queryFactory);
+		queryParserFactories.add(ValParser.queryFactory);
 	}
 	protected static List<ReduceParser.Factory> reduceParserFactories = new ArrayList<ReduceParser.Factory>();
 	static {
 		reduceParserFactories.add(AttrParser.reduceFactory);
+		reduceParserFactories.add(TagNameParser.reduceFactory);
 		reduceParserFactories.add(TextParser.reduceFactory);
+		reduceParserFactories.add(TitleParser.reduceFactory);
+		reduceParserFactories.add(ValParser.reduceFactory);
 	}
 
 	public static EstivateAST parse(Class<?> clazz) {
 		EstivateAST ast = new EstivateAST();
 
-		
+
 		ast.setQuery(parseQuery(clazz.getAnnotations()));
 		ast.setTargetType(clazz);
 		ast.setTargetRawClass(ClassUtils.rawType(clazz));
-		
+
 		parseExpressions(ast, clazz);
 
 		log.debug("AST of '{}' is {}",clazz.toString(), ast);
-		
+
 		return ast;
 	}
 
@@ -87,15 +92,15 @@ public class EstivateParser {
 		}
 		return exps;
 	}
-	
+
 	private static boolean isEmptyExpression(ExpressionAST exp) {
 		return exp.getReduce() instanceof EmptyReduceAST && exp.getQuery() instanceof EmptyQueryAST;
 	}
-	
+
 	private static FieldExpressionAST parseField(Field field) {
 		FieldExpressionAST exp = new FieldExpressionAST();
 		exp.setField(field);
-		
+
 		Type type = field.getGenericType();
 
 		// common properties
@@ -121,31 +126,31 @@ public class EstivateParser {
 
 		exp.setQuery(parseQuery(annotations));
 		exp.setReduce(parseReduce(annotations));
-		
+
 		// values
 		Type[] genericParameterTypes = method.getGenericParameterTypes();
 		for (Type type : genericParameterTypes) {
-			
+
 			ValueAST value = createValue(type);
-			
+
 			exp.getArguments().add(value);
 		}
-		
+
 		return exp;
 	}
 
 	private static ValueAST createValue(Type type) {
 		Class<?> rawType = ClassUtils.rawType(type);
-		
+
 		ValueAST value = ValueAST.builder()
 				.isValueList(rawType.equals(List.class))
 				.type(type)
 				.rawClass(rawType)
 				.build();
-		
+
 		return value;
 	}
-	
+
 	public static interface QueryParser {
 
 		QueryAST parseQuery(Annotation[] annotations);
@@ -159,7 +164,7 @@ public class EstivateParser {
 		}
 
 	}
-	
+
 	private static QueryAST parseQuery(Annotation[] annotations) {
 		for (QueryParser.Factory factory : queryParserFactories) {
 			QueryParser queryParser = factory.queryParser(annotations);
