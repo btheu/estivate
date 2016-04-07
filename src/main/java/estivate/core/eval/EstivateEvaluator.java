@@ -210,8 +210,6 @@ public class EstivateEvaluator {
 			}
 
 			EstivateAST ast = EstivateParser.parse(ClassUtils.rawType(typeArguments[0]));
-
-			log.debug("Sub AST {}", ast);
 			
 			List<?>  resultatList = evalToList(context.getDocument(), context.getDom(), ast);
 			

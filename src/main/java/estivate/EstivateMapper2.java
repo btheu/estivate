@@ -62,8 +62,6 @@ public class EstivateMapper2 {
 
 		EstivateAST ast = EstivateParser.parse(clazz);
 
-		log.debug("AST {}", ast.toString());
-
 		return (T) EstivateEvaluator.eval(document, ast);
 	}
 	
@@ -71,8 +69,6 @@ public class EstivateMapper2 {
 	public <T> List<T> mapToList(Document document, Class<T> clazz) {
 		
 		EstivateAST ast = EstivateParser.parse(clazz);
-		
-		log.debug("AST {}", ast.toString());
 		
 		return (List<T>) EstivateEvaluator.evalToList(document, ast);
 	}

@@ -47,6 +47,8 @@ public class EstivateParser {
 		
 		parseExpressions(ast, clazz);
 
+		log.debug("AST of '{}' is {}",clazz.toString(), ast);
+		
 		return ast;
 	}
 
