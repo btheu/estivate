@@ -1,8 +1,11 @@
 package estivate;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -49,6 +52,11 @@ public class EstivateMapper2 {
 		STANDARD_TARGET_TYPES.add(Element.class);
 	}
 
+	public <T> T map(InputStream document, Class<T> clazz) throws IOException {
+		Document doc = Jsoup.parse(document, encoding, baseURI);
+		return map(doc, clazz);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <T> T map(Document document, Class<T> clazz) {
 
@@ -58,7 +66,16 @@ public class EstivateMapper2 {
 
 		return (T) EstivateEvaluator.eval(document, ast);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public <T> List<T> mapToList(Document document, Class<T> clazz) {
+		
+		EstivateAST ast = EstivateParser.parse(clazz);
+		
+		log.debug("AST {}", ast.toString());
+		
+		return (List<T>) EstivateEvaluator.evalToList(document, ast);
+	}
 	
 
 }
