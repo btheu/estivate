@@ -3,11 +3,14 @@ package estivate.core.ast.parser;
 import java.lang.annotation.Annotation;
 
 import estivate.annotations.Attr;
+import estivate.core.ast.EstivateAST;
+import estivate.core.ast.ExpressionAST;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.lang.AttrReduceAST;
 import estivate.core.ast.parser.EstivateParser.QueryParser;
 import estivate.core.ast.parser.EstivateParser.ReduceParser;
+import estivate.core.ast.parser2.EstivateParser2.AnnotationParser;
 import estivate.utils.AnnotationsUtils;
 
 /**
@@ -16,10 +19,20 @@ import estivate.utils.AnnotationsUtils;
  * @author Benoit Theunissen
  *
  */
-public class AttrParser implements QueryParser, ReduceParser {
+public class AttrParser implements AnnotationParser, QueryParser, ReduceParser {
 
 	public static final Class<? extends Annotation> TYPE = Attr.class;
 
+    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {}
+
+    public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
+        
+        Attr annotation = (Attr) AnnotationsUtils.find(annotations, TYPE);
+        
+        ast.setQuery(SelectParser.parse(annotation));
+    }
+    
+	@Deprecated
 	public QueryAST parseQuery(Annotation[] annotations) {
 
 		Attr aAttr = (Attr) AnnotationsUtils.find(annotations, TYPE);
@@ -27,6 +40,7 @@ public class AttrParser implements QueryParser, ReduceParser {
 		return SelectParser.parse(aAttr);
 	}
 
+	@Deprecated
 	public ReduceAST parseReduce(Annotation[] annotations) {
 
 		Attr aAttr = (Attr) AnnotationsUtils.find(annotations, TYPE);
@@ -57,5 +71,7 @@ public class AttrParser implements QueryParser, ReduceParser {
 			return super.reduceParser(annotations);
 		}
 	};
+
+
 
 }

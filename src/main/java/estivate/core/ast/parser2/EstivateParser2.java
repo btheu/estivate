@@ -49,7 +49,7 @@ public class EstivateParser2 {
             ast.setTargetRawClass(ClassUtils.rawType(clazz));
 
             for (AnnotationParser parser : annotationParsers) {
-                parser.parseMember(ast, clazz.getAnnotations());
+                parser.parseAnnotation(ast, clazz.getAnnotations());
             }
             
             List<AccessibleObject> list = membersFinder.list(clazz);
@@ -73,7 +73,7 @@ public class EstivateParser2 {
                 fieldAST.setField(field);
                 
                 for (AnnotationParser parser : annotationParsers) {
-                    parser.parseMember(fieldAST, field.getAnnotations());
+                    parser.parseAnnotation(fieldAST, field.getAnnotations());
                 }
                 for (TypeParser parser : typeParsers) {
                     parser.parseType(fieldAST, field.getType());
@@ -95,7 +95,7 @@ public class EstivateParser2 {
                 methodAST.setMethod(method);
                 
                 for (AnnotationParser parser : annotationParsers) {
-                    parser.parseMember(methodAST, method.getAnnotations());
+                    parser.parseAnnotation(methodAST, method.getAnnotations());
                 }
                 for (TypeParser parser : typeParsers) {
                     parser.parseType(methodAST, method.getTypeParameters());
@@ -140,9 +140,9 @@ public class EstivateParser2 {
     }
 
     public interface AnnotationParser {
-        public void parseMember(EstivateAST ast, Annotation[] annotations);
+        public void parseAnnotation(EstivateAST ast, Annotation[] annotations);
         
-        public void parseMember(ExpressionAST ast, Annotation[] annotations);
+        public void parseAnnotation(ExpressionAST ast, Annotation[] annotations);
     }
     
     public interface TypeParser {
