@@ -20,7 +20,6 @@ import estivate.core.SelectEvaluater;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Deprecated
 public class DefaultReducter implements Reducter {
 
 	/*

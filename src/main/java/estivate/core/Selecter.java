@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
  * @author Benoit Theunissen
  *
  */
+@Deprecated
 public interface Selecter {
 
     Elements select(Document document, Elements elements,

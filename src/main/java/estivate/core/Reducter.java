@@ -24,6 +24,7 @@ import estivate.annotations.Val;
  * @author Benoit Theunissen
  *
  */
+@Deprecated
 public interface Reducter {
 
     /**
