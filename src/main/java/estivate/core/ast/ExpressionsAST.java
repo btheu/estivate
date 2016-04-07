@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
-public class ExpressionsAST {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class ExpressionsAST extends NodeAST {
 
-	protected QueryAST query;
-	
 	protected List<ExpressionAST> expressions = new ArrayList<ExpressionAST>();
 
 }

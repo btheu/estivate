@@ -31,14 +31,8 @@ public class EstivateParser2 {
         EstivateAST ast = new EstivateAST();
 
         for (ClassParser parser : classParsers) {
-
             parser.parseClass(ast, clazz);
-
         }
-
-
-        //
-        //		parseExpressions(ast, clazz);
 
         log.debug("AST of '{}' is {}",clazz.toString(), ast);
 
@@ -52,7 +46,9 @@ public class EstivateParser2 {
             ast.setTargetType(clazz);
             ast.setTargetRawClass(ClassUtils.rawType(clazz));
 
-            //ast.setQuery(parseQuery(clazz.getAnnotations()));
+            for (AnnotationParser parser : annotationParsers) {
+                parser.parseMember(ast, clazz.getAnnotations());
+            }
             
             List<AccessibleObject> list = membersFinder.list(clazz);
             for (AccessibleObject member : list) {
@@ -119,6 +115,8 @@ public class EstivateParser2 {
     }
 
     public interface AnnotationParser {
+        public void parseMember(EstivateAST ast, Annotation[] annotations);
+        
         public void parseMember(ExpressionAST ast, Annotation[] annotations);
     }
     
