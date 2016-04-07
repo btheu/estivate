@@ -8,11 +8,8 @@ import org.jsoup.select.Elements;
 
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.lang.TextReduceAST;
-import estivate.core.eval.EstivateEvaluator;
-import estivate.core.eval.ReduceASTEvaluator;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
-import estivate.core.eval.ReduceASTEvaluator.Factory;
-import estivate.core.eval.ReduceASTEvaluator.ReduceResult;
+import estivate.core.eval.ReduceASTEvaluator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -65,36 +62,6 @@ public class TextReduceEvaluator implements ReduceASTEvaluator {
 				value = elements.text();
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		String value;
-//		if(text.isOwn()){
-//
-//			StringBuilder sb = new StringBuilder(50);
-//			for (Element element : context.getDom()) {
-//				if (sb.length() != 0)
-//					sb.append(" ");
-//				sb.append(element.ownText());
-//			}
-//
-//			value = sb.toString();
-//		}else{
-//			value = context.getDom().text();
-//		}
 
 		return ReduceResult.builder().value(value).build();
 	}
