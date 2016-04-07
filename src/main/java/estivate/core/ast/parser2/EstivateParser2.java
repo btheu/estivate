@@ -3,6 +3,7 @@ package estivate.core.ast.parser2;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ExpressionAST;
 import estivate.core.ast.FieldExpressionAST;
 import estivate.core.ast.ListValuesAST;
+import estivate.core.ast.MethodExpressionAST;
 import estivate.core.ast.SimpleValueAST;
 import estivate.core.impl.DefaultMembersFinder;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +70,7 @@ public class EstivateParser2 {
                 Field field = (Field) member;
                 
                 FieldExpressionAST fieldAST = new FieldExpressionAST();
+                fieldAST.setField(field);
                 
                 for (AnnotationParser parser : annotationParsers) {
                     parser.parseMember(fieldAST, field.getAnnotations());
@@ -77,6 +80,28 @@ public class EstivateParser2 {
                 }
                 
                 ast.getExpressions().add(fieldAST);
+            }
+        }
+        
+    };
+    
+    public static MemberParser methodParser = new MemberParser() {
+        
+        public void parseMember(EstivateAST ast, AccessibleObject member) {
+            if(member instanceof Method){
+                Method method = (Method) member;
+                
+                MethodExpressionAST methodAST = new MethodExpressionAST();
+                methodAST.setMethod(method);
+                
+                for (AnnotationParser parser : annotationParsers) {
+                    parser.parseMember(methodAST, method.getAnnotations());
+                }
+                for (TypeParser parser : typeParsers) {
+                    parser.parseType(methodAST, method.getTypeParameters());
+                }
+                
+                ast.getExpressions().add(methodAST);
             }
         }
         
