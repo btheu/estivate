@@ -165,34 +165,35 @@ public class EstivateEvaluator {
         return ReduceResult.builder().build();
     }
 
-	protected static void evalValue(EvalContext context, ReduceResult reduceResult, ValueAST value) {
+    protected static void evalValue(EvalContext context, ReduceResult reduceResult, ValueAST value) {
 
-		// Expand standard type
-		
-		if (value.getRawClass().equals(Document.class)) {
-			value.setValue(context.getDocument());
-		} else if (value.getRawClass().equals(Elements.class)) {
-			value.setValue(context.getDom());
-		} else if (value.getRawClass().equals(Element.class)) {
-			Elements dom = context.getDom();
-			if (dom.size() == 1) {
-				value.setValue(dom);
-			} else {
-				throw new IllegalArgumentException("Cant eval single Element value. Size of the selected DOM was '" + dom.size() + "'");
-			}
-		} else if(ClassUtils.isAssignableValue(value.getRawClass(), reduceResult.getValue()) 
-				&& !Elements.class.equals(reduceResult.getValue().getClass())) {
-			// Simple Type
-			value.setValue(reduceResult.getValue());
-		}else{
-			
-			// Recursive Mapping
-			evalTreeValue(context,value);
-		}
-		
-		// TODO Convert
-		
-	}
+    	// Expand standard type
+
+    	if (value.getRawClass().equals(Document.class)) {
+    		value.setValue(context.getDocument());
+    	} else if (value.getRawClass().equals(Elements.class)) {
+    		value.setValue(context.getDom());
+    	} else if (value.getRawClass().equals(Element.class)) {
+    		Elements dom = context.getDom();
+    		if (dom.size() == 1) {
+    			value.setValue(dom);
+    		} else {
+    			throw new IllegalArgumentException("Cant eval single Element value. Size of the selected DOM was '" + dom.size() + "'");
+    		}
+    	} else if(ClassUtils.isAssignableValue(value.getRawClass(), reduceResult.getValue()) 
+    			&& !Elements.class.equals(reduceResult.getValue().getClass())) {
+    		// Simple Type
+    		value.setValue(reduceResult.getValue());
+    	} else if(!reduceResult.getValue().getClass().equals(Elements.class)){
+    		throw new IllegalArgumentException("Cant cast '" + reduceResult.getValue().getClass() + "' as '"+value.getType()+"'");
+    	} else {
+    		// Recursive Mapping
+    		evalTreeValue(context,value);
+    	}
+
+    	// TODO Convert
+
+    }
 	
 	/**
 	 * Evaluation recursive
@@ -206,7 +207,7 @@ public class EstivateEvaluator {
 		if (value.isValueList()) {
 			Class<?>[] typeArguments = ClassUtils.typeArguments(value.getType());
 			if (typeArguments.length != 1) {
-				throw new IllegalArgumentException("Cant handle such genetic type: " + value.getType().toString());
+				throw new IllegalArgumentException("Cant handle such generic type: " + value.getType().toString());
 			}
 
 			EstivateAST ast = EstivateParser.parse(ClassUtils.rawType(typeArguments[0]));

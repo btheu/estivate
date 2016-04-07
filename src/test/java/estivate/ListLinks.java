@@ -24,7 +24,7 @@ public class ListLinks {
 
 		Document document = Jsoup.connect(url).get();
 
-		EstivateMapper estivate = new EstivateMapper();
+		EstivateMapper2 estivate = new EstivateMapper2();
 
 		Data data = estivate.map(document, Data.class);
 

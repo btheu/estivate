@@ -1,5 +1,6 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
@@ -7,18 +8,15 @@ import org.jsoup.nodes.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.EstivateMapper;
 import estivate.annotations.Select;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SelectTest {
-
-    EstivateMapper mapper = new EstivateMapper();
+public class SelectTest extends EstivateTest {
 
     @Test
-    public void select1() {
+    public void select1() throws IOException {
 
         InputStream document = read("/select/u1.html");
 
@@ -36,7 +34,7 @@ public class SelectTest {
     }
 
     @Test
-    public void selectList1() {
+    public void selectList1() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -87,10 +85,4 @@ public class SelectTest {
 
     }
 
-    private InputStream read(String string) {
-        InputStream resourceAsStream = EstivateMapper.class
-                .getResourceAsStream(string);
-        Assert.assertNotNull(resourceAsStream);
-        return resourceAsStream;
-    }
 }

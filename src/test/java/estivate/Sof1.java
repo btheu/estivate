@@ -16,9 +16,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Sof1 {
-
-	EstivateMapper mapper = new EstivateMapper();
+public class Sof1 extends EstivateTest {
 
 	@Test
 	public void sof_36385967() throws IOException {
@@ -100,9 +98,4 @@ public class Sof1 {
 
 	}
 
-	private InputStream read(String string) {
-		InputStream resourceAsStream = EstivateMapper.class.getResourceAsStream(string);
-		Assert.assertNotNull(resourceAsStream);
-		return resourceAsStream;
-	}
 }

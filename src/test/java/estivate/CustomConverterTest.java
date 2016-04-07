@@ -1,5 +1,6 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,12 +18,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CustomConverterTest {
-
-	EstivateMapper mapper = new EstivateMapper();
+public class CustomConverterTest extends EstivateTest {
 
 	@Test
-	public void converterCustom1() {
+	public void converterCustom1() throws IOException {
 
 		InputStream document = read("/converter/u3.html");
 
@@ -58,12 +57,6 @@ public class CustomConverterTest {
 			this.date2 = date2;
 		}
 
-	}
-
-	private InputStream read(String string) {
-		InputStream resourceAsStream = CustomConverterTest.class.getResourceAsStream(string);
-		Assert.assertNotNull(resourceAsStream);
-		return resourceAsStream;
 	}
 
 	public static class DateConvertor implements Converter {

@@ -1,5 +1,6 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -7,18 +8,15 @@ import java.math.BigInteger;
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.EstivateMapper;
 import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ConverterTest {
-
-	EstivateMapper mapper = new EstivateMapper();
+public class ConverterTest extends EstivateTest {
 
 	@Test
-	public void convertorPrimitive1() {
+	public void convertorPrimitive1() throws IOException {
 
 		InputStream document = read("/converter/u1.html");
 
@@ -55,7 +53,7 @@ public class ConverterTest {
 	}
 
 	@Test
-	public void convertorBigNumber1() {
+	public void convertorBigNumber1() throws IOException {
 		InputStream document = read("/converter/u2.html");
 
 		ResultBig result = mapper.map(document, ResultBig.class);
@@ -134,10 +132,4 @@ public class ConverterTest {
 
 	}
 
-	private InputStream read(String string) {
-		InputStream resourceAsStream = EstivateMapper.class
-				.getResourceAsStream(string);
-		Assert.assertNotNull(resourceAsStream);
-		return resourceAsStream;
-	}
 }

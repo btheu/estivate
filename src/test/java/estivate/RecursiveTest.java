@@ -1,5 +1,6 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -13,12 +14,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RecursiveTest {
-
-    EstivateMapper mapper = new EstivateMapper();
+public class RecursiveTest extends EstivateTest {
 
     @Test
-    public void selectRec3() {
+    public void selectRec3() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -36,7 +35,7 @@ public class RecursiveTest {
     }
 
     @Test
-    public void selectRec3Bis() {
+    public void selectRec3Bis() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -73,7 +72,7 @@ public class RecursiveTest {
     }
 
     @Test
-    public void selectRec1() {
+    public void selectRec1() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -91,7 +90,7 @@ public class RecursiveTest {
     }
 
     @Test
-    public void selectRec2() {
+    public void selectRec2() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -157,10 +156,4 @@ public class RecursiveTest {
 
     }
 
-    private InputStream read(String string) {
-        InputStream resourceAsStream = EstivateMapper.class
-                .getResourceAsStream(string);
-        Assert.assertNotNull(resourceAsStream);
-        return resourceAsStream;
-    }
 }

@@ -1,5 +1,6 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -11,12 +12,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AttrTest {
-
-    EstivateMapper mapper = new EstivateMapper();
+public class AttrTest extends EstivateTest { 
 
     @Test
-    public void attr2() {
+    public void attr2() throws IOException {
 
         InputStream document = read("/attr/u2.html");
 
@@ -46,7 +45,7 @@ public class AttrTest {
     }
 
     @Test
-    public void attr1() {
+    public void attr1() throws IOException {
 
         InputStream document = read("/attr/u1.html");
 
@@ -75,10 +74,4 @@ public class AttrTest {
 
     }
 
-    private InputStream read(String string) {
-        InputStream resourceAsStream = EstivateMapper.class
-                .getResourceAsStream(string);
-        Assert.assertNotNull(resourceAsStream);
-        return resourceAsStream;
-    }
 }

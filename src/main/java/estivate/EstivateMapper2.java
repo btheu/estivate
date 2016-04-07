@@ -56,7 +56,7 @@ public class EstivateMapper2 {
 		Document doc = Jsoup.parse(document, encoding, baseURI);
 		return map(doc, clazz);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <T> T map(Document document, Class<T> clazz) {
 
@@ -64,14 +64,18 @@ public class EstivateMapper2 {
 
 		return (T) EstivateEvaluator.eval(document, ast);
 	}
-	
+
+	public <T> List<T> mapToList(InputStream document, Class<T> clazz) throws IOException {
+		Document doc = Jsoup.parse(document, encoding, baseURI);
+		return mapToList(doc, clazz);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T> List<T> mapToList(Document document, Class<T> clazz) {
-		
+
 		EstivateAST ast = EstivateParser.parse(clazz);
-		
+
 		return (List<T>) EstivateEvaluator.evalToList(document, ast);
 	}
-	
 
 }
