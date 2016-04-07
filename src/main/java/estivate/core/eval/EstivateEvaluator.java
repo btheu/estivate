@@ -204,6 +204,8 @@ public class EstivateEvaluator {
 	private static void evalTreeValue(EvalContext context, ValueAST value) {
 		log.debug("[{}] > eval with recursive mapping'", context.getMemberName());
 
+		Object result;
+		
 		if (value.isValueList()) {
 			Class<?>[] typeArguments = ClassUtils.typeArguments(value.getType());
 			if (typeArguments.length != 1) {
@@ -212,17 +214,17 @@ public class EstivateEvaluator {
 
 			EstivateAST ast = EstivateParser.parse(ClassUtils.rawType(typeArguments[0]));
 			
-			List<?>  resultatList = evalToList(context.getDocument(), context.getDom(), ast);
-			
-			value.setValue(resultatList);
+			result = evalToList(context.getDocument(), context.getDom(), ast);
 			
 		}else{
 			
 			EstivateAST ast = EstivateParser.parse(value.getRawClass());
 			
-			eval(context.document,context.getDom(),ast);
+			result = eval(context.document,context.getDom(),ast);
+			
 		}
 
+		value.setValue(result);
 
 		log.debug("[{}] < eval with recursive mapping", context.getMemberName());
 	}

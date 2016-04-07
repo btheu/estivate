@@ -80,10 +80,10 @@ public class RecursiveTest extends EstivateTest {
 
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getSubResult());
+        Assert.assertNotNull(result.getSubResult1());
         Assert.assertNotNull(result.getSubResult2());
 
-        Assert.assertEquals("Name 2", result.getSubResult().getName());
+        Assert.assertEquals("Name 2", result.getSubResult1().getName());
         Assert.assertEquals("Name 2", result.getSubResult2().getName());
 
         log.info(result.toString());
@@ -98,13 +98,13 @@ public class RecursiveTest extends EstivateTest {
 
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getSubResults());
+        Assert.assertNotNull(result.getSubResults1());
         Assert.assertNotNull(result.getSubResults2());
 
-        Assert.assertEquals(3, result.getSubResults().size());
+        Assert.assertEquals(3, result.getSubResults1().size());
         Assert.assertEquals(3, result.getSubResults2().size());
 
-        List<SubResult> subResults = result.getSubResults();
+        List<SubResult> subResults = result.getSubResults1();
         for (SubResult subResult : subResults) {
             subResult.getName();
         }
@@ -122,7 +122,7 @@ public class RecursiveTest extends EstivateTest {
     public static class ResultSingle {
 
         @Select("#div2")
-        public SubResult subResult;
+        public SubResult subResult1;
 
         public SubResult subResult2;
 
@@ -137,13 +137,13 @@ public class RecursiveTest extends EstivateTest {
     public static class ResultList {
 
         @Select(".someClass")
-        public List<SubResult> subResults;
+        public List<SubResult> subResults1;
 
         public List<SubResult> subResults2;
 
         @Select(".someClass")
         public void setSubResult2(List<SubResult> subResults) {
-            subResults2 = subResults;
+            this.subResults2 = subResults;
         }
 
     }
