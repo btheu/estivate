@@ -176,7 +176,7 @@ public class EstivateEvaluator {
     	} else if (value.getRawClass().equals(Element.class)) {
     		Elements dom = context.getDom();
     		if (dom.size() == 1) {
-    			value.setValue(dom);
+    			value.setValue(dom.first());
     		} else {
     			throw new IllegalArgumentException("Cant eval single Element value. Size of the selected DOM was '" + dom.size() + "'");
     		}
