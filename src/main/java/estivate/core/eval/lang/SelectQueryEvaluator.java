@@ -1,10 +1,13 @@
-package estivate.core.eval;
+package estivate.core.eval.lang;
 
 import org.jsoup.helper.StringUtil;
 
 import estivate.core.ast.QueryAST;
-import estivate.core.ast.parser.SelectQueryAST;
+import estivate.core.ast.lang.SelectQueryAST;
+import estivate.core.eval.EstivateEvaluator;
+import estivate.core.eval.QueryASTEvaluator;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
+import estivate.core.eval.QueryASTEvaluator.Factory;
 
 public class SelectQueryEvaluator implements QueryASTEvaluator {
 

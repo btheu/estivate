@@ -6,6 +6,7 @@ import org.jsoup.helper.StringUtil;
 
 import estivate.annotations.Select;
 import estivate.core.ast.QueryAST;
+import estivate.core.ast.lang.SelectQueryAST;
 import estivate.core.ast.parser.EstivateParser.QueryParser;
 import estivate.utils.AnnotationsUtils;
 

@@ -5,6 +5,8 @@ import java.lang.annotation.Annotation;
 import estivate.annotations.Text;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
+import estivate.core.ast.lang.SelectQueryAST;
+import estivate.core.ast.lang.TextReduceAST;
 import estivate.core.ast.parser.EstivateParser.QueryParser;
 import estivate.core.ast.parser.EstivateParser.ReduceParser;
 import estivate.utils.AnnotationsUtils;

@@ -1,20 +1,15 @@
-package estivate.core.ast.parser;
+package estivate.core.ast.lang;
 
 import estivate.core.ast.ReduceAST;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * 
- * @author Benoit Theunissen
- *
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class AttrReduceAST extends ReduceAST {
+public class TextReduceAST extends ReduceAST {
 
-	protected String attr;
-
+    protected boolean own = false;
+    
 }

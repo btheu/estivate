@@ -1,4 +1,4 @@
-package estivate.core.ast.parser;
+package estivate.core.ast.lang;
 
 import estivate.core.ast.QueryAST;
 import lombok.Data;

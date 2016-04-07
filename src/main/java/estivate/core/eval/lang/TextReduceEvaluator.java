@@ -1,4 +1,4 @@
-package estivate.core.eval;
+package estivate.core.eval.lang;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import estivate.core.ast.ReduceAST;
-import estivate.core.ast.parser.TextReduceAST;
+import estivate.core.ast.lang.TextReduceAST;
+import estivate.core.eval.EstivateEvaluator;
+import estivate.core.eval.ReduceASTEvaluator;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
+import estivate.core.eval.ReduceASTEvaluator.Factory;
+import estivate.core.eval.ReduceASTEvaluator.ReduceResult;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
