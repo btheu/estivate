@@ -139,17 +139,16 @@ public class EstivateParser {
 		return exp;
 	}
 
-	private static ValueAST createValue(Type type) {
-		Class<?> rawType = ClassUtils.rawType(type);
+    private static ValueAST createValue(Type type) {
+        Class<?> rawType = ClassUtils.rawType(type);
 
-		ValueAST value = ValueAST.builder()
-				.isValueList(rawType.equals(List.class))
-				.type(type)
-				.rawClass(rawType)
-				.build();
+        ValueAST value = new ValueAST();
+        value.setType(type);
+        value.setRawClass(rawType);
+        value.setValueList(rawType.equals(List.class));
 
-		return value;
-	}
+        return value;
+    }
 
 	public static interface QueryParser {
 

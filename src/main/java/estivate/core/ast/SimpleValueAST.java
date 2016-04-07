@@ -3,20 +3,20 @@ package estivate.core.ast;
 import java.lang.reflect.Type;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
-public class ValueAST {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class SimpleValueAST extends ValueAST {
 
-    @Deprecated
 	protected Type type;
 
-    @Deprecated
 	protected Class<?> rawClass;
 
-    @Deprecated
 	protected boolean isValueList = false;
 	
-    @Deprecated
 	protected Object value;
 
 }

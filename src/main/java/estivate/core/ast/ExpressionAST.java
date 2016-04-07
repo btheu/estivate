@@ -13,4 +13,6 @@ public abstract class ExpressionAST {
 
 	protected ConverterAST converter;
 
+	// Simple Value or List Value
+	protected ValueAST value;
 }
