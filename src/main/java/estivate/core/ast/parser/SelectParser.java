@@ -34,6 +34,8 @@ public class SelectParser implements QueryParser {
 		query.setLast(aSelect.last());
 		query.setQueryString(or(aSelect.select(), aSelect.value()));
 
+		valid(query);
+		
 		return query;
 	}
 
@@ -56,6 +58,8 @@ public class SelectParser implements QueryParser {
 		query.setLast(annotation.last());
 		query.setQueryString(annotation.select());
 
+		valid(query);
+		
 		return query;
 	}
 
@@ -67,6 +71,8 @@ public class SelectParser implements QueryParser {
 		query.setFirst(annotation.first());
 		query.setLast(annotation.last());
 		query.setQueryString(annotation.select());
+
+		valid(query);
 		
 		return query;
 	}
@@ -79,6 +85,8 @@ public class SelectParser implements QueryParser {
 		query.setFirst(annotation.first());
 		query.setLast(annotation.last());
 		query.setQueryString(annotation.select());
+
+		valid(query);
 		
 		return query;
 	}
@@ -91,11 +99,21 @@ public class SelectParser implements QueryParser {
 		query.setFirst(annotation.first());
 		query.setLast(annotation.last());
 		query.setQueryString(annotation.select());
+
+		valid(query);
 		
 		return query;
 	}
 	
-	private String or(String value1, String value2) {
+	private static void valid(SelectQueryAST ast) {
+		if(ast.isFirst() && ast.isLast()){
+			 throw new IllegalArgumentException(
+					 "Select cant be true for first() and last() a the same time");
+		}
+		
+	}
+	
+	private static String or(String value1, String value2) {
 		return StringUtil.isBlank(value1) ? value2 : value1;
 	}
 }
