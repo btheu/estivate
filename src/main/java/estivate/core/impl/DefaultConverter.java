@@ -7,14 +7,14 @@ import estivate.core.Converter;
 
 public class DefaultConverter implements Converter {
 
-	public static final List<Converter> convertors = new ArrayList<Converter>();
+	public static final List<Converter> converters = new ArrayList<Converter>();
 	static {
-		convertors.add(new PrimitiveConverter());
-		convertors.add(new StandardConverter());
+		converters.add(new PrimitiveConverter());
+		converters.add(new SimpleConverter());
 	}
 
 	public boolean canConvert(Object value, Class<?> targetType) {
-		for (Converter typeConverter : convertors) {
+		for (Converter typeConverter : converters) {
 			if (typeConverter.canConvert(value, targetType)) {
 				return true;
 			}
@@ -23,7 +23,7 @@ public class DefaultConverter implements Converter {
 	}
 
 	public Object convert(Object value, Class<?> targetType) {
-		for (Converter typeConverter : convertors) {
+		for (Converter typeConverter : converters) {
 			if (typeConverter.canConvert(value, targetType)) {
 				return typeConverter.convert(value, targetType);
 			}
