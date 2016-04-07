@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ConverterTest extends EstivateTest {
+public class StandardConverterTest extends EstivateTest {
 
 	@Test
 	public void convertorPrimitive1() throws IOException {
