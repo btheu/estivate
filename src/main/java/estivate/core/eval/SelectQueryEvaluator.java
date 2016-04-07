@@ -1,5 +1,7 @@
 package estivate.core.eval;
 
+import org.jsoup.helper.StringUtil;
+
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.parser.SelectQueryAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
@@ -11,7 +13,12 @@ public class SelectQueryEvaluator implements QueryASTEvaluator {
 		
 		EvalContext result = context.toBuilder().build();
 		
-		result.setDom(result.getDom().select(select.getQueryString()));
+		String queryString = select.getQueryString();
+		if(StringUtil.isBlank(queryString)){
+			result.setDom(result.getDom());
+		}else{
+			result.setDom(result.getDom().select(queryString));
+		}
 		
 		return result;
 	}
