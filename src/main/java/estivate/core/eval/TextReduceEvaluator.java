@@ -1,11 +1,17 @@
 package estivate.core.eval;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.parser.TextReduceAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class TextReduceEvaluator implements ReduceASTEvaluator {
 
 	public ReduceResult eval(EvalContext context, ReduceAST reduce) {
@@ -15,20 +21,76 @@ public class TextReduceEvaluator implements ReduceASTEvaluator {
 	public ReduceResult eval(EvalContext context, ReduceAST reduce, boolean isValueList) {
 		TextReduceAST text = (TextReduceAST) reduce;
 
-		String value;
-		if(text.isOwn()){
-
-			StringBuilder sb = new StringBuilder(50);
-			for (Element element : context.getDom()) {
-				if (sb.length() != 0)
-					sb.append(" ");
-				sb.append(element.ownText());
+		Elements elements = context.getDom();
+		
+		Object value;
+		
+		if (isValueList) {
+			List<String> list = new ArrayList<String>();
+			if (text.isOwn()) {
+				log.debug("using list owntext()");
+				for (Element element : elements) {
+					list.add(element.ownText());
+				}
+			} else {
+				log.debug("using list text()");
+				for (Element element : elements) {
+					list.add(element.text());
+				}
 			}
+			value = list;
+		} else {
+			if (elements.size() > 1) {
+				log.warn(
+						"'{}' text using first element. Consider fixing the select expression to get only one element.",
+						context.getMemberName());
+			}
+			if (text.isOwn()) {
+				log.debug("using simple owntext()");
 
-			value = sb.toString();
-		}else{
-			value = context.getDom().text();
+				StringBuilder sb = new StringBuilder(50);
+				for (Element element : elements) {
+					if (sb.length() != 0)
+						sb.append(" ");
+					sb.append(element.ownText());
+				}
+
+				value = sb.toString();
+			} else {
+				log.debug("using simple text()");
+				value = elements.text();
+			}
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		String value;
+//		if(text.isOwn()){
+//
+//			StringBuilder sb = new StringBuilder(50);
+//			for (Element element : context.getDom()) {
+//				if (sb.length() != 0)
+//					sb.append(" ");
+//				sb.append(element.ownText());
+//			}
+//
+//			value = sb.toString();
+//		}else{
+//			value = context.getDom().text();
+//		}
 
 		return ReduceResult.builder().value(value).build();
 	}

@@ -24,9 +24,10 @@ public class AttrReduceEvaluator implements ReduceASTEvaluator {
 	public ReduceResult eval(EvalContext context, ReduceAST reduce, boolean isValueList) {
 		AttrReduceAST attr = (AttrReduceAST) reduce;
 		
+		Elements elements = context.getDom();
+		
 		Object value;
 		
-		Elements elements = context.getDom();
 		if (isValueList) {
 			List<String> list = new ArrayList<String>();
 
@@ -39,7 +40,7 @@ public class AttrReduceEvaluator implements ReduceASTEvaluator {
 			if (elements.size() > 1) {
 				log.warn(
 						"'{}' attr concats elements. Consider fixing the Query expression to get only one element.",
-						attr.getAttr());
+						context.getMemberName());
 			}
 
 			StringBuilder sb = new StringBuilder(50);
