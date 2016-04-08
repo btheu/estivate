@@ -98,11 +98,19 @@ public class EstivateEvaluator2 {
 		}
 	}
 
-	private static void evalConvert(EvalContext context, ConverterAST converter, ValueAST value) {
-		// TODO Auto-generated method stub
-
+	private static void evalConvert(EvalContext context, ConverterAST converter, SimpleValueAST value) {
+	    Object result =  eval(context.document,context.getQueryResult(),value.getAst());
+	    
+	    context.getValue().put(value, result);
 	}
 
+    private static void evalConvert(EvalContext context, ConverterAST converter, ListValueAST values) {
+        List<SimpleValueAST> values2 = values.getValues();
+        for (SimpleValueAST simpleValueAST : values2) {
+            evalConvert(context.toBuilder().build(), converter, simpleValueAST);
+        }
+    }
+	
 	private static void evalReduce(EvalContext context, ReduceAST reduce, ValueAST value) {
 		if(value instanceof SimpleValueAST){
 			SimpleValueAST simpleValueAST = (SimpleValueAST) value;
@@ -176,7 +184,9 @@ public class EstivateEvaluator2 {
 			}
 		}
 
-		private void evalValue(EvalContext context, MethodExpressionAST expression) {
+
+
+        private void evalValue(EvalContext context, MethodExpressionAST expression) {
 
 			List<SimpleValueAST> values = expression.getValues().getValues();
 			
