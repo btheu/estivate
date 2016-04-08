@@ -103,22 +103,48 @@ public class EstivateEvaluator2 {
 
         Object currentValue = context.getValue().get(value);
 
+        // Standard assignment
+        if(value.getRawClass().equals(Document.class)){
+            context.getValue().put(value, context.getDocument());
+            return;
+        }
+        if(value.getRawClass().equals(Elements.class)){
+            context.getValue().put(value, context.getQueryResult());
+            return;
+        }
+        if(value.getRawClass().equals(Element.class)){
+            Elements dom = context.getQueryResult();
+            if (dom.size() == 1) {
+                context.getValue().put(value,dom.first());
+            } else {
+                throw new IllegalArgumentException("Cant eval single Element value. Size of the selected DOM was '" + dom.size() + "'");
+            }
+            return;
+        }
+
         // TODO Custom Convert
+
+        // TODO Primitive Convert
         
+        // Recursive assignment
+        if(currentValue.getClass().equals(Elements.class)){
+            if(value.isValueList()){
+                currentValue =  evalToList(context.document,context.getQueryResult(),value.getAst());
+            }else{
+                currentValue = eval(context.document,context.getQueryResult(),value.getAst());
+            }
+            context.getValue().put(value, currentValue);
+            return;
+        }
+
         // Direct assignment
         if(ClassUtils.isAssignableValue(value.getRawClass(), currentValue)){
             context.getValue().put(value, currentValue);
             return;
         }
+
         
-        // TODO Primitive Convert
-        
-        // Recursive assignment
-        if(value.isValueList()){
-            currentValue =  evalToList(context.document,context.getQueryResult(),value.getAst());
-        }else{
-            currentValue = eval(context.document,context.getQueryResult(),value.getAst());
-        }
+
     }
 
     private static void evalConvert(EvalContext context, ConverterAST converter, ListValueAST values) {
