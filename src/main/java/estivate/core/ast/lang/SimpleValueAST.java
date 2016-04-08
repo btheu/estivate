@@ -2,6 +2,7 @@ package estivate.core.ast.lang;
 
 import java.lang.reflect.Type;
 
+import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ValueAST;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,4 +19,5 @@ public class SimpleValueAST extends ValueAST {
 
 	protected boolean isValueList = false;
 	
+	protected EstivateAST ast;
 }

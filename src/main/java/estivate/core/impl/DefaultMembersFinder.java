@@ -38,7 +38,7 @@ public class DefaultMembersFinder implements MembersFinder {
 		List<Field> res = new ArrayList<Field>();
 
 		Class<?> index = clazz;
-		while (index != Object.class) {
+		while (index != Object.class && index != null) {
 			res.addAll(Arrays.asList(index.getDeclaredFields()));
 
 			index = index.getSuperclass();

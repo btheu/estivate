@@ -17,6 +17,8 @@ import estivate.core.ast.MethodExpressionAST;
 import estivate.core.ast.lang.ListValueAST;
 import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.ast.parser.AttrParser;
+import estivate.core.ast.parser.SelectParser;
+import estivate.core.ast.parser.TextParser;
 import estivate.core.impl.DefaultMembersFinder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +65,30 @@ public class EstivateParser2 {
         }
     };
 
+    public static SimpleValueAST parseType2(Type type) {
+        SimpleValueAST value = new SimpleValueAST();
+
+        Class<?> rawType = ClassUtils.rawType(type);
+        
+        boolean isValueList = rawType.equals(List.class);
+        
+        value.setType(type);
+        value.setRawClass(rawType);
+        value.setValueList(isValueList);
+        
+        if(isValueList){
+            Class<?> typeArgument = ClassUtils.typeArguments(type)[0];
+            
+            value.setAst(EstivateParser2.parse( ClassUtils.rawType(typeArgument)));
+            
+        }else{
+            value.setAst(EstivateParser2.parse(value.getRawClass()));
+        }
+        
+        
+        return value;
+    }
+    
     public static MemberParser fieldParser = new MemberParser() {
 
         public void parseMember(EstivateAST ast, AccessibleObject member) {
@@ -85,11 +111,7 @@ public class EstivateParser2 {
 
         public void parseType(FieldExpressionAST ast, Type type) {
 
-            SimpleValueAST value = new SimpleValueAST();
-
-            value.setType(type);
-            value.setRawClass(ClassUtils.rawType(type));
-            value.setValueList(value.getRawClass().equals(List.class));
+            SimpleValueAST value = parseType2(type);
 
             ast.setValue(value);
 
@@ -127,11 +149,7 @@ public class EstivateParser2 {
 
             for (Type type : types) {
 
-                SimpleValueAST value = new SimpleValueAST();
-
-                value.setType(type);
-                value.setRawClass(ClassUtils.rawType(type));
-                value.setValueList(value.getRawClass().equals(List.class));
+                SimpleValueAST value = parseType2(type);
 
                 list.getValues().add(value);
 
@@ -140,6 +158,8 @@ public class EstivateParser2 {
             ast.setValues(list);
 
         }
+
+       
 
         private boolean isEmptyExpression(ExpressionAST exp) {
             return exp.getReduce() == null && exp.getQuery() == null;
@@ -153,6 +173,8 @@ public class EstivateParser2 {
         memberParsers.add(methodParser);
 
         annotationParsers.add(AttrParser.INSTANCE);
+        annotationParsers.add(SelectParser.INSTANCE);
+        annotationParsers.add(TextParser.INSTANCE);
     }
 
     public interface ClassParser {

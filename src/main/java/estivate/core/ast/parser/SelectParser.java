@@ -24,6 +24,8 @@ import estivate.utils.AnnotationsUtils;
  */
 public class SelectParser implements AnnotationParser {
 
+    public static final SelectParser INSTANCE = new SelectParser();
+    
 	public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
 		Select annotation = AnnotationsUtils.find(annotations, Select.class);
 		if(annotation != null){
