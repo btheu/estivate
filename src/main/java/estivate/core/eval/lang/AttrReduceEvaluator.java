@@ -8,69 +8,54 @@ import org.jsoup.select.Elements;
 
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.lang.AttrReduceAST;
-import estivate.core.eval.EstivateEvaluator;
-import estivate.core.eval.ReduceASTEvaluator;
-import estivate.core.eval.EstivateEvaluator.EvalContext;
-import estivate.core.eval.ReduceASTEvaluator.Factory;
-import estivate.core.eval.ReduceASTEvaluator.ReduceResult;
+import estivate.core.eval.EstivateEvaluator2.EvalContext;
+import estivate.core.eval.EstivateEvaluator2.ReduceEvaluator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AttrReduceEvaluator implements ReduceASTEvaluator {
+public class AttrReduceEvaluator implements ReduceEvaluator {
 
-	public ReduceResult eval(EvalContext context, ReduceAST reduce) {
-
-		AttrReduceAST attr = (AttrReduceAST) reduce;
-		
-		return ReduceResult.builder().value(context.getDom().attr(attr.getAttr())).build();
-	}
+	public static final AttrReduceEvaluator INSTANCE = new AttrReduceEvaluator();
 	
-	public ReduceResult eval(EvalContext context, ReduceAST reduce, boolean isValueList) {
-		AttrReduceAST attr = (AttrReduceAST) reduce;
+	public void evalReduce(EvalContext context, ReduceAST reduce,
+			boolean isValueList) {
 		
-		Elements elements = context.getDom();
-		
-		Object value;
-		
-		if (isValueList) {
-			List<String> list = new ArrayList<String>();
+		if(reduce instanceof AttrReduceAST){
+			AttrReduceAST ast = (AttrReduceAST) reduce;
+			
+			Elements elements = context.getQueryResult();
+			
+			Object reduceValue;
+			
+			if (isValueList) {
+				List<String> list = new ArrayList<String>();
 
-			for (Element element : elements) {
-				list.add(element.attr(attr.getAttr()));
+				for (Element element : elements) {
+					list.add(element.attr(ast.getAttr()));
+				}
+
+				reduceValue = list;
+			} else {
+				if (elements.size() > 1) {
+					log.warn(
+							"'{}' attr concats elements. Consider fixing the Query expression to get only one element.",
+							context.getMemberName());
+				}
+
+				StringBuilder sb = new StringBuilder(50);
+				for (Element element : elements) {
+					if (sb.length() != 0)
+						sb.append(" ");
+					sb.append(element.attr(ast.getAttr()));
+				}
+
+				reduceValue = sb.toString();
 			}
-
-			value = list;
-		} else {
-			if (elements.size() > 1) {
-				log.warn(
-						"'{}' attr concats elements. Consider fixing the Query expression to get only one element.",
-						context.getMemberName());
-			}
-
-			StringBuilder sb = new StringBuilder(50);
-			for (Element element : elements) {
-				if (sb.length() != 0)
-					sb.append(" ");
-				sb.append(element.attr(attr.getAttr()));
-			}
-
-			value = sb.toString();
+			
+			context.setReduceResult(reduceValue);
+			
 		}
 		
-		return ReduceResult.builder().value(value).build();
 	}
-	
-	public static estivate.core.eval.ReduceASTEvaluator.Factory factory = new Factory() {
-		
-		@Override
-		public ReduceASTEvaluator expressionEvaluater(ReduceAST reduce) {
-			if(reduce instanceof AttrReduceAST){
-				return new AttrReduceEvaluator();
-			}
-			return super.expressionEvaluater(reduce);
-		}
-	};
-
-
 
 }

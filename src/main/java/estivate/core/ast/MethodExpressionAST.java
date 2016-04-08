@@ -1,7 +1,6 @@
 package estivate.core.ast;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +15,7 @@ public class MethodExpressionAST extends ExpressionAST {
 
 	protected Method method;
 
+	@Deprecated
 	protected List<ValueAST> arguments = new ArrayList<ValueAST>();
 	
 }

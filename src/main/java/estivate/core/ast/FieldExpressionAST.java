@@ -13,6 +13,4 @@ public class FieldExpressionAST extends ExpressionAST {
 
 	protected Field field;
 
-	protected ValueAST value;
-	
 }

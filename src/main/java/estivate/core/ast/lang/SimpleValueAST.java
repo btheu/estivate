@@ -1,7 +1,8 @@
-package estivate.core.ast;
+package estivate.core.ast.lang;
 
 import java.lang.reflect.Type;
 
+import estivate.core.ast.ValueAST;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

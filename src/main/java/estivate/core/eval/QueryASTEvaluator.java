@@ -3,6 +3,7 @@ package estivate.core.eval;
 import estivate.core.ast.QueryAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
 
+@Deprecated
 public interface QueryASTEvaluator {
 
 	/**

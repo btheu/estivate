@@ -5,45 +5,42 @@ import org.jsoup.select.Elements;
 
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.lang.SelectQueryAST;
-import estivate.core.eval.EstivateEvaluator.EvalContext;
-import estivate.core.eval.QueryASTEvaluator;
+import estivate.core.eval.EstivateEvaluator2.EvalContext;
+import estivate.core.eval.EstivateEvaluator2.QueryEvaluator;
 
-public class SelectQueryEvaluator implements QueryASTEvaluator {
+public class SelectQueryEvaluator implements QueryEvaluator {
 
-	public EvalContext eval(EvalContext context, QueryAST query) {
-		SelectQueryAST ast = (SelectQueryAST) query;
-		
-		EvalContext result = context.toBuilder().build();
-		
-		String queryString = ast.getQueryString();
-		if(StringUtil.isBlank(queryString)){
-			result.setDom(result.getDom());
-		}else{
-			Elements select2 = result.getDom().select(queryString);
-			
-			if(ast.isFirst()){
-				result.setDom(new Elements(select2.first()));
-			} else if(ast.isLast()){
-				result.setDom(new Elements(select2.last()));
-			} else if(ast.isUnique() && select2.size() != 1){
-				throw new RuntimeException("No unique element after query");
-			}else{
-				result.setDom(select2);
+	public static final SelectQueryEvaluator INSTANCE = new SelectQueryEvaluator();
+	
+	public void evalQuery(EvalContext context, QueryAST query) {
+		if (query instanceof SelectQueryAST) {
+			SelectQueryAST ast = (SelectQueryAST) query;
+
+			Elements queryResult = context.getQueryResult();
+
+			String queryString = ast.getQueryString();
+
+
+			if ( ! StringUtil.isBlank(queryString)) {
+				
+				Elements select = context.getQueryResult().select(queryString);
+
+				if (ast.isFirst()) {
+					queryResult = new Elements(select.first());
+				} else if (ast.isLast()) {
+					queryResult = new Elements(select.last());
+				} else if (ast.isUnique() && select.size() != 1) {
+					throw new RuntimeException("No unique element after query");
+				} else {
+					queryResult = select;
+				}
+
 			}
-			
+
+			context.setQueryResult(queryResult);
+
 		}
 		
-		return result;
 	}
-
-	public static QueryASTEvaluator.Factory factory = new Factory() {
-		@Override
-		public QueryASTEvaluator expressionEvaluater(QueryAST query) {
-			if(query instanceof SelectQueryAST){
-				return new SelectQueryEvaluator();
-			}
-			return super.expressionEvaluater(query);
-		}
-	};
 	
 }

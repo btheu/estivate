@@ -12,8 +12,8 @@ import org.jsoup.select.Elements;
 
 import estivate.annotations.Select;
 import estivate.core.ast.EstivateAST;
-import estivate.core.ast.parser.EstivateParser;
-import estivate.core.eval.EstivateEvaluator;
+import estivate.core.ast.parser2.EstivateParser2;
+import estivate.core.eval.EstivateEvaluator2;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -60,9 +60,9 @@ public class EstivateMapper2 {
 	@SuppressWarnings("unchecked")
 	public <T> T map(Document document, Class<T> clazz) {
 
-		EstivateAST ast = EstivateParser.parse(clazz);
+		EstivateAST ast = EstivateParser2.parse(clazz);
 
-		return (T) EstivateEvaluator.eval(document, ast);
+		return (T) EstivateEvaluator2.eval(document, ast);
 	}
 
 	public <T> List<T> mapToList(InputStream document, Class<T> clazz) throws IOException {
@@ -73,9 +73,9 @@ public class EstivateMapper2 {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> mapToList(Document document, Class<T> clazz) {
 
-		EstivateAST ast = EstivateParser.parse(clazz);
+		EstivateAST ast = EstivateParser2.parse(clazz);
 
-		return (List<T>) EstivateEvaluator.evalToList(document, ast);
+		return (List<T>) EstivateEvaluator2.evalToList(document, ast);
 	}
 
 }

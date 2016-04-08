@@ -13,9 +13,10 @@ import estivate.core.MembersFinder;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ExpressionAST;
 import estivate.core.ast.FieldExpressionAST;
-import estivate.core.ast.ListValuesAST;
 import estivate.core.ast.MethodExpressionAST;
-import estivate.core.ast.SimpleValueAST;
+import estivate.core.ast.lang.ListValueAST;
+import estivate.core.ast.lang.SimpleValueAST;
+import estivate.core.ast.parser.AttrParser;
 import estivate.core.impl.DefaultMembersFinder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +29,7 @@ public class EstivateParser2 {
     protected static List<TypeParser> typeParsers = new ArrayList<TypeParser>();
 
     protected static MembersFinder membersFinder = new DefaultMembersFinder();
-
+    
     public static EstivateAST parse(Class<?> clazz) {
         EstivateAST ast = new EstivateAST();
 
@@ -111,7 +112,7 @@ public class EstivateParser2 {
 
         public void parseType(ExpressionAST ast, Type... types) {
             
-            ListValuesAST list = new ListValuesAST();
+            ListValueAST list = new ListValueAST();
             
             for (Type type : types) {
                 
@@ -130,6 +131,15 @@ public class EstivateParser2 {
         }
         
     };
+    
+    static{
+    	classParsers.add(cParser);
+    	memberParsers.add(fieldParser);
+    	memberParsers.add(methodParser);
+    	typeParsers.add(typeParser);
+    	
+    	annotationParsers.add(AttrParser.INSTANCE);
+    }
     
     public interface ClassParser {
         public void parseClass(EstivateAST ast, Class<?> clazz);

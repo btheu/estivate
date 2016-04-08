@@ -5,6 +5,7 @@ import estivate.core.eval.EstivateEvaluator.EvalContext;
 import lombok.Builder;
 import lombok.Data;
 
+@Deprecated
 public interface ReduceASTEvaluator {
 
 	@Deprecated

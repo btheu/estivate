@@ -23,25 +23,16 @@ import estivate.core.impl.DefaultMembersFinder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Deprecated
 public class EstivateParser {
 
     protected static MembersFinder membersFinder = new DefaultMembersFinder();
 
     protected static List<QueryParser.Factory> queryParserFactories = new ArrayList<QueryParser.Factory>();
     static {
-        queryParserFactories.add(AttrParser.queryFactory);
-        queryParserFactories.add(SelectParser.queryFactory);
-        queryParserFactories.add(TagNameParser.queryFactory);
-        queryParserFactories.add(TextParser.queryFactory);
-        queryParserFactories.add(ValParser.queryFactory);
     }
     protected static List<ReduceParser.Factory> reduceParserFactories = new ArrayList<ReduceParser.Factory>();
     static {
-        reduceParserFactories.add(AttrParser.reduceFactory);
-        reduceParserFactories.add(TagNameParser.reduceFactory);
-        reduceParserFactories.add(TextParser.reduceFactory);
-        reduceParserFactories.add(TitleParser.reduceFactory);
-        reduceParserFactories.add(ValParser.reduceFactory);
     }
 
     public static EstivateAST parse(Class<?> clazz) {

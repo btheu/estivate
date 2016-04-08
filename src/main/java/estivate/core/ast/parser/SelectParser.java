@@ -9,9 +9,11 @@ import estivate.annotations.Select;
 import estivate.annotations.TagName;
 import estivate.annotations.Text;
 import estivate.annotations.Val;
+import estivate.core.ast.EstivateAST;
+import estivate.core.ast.ExpressionAST;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.lang.SelectQueryAST;
-import estivate.core.ast.parser.EstivateParser.QueryParser;
+import estivate.core.ast.parser2.EstivateParser2.AnnotationParser;
 import estivate.utils.AnnotationsUtils;
 
 /**
@@ -20,35 +22,36 @@ import estivate.utils.AnnotationsUtils;
  * @author Benoit Theunissen
  *
  */
-public class SelectParser implements QueryParser {
+public class SelectParser implements AnnotationParser {
 
-	public QueryAST parseQuery(Annotation[] annotations) {
+	public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
+		Select annotation = AnnotationsUtils.find(annotations, Select.class);
+		if(annotation != null){
+			ast.setQuery(parse(annotation));
+		}
+	}
 
-		Select aSelect = AnnotationsUtils.find(annotations, Select.class);
-
+	public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
+		Select annotation = AnnotationsUtils.find(annotations, Select.class);
+		if(annotation != null){
+			ast.setQuery(parse(annotation));
+		}
+	}
+	
+	public static QueryAST parse(Select annotation) {
 		SelectQueryAST query = new SelectQueryAST();
-
-		query.setUnique(aSelect.unique());
-		query.setIndex(aSelect.index());
-		query.setFirst(aSelect.first());
-		query.setLast(aSelect.last());
-		query.setQueryString(or(aSelect.select(), aSelect.value()));
-
+		
+		query.setUnique(annotation.unique());
+		query.setIndex(annotation.index());
+		query.setFirst(annotation.first());
+		query.setLast(annotation.last());
+		query.setQueryString(or(annotation.select(), annotation.value()));
+		
 		valid(query);
 		
 		return query;
 	}
-
-	public static QueryParser.Factory queryFactory = new QueryParser.Factory() {
-		@Override
-		public QueryParser queryParser(Annotation[] annotations) {
-			if (AnnotationsUtils.contains(annotations, Select.class)) {
-				return new SelectParser();
-			}
-			return super.queryParser(annotations);
-		}
-	};
-
+	
 	public static QueryAST parse(Val annotation) {
 		SelectQueryAST query = new SelectQueryAST();
 
@@ -116,4 +119,6 @@ public class SelectParser implements QueryParser {
 	private static String or(String value1, String value2) {
 		return StringUtil.isBlank(value1) ? value2 : value1;
 	}
+
+
 }
