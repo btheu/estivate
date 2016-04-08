@@ -18,6 +18,4 @@ public class SimpleValueAST extends ValueAST {
 
 	protected boolean isValueList = false;
 	
-	protected Object value;
-
 }

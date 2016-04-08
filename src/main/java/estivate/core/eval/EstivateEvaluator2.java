@@ -152,7 +152,7 @@ public class EstivateEvaluator2 {
 		}
 		
 		private void evalValue(EvalContext context, FieldExpressionAST expression) {
-			ClassUtils.setValue(expression.getField(), context.getTarget(), expression.getValue().getValue());
+			ClassUtils.setValue(expression.getField(), context.getTarget(), context.getValue().get(expression.getValue()));
 		}
 		
 	};

@@ -17,7 +17,6 @@ import estivate.core.ast.MethodExpressionAST;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.ValueAST;
-import estivate.core.ast.parser.EstivateParser;
 import estivate.core.eval.ReduceASTEvaluator.ReduceResult;
 import lombok.Builder;
 import lombok.Data;
@@ -159,35 +158,7 @@ public class EstivateEvaluator {
         return ReduceResult.builder().build();
     }
 
-    protected static void evalValue(EvalContext context, ReduceResult reduceResult, ValueAST value) {
-
-    	// Expand standard type
-
-    	if (value.getRawClass().equals(Document.class)) {
-    		value.setValue(context.getDocument());
-    	} else if (value.getRawClass().equals(Elements.class)) {
-    		value.setValue(context.getDom());
-    	} else if (value.getRawClass().equals(Element.class)) {
-    		Elements dom = context.getDom();
-    		if (dom.size() == 1) {
-    			value.setValue(dom.first());
-    		} else {
-    			throw new IllegalArgumentException("Cant eval single Element value. Size of the selected DOM was '" + dom.size() + "'");
-    		}
-    	} else if(ClassUtils.isAssignableValue(value.getRawClass(), reduceResult.getValue()) 
-    			&& !Elements.class.equals(reduceResult.getValue().getClass())) {
-    		// Simple Type
-    		value.setValue(reduceResult.getValue());
-    	} else if(!reduceResult.getValue().getClass().equals(Elements.class)){
-    		throw new IllegalArgumentException("Cant cast '" + reduceResult.getValue().getClass() + "' as '"+value.getType()+"'");
-    	} else {
-    		// Recursive Mapping
-    		evalTreeValue(context,value);
-    	}
-
-    	// TODO Convert
-
-    }
+    protected static void evalValue(EvalContext context, ReduceResult reduceResult, ValueAST value) {}
 	
 	/**
 	 * Evaluation recursive
@@ -195,44 +166,14 @@ public class EstivateEvaluator {
 	 * @param context
 	 * @param value
 	 */
-	private static void evalTreeValue(EvalContext context, ValueAST value) {
-		log.debug("[{}] > eval with recursive mapping'", context.getMemberName());
+	private static void evalTreeValue(EvalContext context, ValueAST value) {}
 
-		Object result;
-		
-		if (value.isValueList()) {
-			Class<?>[] typeArguments = ClassUtils.typeArguments(value.getType());
-			if (typeArguments.length != 1) {
-				throw new IllegalArgumentException("Cant handle such generic type: " + value.getType().toString());
-			}
-
-			EstivateAST ast = EstivateParser.parse(ClassUtils.rawType(typeArguments[0]));
-			
-			result = evalToList(context.getDocument(), context.getDom(), ast);
-			
-		}else{
-			
-			EstivateAST ast = EstivateParser.parse(value.getRawClass());
-			
-			result = eval(context.document,context.getDom(),ast);
-			
-		}
-
-		value.setValue(result);
-
-		log.debug("[{}] < eval with recursive mapping", context.getMemberName());
-	}
-
-	protected static void setValue(EvalContext context, FieldExpressionAST exp) {
-		ClassUtils.setValue(exp.getField(), context.getTarget(), exp.getValue().getValue());
-	}
+	protected static void setValue(EvalContext context, FieldExpressionAST exp) {}
 	
 	protected static void setValues(EvalContext context, MethodExpressionAST exp) {
 		Object[] arguments = new Object[exp.getArguments().size()];
 		
-		for (int i = 0; i < exp.getArguments().size(); i++) {
-			arguments[i] = exp.getArguments().get(i).getValue();
-		}
+		for (int i = 0; i < exp.getArguments().size(); i++) {}
 		if(arguments.length == 0){
 			ClassUtils.setValue(exp.getMethod(), context.getTarget());
 		}else{
@@ -273,25 +214,7 @@ public class EstivateEvaluator {
 
     public static class MethodExpEvaluater implements ExpressionASTEvaluator{
 
-		public void eval(EvalContext context, ExpressionAST expression) {
-			MethodExpressionAST exp = (MethodExpressionAST) expression;
-			log.trace("> eval method '{}()'", exp.getMethod().getName());
-
-			context.setMemberName(ClassUtils.getName(exp.getMethod()));
-			
-			EvalContext contextSelect = evalQuery(context.toBuilder().build(), exp.getQuery());
-
-			List<ValueAST> arguments = exp.getArguments();
-			for (ValueAST valueAST : arguments) {
-				ReduceResult reduce = evalReduce(contextSelect.toBuilder().build(), exp.getReduce(), valueAST.isValueList());
-				
-				evalValue(contextSelect, reduce, valueAST);
-			}
-
-			setValues(contextSelect, exp);
-
-			log.trace("< eval method");
-		}
+		public void eval(EvalContext context, ExpressionAST expression) {}
 
         public static Factory factory = new ExpressionASTEvaluator.Factory() {
 

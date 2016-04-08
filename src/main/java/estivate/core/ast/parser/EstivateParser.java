@@ -133,9 +133,6 @@ public class EstivateParser {
         Class<?> rawType = ClassUtils.rawType(type);
 
         ValueAST value = new ValueAST();
-        value.setType(type);
-        value.setRawClass(rawType);
-        value.setValueList(rawType.equals(List.class));
 
         return value;
     }
