@@ -7,74 +7,68 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import estivate.core.ast.ReduceAST;
+import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.ast.lang.TextReduceAST;
-import estivate.core.eval.EstivateEvaluator.EvalContext;
-import estivate.core.eval.ReduceASTEvaluator;
+import estivate.core.eval.EstivateEvaluator2.ReduceEvaluator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class TextReduceEvaluator implements ReduceASTEvaluator {
+public class TextReduceEvaluator implements ReduceEvaluator {
 
-	public ReduceResult eval(EvalContext context, ReduceAST reduce) {
-		return eval(context, reduce, false);
-	}
+    public static final TextReduceEvaluator INSTANCE = new TextReduceEvaluator();
 
-	public ReduceResult eval(EvalContext context, ReduceAST reduce, boolean isValueList) {
-		TextReduceAST text = (TextReduceAST) reduce;
+    public void evalReduce(
+            estivate.core.eval.EstivateEvaluator2.EvalContext context,
+            ReduceAST reduce, SimpleValueAST valueAST) {
 
-		Elements elements = context.getDom();
-		
-		Object value;
-		
-		if (isValueList) {
-			List<String> list = new ArrayList<String>();
-			if (text.isOwn()) {
-				log.debug("using list owntext()");
-				for (Element element : elements) {
-					list.add(element.ownText());
-				}
-			} else {
-				log.debug("using list text()");
-				for (Element element : elements) {
-					list.add(element.text());
-				}
-			}
-			value = list;
-		} else {
-			if (elements.size() > 1) {
-				log.warn(
-						"'{}' text using first element. Consider fixing the select expression to get only one element.",
-						context.getMemberName());
-			}
-			if (text.isOwn()) {
-				log.debug("using simple owntext()");
+        if(reduce instanceof TextReduceAST){
 
-				StringBuilder sb = new StringBuilder(50);
-				for (Element element : elements) {
-					if (sb.length() != 0)
-						sb.append(" ");
-					sb.append(element.ownText());
-				}
+            TextReduceAST text = (TextReduceAST) reduce;
+            
+            Elements elements = context.getQueryResult();
 
-				value = sb.toString();
-			} else {
-				log.debug("using simple text()");
-				value = elements.text();
-			}
-		}
+            Object value;
 
-		return ReduceResult.builder().value(value).build();
-	}
+            if (valueAST.isValueList()) {
+                List<String> list = new ArrayList<String>();
+                if (text.isOwn()) {
+                    log.debug("using list owntext()");
+                    for (Element element : elements) {
+                        list.add(element.ownText());
+                    }
+                } else {
+                    log.debug("using list text()");
+                    for (Element element : elements) {
+                        list.add(element.text());
+                    }
+                }
+                value = list;
+            } else {
+                if (elements.size() > 1) {
+                    log.warn(
+                            "'{}' text using first element. Consider fixing the select expression to get only one element.",
+                            context.getMemberName());
+                }
+                if (text.isOwn()) {
+                    log.debug("using simple owntext()");
 
-	public static estivate.core.eval.ReduceASTEvaluator.Factory factory = new Factory() {
+                    StringBuilder sb = new StringBuilder(50);
+                    for (Element element : elements) {
+                        if (sb.length() != 0)
+                            sb.append(" ");
+                        sb.append(element.ownText());
+                    }
 
-		@Override
-		public ReduceASTEvaluator expressionEvaluater(ReduceAST reduce) {
-			if(reduce instanceof TextReduceAST){
-				return new TextReduceEvaluator();
-			}
-			return super.expressionEvaluater(reduce);
-		}
-	};
+                    value = sb.toString();
+                } else {
+                    log.debug("using simple text()");
+                    value = elements.text();
+                }
+            }
+            
+            context.getValue().put(valueAST, value);
+        }
+
+    }
 
 }

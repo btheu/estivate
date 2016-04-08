@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public abstract class NodeAST {
 
-    protected QueryAST query;
+    protected QueryAST query = new EmptyQueryAST();
     
 }

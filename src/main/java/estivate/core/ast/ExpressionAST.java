@@ -9,7 +9,7 @@ public abstract class ExpressionAST extends NodeAST {
 
     protected Boolean optional;
     
-	protected ReduceAST reduce;
+	protected ReduceAST reduce = new EmptyReduceAST();
 
 	protected ConverterAST converter;
 

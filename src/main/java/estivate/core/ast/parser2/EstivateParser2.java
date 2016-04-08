@@ -10,6 +10,8 @@ import java.util.List;
 
 import estivate.core.ClassUtils;
 import estivate.core.MembersFinder;
+import estivate.core.ast.EmptyQueryAST;
+import estivate.core.ast.EmptyReduceAST;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ExpressionAST;
 import estivate.core.ast.FieldExpressionAST;
@@ -69,26 +71,29 @@ public class EstivateParser2 {
         SimpleValueAST value = new SimpleValueAST();
 
         Class<?> rawType = ClassUtils.rawType(type);
-        
+
         boolean isValueList = rawType.equals(List.class);
-        
+
         value.setType(type);
         value.setRawClass(rawType);
         value.setValueList(isValueList);
-        
+
         if(isValueList){
-            Class<?> typeArgument = ClassUtils.typeArguments(type)[0];
+            Class<?>[] typeArguments = ClassUtils.typeArguments(value.getType());
+            if (typeArguments.length != 1) {
+                throw new IllegalArgumentException("Cant handle such generic type: " + value.getType().toString());
+            }
             
-            value.setAst(EstivateParser2.parse( ClassUtils.rawType(typeArgument)));
-            
+            value.setAst(EstivateParser2.parse(ClassUtils.rawType(typeArguments[0])));
+
         }else{
             value.setAst(EstivateParser2.parse(value.getRawClass()));
         }
-        
-        
+
+
         return value;
     }
-    
+
     public static MemberParser fieldParser = new MemberParser() {
 
         public void parseMember(EstivateAST ast, AccessibleObject member) {
@@ -101,8 +106,9 @@ public class EstivateParser2 {
                 for (AnnotationParser parser : annotationParsers) {
                     parser.parseAnnotation(fieldAST, field.getAnnotations());
                 }
+
                 if(!isEmptyExpression(fieldAST)){
-                    parseType(fieldAST, field.getType());
+                    parseType(fieldAST, field.getGenericType());
 
                     ast.getExpressions().add(fieldAST);
                 }
@@ -117,9 +123,7 @@ public class EstivateParser2 {
 
         }
 
-        private boolean isEmptyExpression(ExpressionAST exp) {
-            return exp.getReduce() == null && exp.getQuery() == null;
-        }
+
     };
 
     public static MemberParser methodParser = new MemberParser() {
@@ -136,7 +140,7 @@ public class EstivateParser2 {
                 }
 
                 if(!isEmptyExpression(methodAST)){
-                    parseType(methodAST, method.getParameterTypes());
+                    parseType(methodAST, method.getGenericParameterTypes());
 
                     ast.getExpressions().add(methodAST);
                 }
@@ -159,14 +163,12 @@ public class EstivateParser2 {
 
         }
 
-       
-
-        private boolean isEmptyExpression(ExpressionAST exp) {
-            return exp.getReduce() == null && exp.getQuery() == null;
-        }
-
     };
 
+    private static boolean isEmptyExpression(ExpressionAST exp) {
+        return exp.getReduce() instanceof EmptyReduceAST && exp.getQuery() instanceof EmptyQueryAST;
+    }
+    
     static{
         classParsers.add(cParser);
         memberParsers.add(fieldParser);
