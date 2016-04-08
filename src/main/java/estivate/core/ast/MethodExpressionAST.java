@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import estivate.core.ast.lang.ListValueAST;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -15,6 +16,8 @@ public class MethodExpressionAST extends ExpressionAST {
 
 	protected Method method;
 
+	protected ListValueAST values;
+	
 	@Deprecated
 	protected List<ValueAST> arguments = new ArrayList<ValueAST>();
 	

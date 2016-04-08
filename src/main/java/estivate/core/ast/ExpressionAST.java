@@ -11,6 +11,4 @@ public abstract class ExpressionAST extends NodeAST {
 
 	protected ConverterAST converter;
 
-	// Simple Value or List Value
-	protected ValueAST value;
 }

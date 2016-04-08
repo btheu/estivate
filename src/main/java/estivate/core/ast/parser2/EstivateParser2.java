@@ -23,140 +23,146 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EstivateParser2 {
 
-    protected static List<ClassParser> classParsers = new ArrayList<ClassParser>();
-    protected static List<MemberParser> memberParsers = new ArrayList<MemberParser>();
-    protected static List<AnnotationParser> annotationParsers = new ArrayList<AnnotationParser>();
-    protected static List<TypeParser> typeParsers = new ArrayList<TypeParser>();
+	protected static List<ClassParser> classParsers = new ArrayList<ClassParser>();
+	protected static List<MemberParser> memberParsers = new ArrayList<MemberParser>();
+	protected static List<AnnotationParser> annotationParsers = new ArrayList<AnnotationParser>();
 
-    protected static MembersFinder membersFinder = new DefaultMembersFinder();
-    
-    public static EstivateAST parse(Class<?> clazz) {
-        EstivateAST ast = new EstivateAST();
+	protected static MembersFinder membersFinder = new DefaultMembersFinder();
 
-        for (ClassParser parser : classParsers) {
-            parser.parseClass(ast, clazz);
-        }
+	public static EstivateAST parse(Class<?> clazz) {
+		EstivateAST ast = new EstivateAST();
 
-        log.debug("AST of '{}' is {}",clazz.toString(), ast);
+		for (ClassParser parser : classParsers) {
+			parser.parseClass(ast, clazz);
+		}
 
-        return ast;
-    }
+		log.debug("AST of '{}' is {}",clazz.toString(), ast);
 
-    public static ClassParser cParser = new ClassParser() {
+		return ast;
+	}
 
-        public void parseClass(EstivateAST ast, Class<?> clazz) {
+	public static ClassParser cParser = new ClassParser() {
 
-            ast.setTargetType(clazz);
-            ast.setTargetRawClass(ClassUtils.rawType(clazz));
+		public void parseClass(EstivateAST ast, Class<?> clazz) {
 
-            for (AnnotationParser parser : annotationParsers) {
-                parser.parseAnnotation(ast, clazz.getAnnotations());
-            }
-            
-            List<AccessibleObject> list = membersFinder.list(clazz);
-            for (AccessibleObject member : list) {
-                for (MemberParser parser : memberParsers) {
-                    parser.parseMember(ast, member);
-                }
-            }
+			ast.setTargetType(clazz);
+			ast.setTargetRawClass(ClassUtils.rawType(clazz));
+
+			for (AnnotationParser parser : annotationParsers) {
+				parser.parseAnnotation(ast, clazz.getAnnotations());
+			}
+
+			List<AccessibleObject> list = membersFinder.list(clazz);
+			for (AccessibleObject member : list) {
+				for (MemberParser parser : memberParsers) {
+					parser.parseMember(ast, member);
+				}
+			}
 
 
-        }
-    };
+		}
+	};
 
-    public static MemberParser fieldParser = new MemberParser() {
+	public static MemberParser fieldParser = new MemberParser() {
 
-        public void parseMember(EstivateAST ast, AccessibleObject member) {
-            if(member instanceof Field){
-                Field field = (Field) member;
-                
-                FieldExpressionAST fieldAST = new FieldExpressionAST();
-                fieldAST.setField(field);
-                
-                for (AnnotationParser parser : annotationParsers) {
-                    parser.parseAnnotation(fieldAST, field.getAnnotations());
-                }
-                for (TypeParser parser : typeParsers) {
-                    parser.parseType(fieldAST, field.getType());
-                }
-                
-                ast.getExpressions().add(fieldAST);
-            }
-        }
-        
-    };
-    
-    public static MemberParser methodParser = new MemberParser() {
-        
-        public void parseMember(EstivateAST ast, AccessibleObject member) {
-            if(member instanceof Method){
-                Method method = (Method) member;
-                
-                MethodExpressionAST methodAST = new MethodExpressionAST();
-                methodAST.setMethod(method);
-                
-                for (AnnotationParser parser : annotationParsers) {
-                    parser.parseAnnotation(methodAST, method.getAnnotations());
-                }
-                for (TypeParser parser : typeParsers) {
-                    parser.parseType(methodAST, method.getTypeParameters());
-                }
-                
-                ast.getExpressions().add(methodAST);
-            }
-        }
-        
-    };
-    
-    public static TypeParser typeParser = new TypeParser() {
+		public void parseMember(EstivateAST ast, AccessibleObject member) {
+			if(member instanceof Field){
+				Field field = (Field) member;
 
-        public void parseType(ExpressionAST ast, Type... types) {
-            
-            ListValueAST list = new ListValueAST();
-            
-            for (Type type : types) {
-                
-                SimpleValueAST value = new SimpleValueAST();
-                
-                value.setType(type);
-                value.setRawClass(ClassUtils.rawType(type));
-                value.setValueList(value.getRawClass().equals(List.class));
-                
-                list.getValues().add(value);
-                
-            }
-            
-            ast.setValue(list);
-            
-        }
-        
-    };
-    
-    static{
-    	classParsers.add(cParser);
-    	memberParsers.add(fieldParser);
-    	memberParsers.add(methodParser);
-    	typeParsers.add(typeParser);
-    	
-    	annotationParsers.add(AttrParser.INSTANCE);
-    }
-    
-    public interface ClassParser {
-        public void parseClass(EstivateAST ast, Class<?> clazz);
-    }
+				FieldExpressionAST fieldAST = new FieldExpressionAST();
+				fieldAST.setField(field);
 
-    public interface MemberParser {
-        public void parseMember(EstivateAST ast, AccessibleObject member);
-    }
+				for (AnnotationParser parser : annotationParsers) {
+					parser.parseAnnotation(fieldAST, field.getAnnotations());
+				}
 
-    public interface AnnotationParser {
-        public void parseAnnotation(EstivateAST ast, Annotation[] annotations);
-        
-        public void parseAnnotation(ExpressionAST ast, Annotation[] annotations);
-    }
-    
-    public interface TypeParser {
-        public void parseType(ExpressionAST ast, Type...types);
-    }
+				parseType(fieldAST, field.getType());
+
+				ast.getExpressions().add(fieldAST);
+			}
+		}
+
+		public void parseType(FieldExpressionAST ast, Type type) {
+
+			SimpleValueAST value = new SimpleValueAST();
+
+			value.setType(type);
+			value.setRawClass(ClassUtils.rawType(type));
+			value.setValueList(value.getRawClass().equals(List.class));
+
+			ast.setValue(value);
+
+		}
+
+	};
+
+	public static MemberParser methodParser = new MemberParser() {
+
+		public void parseMember(EstivateAST ast, AccessibleObject member) {
+			if(member instanceof Method){
+				Method method = (Method) member;
+
+				MethodExpressionAST methodAST = new MethodExpressionAST();
+				methodAST.setMethod(method);
+
+				for (AnnotationParser parser : annotationParsers) {
+					parser.parseAnnotation(methodAST, method.getAnnotations());
+				}
+
+				if(!isEmptyExpression(methodAST)){
+					parseType(methodAST, method.getParameterTypes());
+
+					ast.getExpressions().add(methodAST);
+				}
+			}
+		}
+
+		public void parseType(MethodExpressionAST ast, Type... types) {
+
+			ListValueAST list = new ListValueAST();
+
+			for (Type type : types) {
+
+				SimpleValueAST value = new SimpleValueAST();
+
+				value.setType(type);
+				value.setRawClass(ClassUtils.rawType(type));
+				value.setValueList(value.getRawClass().equals(List.class));
+
+				list.getValues().add(value);
+
+			}
+
+			ast.setValues(list);
+
+		}
+
+		private boolean isEmptyExpression(ExpressionAST exp) {
+			return exp.getReduce() == null && exp.getQuery() == null;
+		}
+
+	};
+
+	static{
+		classParsers.add(cParser);
+		memberParsers.add(fieldParser);
+		memberParsers.add(methodParser);
+
+		annotationParsers.add(AttrParser.INSTANCE);
+	}
+
+	public interface ClassParser {
+		public void parseClass(EstivateAST ast, Class<?> clazz);
+	}
+
+	public interface MemberParser {
+		public void parseMember(EstivateAST ast, AccessibleObject member);
+	}
+
+	public interface AnnotationParser {
+		public void parseAnnotation(EstivateAST ast, Annotation[] annotations);
+
+		public void parseAnnotation(ExpressionAST ast, Annotation[] annotations);
+	}
 
 }

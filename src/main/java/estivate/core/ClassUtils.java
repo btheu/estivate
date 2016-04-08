@@ -48,16 +48,20 @@ public abstract class ClassUtils {
 
     }
 
-    public static void setValue(Method method, Object target, Object... values){
+	public static void setValue(Method method, Object target, Object... values) {
 
-        log.debug("set value by method [{} ({})]", method.getName(), values);
+		log.debug("set value by method [{} ({})]", method.getName(), values);
 
-        try {
-            method.invoke(target, values);
-        } catch (Exception e) {
-            throw new RuntimeException("Cant set " + values.toString() + " to " + method.getName()+"()",e);
-        }
-    }
+		try {
+			if (values.length == 0) {
+				method.invoke(target);
+			} else {
+				method.invoke(target, values);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Cant set " + values.toString() + " to " + method.getName() + "()", e);
+		}
+	}
     
     public static Type[] getMemberTypes(AccessibleObject member) {
         if (member instanceof Field) {

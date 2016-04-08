@@ -103,7 +103,6 @@ public class EstivateParser {
         // value
         ValueAST value = createValue(type);
 
-        exp.setValue(value);
 
         return exp;
     }

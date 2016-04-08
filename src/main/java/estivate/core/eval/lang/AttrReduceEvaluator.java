@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.lang.AttrReduceAST;
+import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.eval.EstivateEvaluator2.EvalContext;
 import estivate.core.eval.EstivateEvaluator2.ReduceEvaluator;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ public class AttrReduceEvaluator implements ReduceEvaluator {
 	public static final AttrReduceEvaluator INSTANCE = new AttrReduceEvaluator();
 	
 	public void evalReduce(EvalContext context, ReduceAST reduce,
-			boolean isValueList) {
+			 SimpleValueAST simpleValueAST) {
 		
 		if(reduce instanceof AttrReduceAST){
 			AttrReduceAST ast = (AttrReduceAST) reduce;
@@ -27,7 +28,7 @@ public class AttrReduceEvaluator implements ReduceEvaluator {
 			
 			Object reduceValue;
 			
-			if (isValueList) {
+			if (simpleValueAST.isValueList()) {
 				List<String> list = new ArrayList<String>();
 
 				for (Element element : elements) {
@@ -52,7 +53,7 @@ public class AttrReduceEvaluator implements ReduceEvaluator {
 				reduceValue = sb.toString();
 			}
 			
-			context.setReduceResult(reduceValue);
+			context.getValue().put(simpleValueAST, reduceValue);
 			
 		}
 		
