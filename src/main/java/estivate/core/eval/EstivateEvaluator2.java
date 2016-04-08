@@ -103,16 +103,22 @@ public class EstivateEvaluator2 {
 
         Object currentValue = context.getValue().get(value);
 
-        if(!ClassUtils.isAssignableValue(value.getRawClass(), currentValue)){
-            if(value.isValueList()){
-                currentValue =  evalToList(context.document,context.getQueryResult(),value.getAst());
-            }else{
-                currentValue = eval(context.document,context.getQueryResult(),value.getAst());
-            }
-
+        // TODO Custom Convert
+        
+        // Direct assignment
+        if(ClassUtils.isAssignableValue(value.getRawClass(), currentValue)){
+            context.getValue().put(value, currentValue);
+            return;
         }
-
-        context.getValue().put(value, currentValue);
+        
+        // TODO Primitive Convert
+        
+        // Recursive assignment
+        if(value.isValueList()){
+            currentValue =  evalToList(context.document,context.getQueryResult(),value.getAst());
+        }else{
+            currentValue = eval(context.document,context.getQueryResult(),value.getAst());
+        }
     }
 
     private static void evalConvert(EvalContext context, ConverterAST converter, ListValueAST values) {
