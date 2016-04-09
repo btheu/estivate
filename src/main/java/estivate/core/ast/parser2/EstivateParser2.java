@@ -19,6 +19,7 @@ import estivate.core.ast.MethodExpressionAST;
 import estivate.core.ast.lang.ListValueAST;
 import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.ast.parser.AttrParser;
+import estivate.core.ast.parser.CustomConvertorParser;
 import estivate.core.ast.parser.SelectParser;
 import estivate.core.ast.parser.TextParser;
 import estivate.core.impl.DefaultMembersFinder;
@@ -67,7 +68,7 @@ public class EstivateParser2 {
         }
     };
 
-    public static SimpleValueAST parseType2(Type type) {
+    public static SimpleValueAST parseType(ExpressionAST ast, Type type) {
         SimpleValueAST value = new SimpleValueAST();
 
         Class<?> rawType = ClassUtils.rawType(type);
@@ -117,7 +118,7 @@ public class EstivateParser2 {
 
         public void parseType(FieldExpressionAST ast, Type type) {
 
-            SimpleValueAST value = parseType2(type);
+            SimpleValueAST value = EstivateParser2.parseType(ast,type);
 
             ast.setValue(value);
 
@@ -140,20 +141,20 @@ public class EstivateParser2 {
                 }
 
                 if(!isEmptyExpression(methodAST)){
-                    parseType(methodAST, method.getGenericParameterTypes());
+                    parseTypes(methodAST, method.getGenericParameterTypes());
 
                     ast.getExpressions().add(methodAST);
                 }
             }
         }
 
-        public void parseType(MethodExpressionAST ast, Type... types) {
+        public void parseTypes(MethodExpressionAST ast, Type... types) {
 
             ListValueAST list = new ListValueAST();
 
             for (Type type : types) {
 
-                SimpleValueAST value = parseType2(type);
+                SimpleValueAST value = EstivateParser2.parseType(ast,type);
 
                 list.getValues().add(value);
 
@@ -175,6 +176,7 @@ public class EstivateParser2 {
         memberParsers.add(methodParser);
 
         annotationParsers.add(AttrParser.INSTANCE);
+        annotationParsers.add(CustomConvertorParser.INSTANCE);
         annotationParsers.add(SelectParser.INSTANCE);
         annotationParsers.add(TextParser.INSTANCE);
     }
