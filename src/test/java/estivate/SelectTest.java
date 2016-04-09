@@ -9,11 +9,30 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import estivate.annotations.Select;
+import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SelectTest extends EstivateTest {
+
+    @Test(expected=IllegalArgumentException.class)
+    public void selectFail1() throws IOException {
+
+        InputStream document = read("/select/u1.html");
+
+        mapper.map(document, ResultFail1.class);
+
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void selectFail2() throws IOException {
+        
+        InputStream document = read("/select/u1.html");
+        
+        mapper.map(document, ResultFail2.class);
+        
+    }
 
     @Test
     public void select1() throws IOException {
@@ -57,7 +76,7 @@ public class SelectTest extends EstivateTest {
     @Data
     public static class ResultElement {
 
-        @Select("#id1 input")
+        @Select(select="#id1 input")
         public Element input1;
 
         public Element input2;
@@ -73,14 +92,32 @@ public class SelectTest extends EstivateTest {
     @Select(".someClass")
     public static class ResultList {
 
-        @Select(".name")
+        @Text(select=".name")
         public String name1;
 
         public String name2;
 
-        @Select(".name")
+        @Text(select=".name")
         public void setName2(String name) {
             this.name2 = name;
+        }
+
+    }
+
+    @Data
+    public static class ResultFail1 {
+
+        @Select(".name")
+        public String name1;
+
+    }
+
+    @Data
+    public static class ResultFail2 {
+
+        @Select(".name")
+        public void setName2(String name) {
+
         }
 
     }

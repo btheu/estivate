@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import estivate.core.ClassUtils;
+import estivate.core.Converter;
 import estivate.core.ast.ConverterAST;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ExpressionAST;
@@ -19,6 +20,7 @@ import estivate.core.ast.MethodExpressionAST;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.ValueAST;
+import estivate.core.ast.lang.CustomConverterAST;
 import estivate.core.ast.lang.ListValueAST;
 import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.eval.lang.AttrReduceEvaluator;
@@ -58,27 +60,39 @@ public class EstivateEvaluator2 {
     }
 
     private static List<?> evalToList(Document document, Elements queryResult, EstivateAST ast) {
+        
+        // eval class query 
+        EvalContext context = evalQuery(document, queryResult, ast);
+        
         List<Object> results = new ArrayList<Object>();
-
-        for (Element element : queryResult) {
-
+        
+        for (Element element : context.getQueryResult()) {
+            
             Object target = ClassUtils.newInstance(ast.getTargetRawClass());
 
-            EvalContext context = new EvalContext.EvalContextBuilder()
+            // copy of the context with new queryResult
+            evalExpressions(context.toBuilder()
                     .target(target)
-                    .document(document)
                     .queryResult(new Elements(element))
-                    .optional(ast.isOptional())
-                    .value(new HashMap<ValueAST, Object>())
-                    .build();
-
-            // copy of the context
-            evalExpressions(context.toBuilder().build(), ast);
+                    .build(), ast);
 
             results.add(target);
         }
 
         return results;
+    }
+
+    private static EvalContext evalQuery(Document document,
+            Elements queryResult, EstivateAST ast) {
+        EvalContext context = new EvalContext.EvalContextBuilder()
+                .document(document)
+                .queryResult(queryResult)
+                .optional(ast.isOptional())
+                .value(new HashMap<ValueAST, Object>())
+                .build();
+        
+        evalQuery(context, ast.getQuery());
+        return context;
     }
 
     public static void evalExpressions(EvalContext context, ExpressionsAST ast) {
@@ -103,16 +117,18 @@ public class EstivateEvaluator2 {
 
         Object currentValue = context.getValue().get(value);
 
+        Class<?> targetType = value.getRawClass();
+        
         // Standard assignment
-        if(value.getRawClass().equals(Document.class)){
+        if(targetType.equals(Document.class)){
             context.getValue().put(value, context.getDocument());
             return;
         }
-        if(value.getRawClass().equals(Elements.class)){
+        if(targetType.equals(Elements.class)){
             context.getValue().put(value, context.getQueryResult());
             return;
         }
-        if(value.getRawClass().equals(Element.class)){
+        if(targetType.equals(Element.class)){
             Elements dom = context.getQueryResult();
             if (dom.size() == 1) {
                 context.getValue().put(value,dom.first());
@@ -124,6 +140,19 @@ public class EstivateEvaluator2 {
 
         // TODO Custom Convert
 
+        if(converter instanceof CustomConverterAST){
+            CustomConverterAST customConverter = (CustomConverterAST) converter;
+         
+            Converter newInstance = ClassUtils.newInstance(customConverter.getConverterClass());
+            
+            Object convertedValue = newInstance.convert(currentValue, targetType);
+            
+            context.getValue().put(value, convertedValue);
+            
+            return;
+        }
+        
+        
         // TODO Primitive Convert
         
         // Recursive assignment
@@ -138,7 +167,7 @@ public class EstivateEvaluator2 {
         }
 
         // Direct assignment
-        if(ClassUtils.isAssignableValue(value.getRawClass(), currentValue)){
+        if(ClassUtils.isAssignableValue(targetType, currentValue)){
             context.getValue().put(value, currentValue);
             return;
         }
