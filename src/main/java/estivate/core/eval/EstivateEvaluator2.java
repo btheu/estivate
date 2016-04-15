@@ -26,6 +26,7 @@ import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.eval.lang.AttrReduceEvaluator;
 import estivate.core.eval.lang.SelectQueryEvaluator;
 import estivate.core.eval.lang.TextReduceEvaluator;
+import estivate.core.impl.PrimitiveConverter;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -33,309 +34,318 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EstivateEvaluator2 {
 
+	protected static PrimitiveConverter primitiveConverter = new PrimitiveConverter();
+
+	public static Object eval(Document document, EstivateAST ast) {
+		return eval(document, new Elements(document), ast);
+	}
+
+	private static Object eval(Document document, Elements queryResult, EstivateAST ast) {
+
+		Object target = ClassUtils.newInstance(ast.getTargetRawClass());
+
+		EvalContext context = new EvalContext.EvalContextBuilder()
+				.target(target)
+				.document(document)
+				.queryResult(queryResult)
+				.optional(ast.isOptional())
+				.value(new HashMap<ValueAST, Object>())
+				.build();
 
-    public static Object eval(Document document, EstivateAST ast) {
-        return eval(document, new Elements(document), ast);
-    }
-
-    private static Object eval(Document document, Elements queryResult, EstivateAST ast) {
-
-        Object target = ClassUtils.newInstance(ast.getTargetRawClass());
-
-        EvalContext context = new EvalContext.EvalContextBuilder()
-                .target(target)
-                .document(document)
-                .queryResult(queryResult)
-                .optional(ast.isOptional())
-                .value(new HashMap<ValueAST, Object>())
-                .build();
-
-        evalExpressions(context.toBuilder().build(), ast);
-
-        return target;
-    }
-
-    public static List<?> evalToList(Document document, EstivateAST ast) {
-        return evalToList(document, new Elements(document), ast);
-    }
-
-    private static List<?> evalToList(Document document, Elements queryResult, EstivateAST ast) {
-        
-        // eval class query 
-        EvalContext context = evalQuery(document, queryResult, ast);
-        
-        List<Object> results = new ArrayList<Object>();
-        
-        for (Element element : context.getQueryResult()) {
-            
-            Object target = ClassUtils.newInstance(ast.getTargetRawClass());
-
-            // copy of the context with new queryResult
-            evalExpressions(context.toBuilder()
-                    .target(target)
-                    .queryResult(new Elements(element))
-                    .build(), ast);
-
-            results.add(target);
-        }
-
-        return results;
-    }
-
-    private static EvalContext evalQuery(Document document,
-            Elements queryResult, EstivateAST ast) {
-        EvalContext context = new EvalContext.EvalContextBuilder()
-                .document(document)
-                .queryResult(queryResult)
-                .optional(ast.isOptional())
-                .value(new HashMap<ValueAST, Object>())
-                .build();
-        
-        evalQuery(context, ast.getQuery());
-        return context;
-    }
-
-    public static void evalExpressions(EvalContext context, ExpressionsAST ast) {
-
-        // Eval Query
-        evalQuery(context,ast.getQuery());
-
-        List<ExpressionAST> expressions = ast.getExpressions();
-        for (ExpressionAST expression : expressions) {
-            // copy of the context
-            evalExpression(context.toBuilder().build(), expression);
-        }
-    }
-
-    protected static void evalExpression(EvalContext context, ExpressionAST expression) {
-        for (ExpressionEvaluator eval : EXPRESSION_EVALUATORS) {
-            eval.evalExpression(context, expression);
-        }
-    }
-
-    private static void evalConvert(EvalContext context, ConverterAST converter, SimpleValueAST value) {
-
-        Object currentValue = context.getValue().get(value);
-
-        Class<?> targetType = value.getRawClass();
-        
-        // Standard assignment
-        if(targetType.equals(Document.class)){
-            context.getValue().put(value, context.getDocument());
-            return;
-        }
-        if(targetType.equals(Elements.class)){
-            context.getValue().put(value, context.getQueryResult());
-            return;
-        }
-        if(targetType.equals(Element.class)){
-            Elements dom = context.getQueryResult();
-            if (dom.size() == 1) {
-                context.getValue().put(value,dom.first());
-            } else {
-                throw new IllegalArgumentException("Cant eval single Element value. Size of the selected DOM was '" + dom.size() + "'");
-            }
-            return;
-        }
-
-        // TODO Custom Convert
-
-        if(converter instanceof CustomConverterAST){
-            CustomConverterAST customConverter = (CustomConverterAST) converter;
-         
-            Converter newInstance = ClassUtils.newInstance(customConverter.getConverterClass());
-            
-            Object convertedValue = newInstance.convert(currentValue, targetType);
-            
-            context.getValue().put(value, convertedValue);
-            
-            return;
-        }
-        
-        
-        // TODO Primitive Convert
-        
-        // Recursive assignment
-        if(currentValue.getClass().equals(Elements.class)){
-            if(value.isValueList()){
-                currentValue =  evalToList(context.document,context.getQueryResult(),value.getAst());
-            }else{
-                currentValue = eval(context.document,context.getQueryResult(),value.getAst());
-            }
-            context.getValue().put(value, currentValue);
-            return;
-        }
-
-        // Direct assignment
-        if(ClassUtils.isAssignableValue(targetType, currentValue)){
-            context.getValue().put(value, currentValue);
-            return;
-        }
+		evalExpressions(context.toBuilder().build(), ast);
 
-        
+		return target;
+	}
 
-    }
+	public static List<?> evalToList(Document document, EstivateAST ast) {
+		return evalToList(document, new Elements(document), ast);
+	}
 
-    private static void evalConvert(EvalContext context, ConverterAST converter, ListValueAST values) {
-        List<SimpleValueAST> values2 = values.getValues();
-        for (SimpleValueAST simpleValueAST : values2) {
-            evalConvert(context.toBuilder().build(), converter, simpleValueAST);
-        }
-    }
+	private static List<?> evalToList(Document document, Elements queryResult, EstivateAST ast) {
 
-    private static void evalReduce(EvalContext context, ReduceAST reduce, ValueAST value) {
-        if(value instanceof SimpleValueAST){
-            SimpleValueAST simpleValueAST = (SimpleValueAST) value;
+		// eval class query 
+		EvalContext context = evalQuery(document, queryResult, ast);
 
-            evalReduceSimpleValue( context,  reduce,  simpleValueAST);
-        }
-        if(value instanceof ListValueAST){
-            ListValueAST listValueAST = (ListValueAST) value;
-            for (SimpleValueAST simpleValueAST : listValueAST.getValues()) {
+		List<Object> results = new ArrayList<Object>();
 
-                evalReduceSimpleValue( context,  reduce,  simpleValueAST);
-            }
-        }
-    }
+		for (Element element : context.getQueryResult()) {
 
-    private static void evalReduceSimpleValue(EvalContext context, ReduceAST reduce, SimpleValueAST simpleValueAST) {
-        for (ReduceEvaluator eval : REDUCE_EVALUATORS) {
-            eval.evalReduce(context, reduce, simpleValueAST);
-        }
-    }
+			Object target = ClassUtils.newInstance(ast.getTargetRawClass());
 
-    private static void evalQuery(EvalContext context, QueryAST query) {
-        for (QueryEvaluator eval : QUERY_EVALUATORS) {
-            eval.evalQuery(context, query);
-        }
-    }
+			// copy of the context with new queryResult
+			evalExpressions(context.toBuilder()
+					.target(target)
+					.queryResult(new Elements(element))
+					.build(), ast);
 
+			results.add(target);
+		}
 
-    public static final ExpressionEvaluator fieldEvaluator = new ExpressionEvaluator() {
+		return results;
+	}
 
-        public void evalExpression(EvalContext context, ExpressionAST expression) {
-            if(expression instanceof FieldExpressionAST){
+	private static EvalContext evalQuery(Document document,
+			Elements queryResult, EstivateAST ast) {
+		EvalContext context = new EvalContext.EvalContextBuilder()
+				.document(document)
+				.queryResult(queryResult)
+				.optional(ast.isOptional())
+				.value(new HashMap<ValueAST, Object>())
+				.build();
 
-                FieldExpressionAST fieldExpression = (FieldExpressionAST) expression;
+		evalQuery(context, ast.getQuery());
+		return context;
+	}
 
-                context.setMemberName(fieldExpression.getField().getName());
+	public static void evalExpressions(EvalContext context, ExpressionsAST ast) {
 
-                // Query
-                evalQuery(context, fieldExpression.getQuery());
+		// Eval Query
+		evalQuery(context,ast.getQuery());
 
-                // Reduce
-                evalReduce(context, fieldExpression.getReduce(), fieldExpression.getValue());
+		List<ExpressionAST> expressions = ast.getExpressions();
+		for (ExpressionAST expression : expressions) {
+			// copy of the context
+			evalExpression(context.toBuilder().build(), expression);
+		}
+	}
 
-                // Convert
-                evalConvert(context, fieldExpression.getConverter(), fieldExpression.getValue());
+	protected static void evalExpression(EvalContext context, ExpressionAST expression) {
+		for (ExpressionEvaluator eval : EXPRESSION_EVALUATORS) {
+			eval.evalExpression(context, expression);
+		}
+	}
 
-                // Value
-                evalValue(context, fieldExpression);
-            }
-        }
+	private static void evalConvert(EvalContext context, ConverterAST converter, SimpleValueAST value) {
 
-        private void evalValue(EvalContext context, FieldExpressionAST expression) {
-            ClassUtils.setValue(expression.getField(), context.getTarget(), context.getValue().get(expression.getValue()));
-        }
+		Object currentValue = context.getValue().get(value);
 
-    };
-    public static final ExpressionEvaluator methodEvaluator = new ExpressionEvaluator() {
+		Class<?> targetType = value.getRawClass();
 
-        public void evalExpression(EvalContext context, ExpressionAST expression) {
-            if(expression instanceof MethodExpressionAST){
+		// Standard assignment
+		if(targetType.equals(Document.class)){
+			context.getValue().put(value, context.getDocument());
+			return;
+		}
+		if(targetType.equals(Elements.class)){
+			context.getValue().put(value, context.getQueryResult());
+			return;
+		}
+		if(targetType.equals(Element.class)){
+			Elements dom = context.getQueryResult();
+			if (dom.size() == 1) {
+				context.getValue().put(value,dom.first());
+			} else {
+				throw new IllegalArgumentException("Cant eval single Element value. Size of the selected DOM was '" + dom.size() + "'");
+			}
+			return;
+		}
 
-                MethodExpressionAST methodExpression = (MethodExpressionAST) expression;
+		// Custom Convert
 
-                context.setMemberName(methodExpression.getMethod().getName());
+		if(converter instanceof CustomConverterAST){
+			CustomConverterAST customConverter = (CustomConverterAST) converter;
 
-                // Query
-                evalQuery(context, methodExpression.getQuery());
+			Converter newInstance = ClassUtils.newInstance(customConverter.getConverterClass());
 
-                // Reduce
-                evalReduce(context, methodExpression.getReduce(), methodExpression.getValues());
+			Object convertedValue = newInstance.convert(currentValue, targetType);
 
-                // Convert
-                evalConvert(context, methodExpression.getConverter(), methodExpression.getValues());
+			context.getValue().put(value, convertedValue);
 
-                // Value
-                evalValue(context, methodExpression);
-            }
-        }
+			return;
+		}
 
+		// Primitive Convert
 
+		if(primitiveConverter.canConvert(currentValue, targetType)){
 
-        private void evalValue(EvalContext context, MethodExpressionAST expression) {
+			Object convertedValue = primitiveConverter.convert(currentValue, targetType);
 
-            List<SimpleValueAST> values = expression.getValues().getValues();
+			context.getValue().put(value, convertedValue);
 
-            Object[] arguments = new Object[values.size()];
+			return;
+		}
 
-            for (int i = 0; i < values.size(); i++) {
-                arguments[i] =  context.getValue().get(values.get(i));
-            }
+		// Recursive assignment
+		if(currentValue.getClass().equals(Elements.class)){
+			if(value.isValueList()){
+				currentValue =  evalToList(context.document,context.getQueryResult(),value.getAst());
+			}else{
+				currentValue = eval(context.document,context.getQueryResult(),value.getAst());
+			}
+			context.getValue().put(value, currentValue);
+			return;
+		}
 
-            ClassUtils.setValue(expression.getMethod(), context.getTarget(), arguments);
+		// Direct assignment
+		if(ClassUtils.isAssignableValue(targetType, currentValue)){
+			context.getValue().put(value, currentValue);
+			return;
+		}
 
-        }
 
-    };
 
+	}
 
-    public static final List<ExpressionEvaluator> EXPRESSION_EVALUATORS = new ArrayList<ExpressionEvaluator>();
-    public static final List<QueryEvaluator> QUERY_EVALUATORS = new ArrayList<QueryEvaluator>();
-    public static final List<ReduceEvaluator> REDUCE_EVALUATORS = new ArrayList<ReduceEvaluator>();
-    static {
+	private static void evalConvert(EvalContext context, ConverterAST converter, ListValueAST values) {
+		List<SimpleValueAST> values2 = values.getValues();
+		for (SimpleValueAST simpleValueAST : values2) {
+			evalConvert(context.toBuilder().build(), converter, simpleValueAST);
+		}
+	}
 
-        EXPRESSION_EVALUATORS.add(fieldEvaluator);
-        EXPRESSION_EVALUATORS.add(methodEvaluator);
+	private static void evalReduce(EvalContext context, ReduceAST reduce, ValueAST value) {
+		if(value instanceof SimpleValueAST){
+			SimpleValueAST simpleValueAST = (SimpleValueAST) value;
 
-        QUERY_EVALUATORS.add(SelectQueryEvaluator.INSTANCE);
+			evalReduceSimpleValue( context,  reduce,  simpleValueAST);
+		}
+		if(value instanceof ListValueAST){
+			ListValueAST listValueAST = (ListValueAST) value;
+			for (SimpleValueAST simpleValueAST : listValueAST.getValues()) {
 
-        REDUCE_EVALUATORS.add(EmptyReduceEvaluator.INSTANCE);
-        REDUCE_EVALUATORS.add(AttrReduceEvaluator.INSTANCE);
-        REDUCE_EVALUATORS.add(TextReduceEvaluator.INSTANCE);
-    }
+				evalReduceSimpleValue( context,  reduce,  simpleValueAST);
+			}
+		}
+	}
 
-    public interface QueryEvaluator {
+	private static void evalReduceSimpleValue(EvalContext context, ReduceAST reduce, SimpleValueAST simpleValueAST) {
+		for (ReduceEvaluator eval : REDUCE_EVALUATORS) {
+			eval.evalReduce(context, reduce, simpleValueAST);
+		}
+	}
 
-        public void evalQuery(EvalContext context, QueryAST query);
+	private static void evalQuery(EvalContext context, QueryAST query) {
+		for (QueryEvaluator eval : QUERY_EVALUATORS) {
+			eval.evalQuery(context, query);
+		}
+	}
 
-    }
-    public interface ReduceEvaluator {
 
-        public void evalReduce(EvalContext context, ReduceAST reduce,  SimpleValueAST valueAST);
+	public static final ExpressionEvaluator fieldEvaluator = new ExpressionEvaluator() {
 
-    }
+		public void evalExpression(EvalContext context, ExpressionAST expression) {
+			if(expression instanceof FieldExpressionAST){
 
-    public interface ExpressionEvaluator {
+				FieldExpressionAST fieldExpression = (FieldExpressionAST) expression;
 
-        public void evalExpression(EvalContext context, ExpressionAST expression);
+				context.setMemberName(fieldExpression.getField().getName());
 
-    }
+				// Query
+				evalQuery(context, fieldExpression.getQuery());
 
-    @Data
-    @Builder(toBuilder=true)
-    public static class EvalContext {
-        protected Object target;
+				// Reduce
+				evalReduce(context, fieldExpression.getReduce(), fieldExpression.getValue());
 
-        protected String memberName;
+				// Convert
+				evalConvert(context, fieldExpression.getConverter(), fieldExpression.getValue());
 
-        protected boolean optional = false;
+				// Value
+				evalValue(context, fieldExpression);
+			}
+		}
 
-        protected Document document;
+		private void evalValue(EvalContext context, FieldExpressionAST expression) {
+			ClassUtils.setValue(expression.getField(), context.getTarget(), context.getValue().get(expression.getValue()));
+		}
 
-        protected Elements queryResult;
+	};
+	public static final ExpressionEvaluator methodEvaluator = new ExpressionEvaluator() {
 
-        protected Map<ValueAST,Object> value;
+		public void evalExpression(EvalContext context, ExpressionAST expression) {
+			if(expression instanceof MethodExpressionAST){
 
-        @Deprecated
-        protected Object reduceResult;
+				MethodExpressionAST methodExpression = (MethodExpressionAST) expression;
 
-        // alias final value
-        @Deprecated
-        protected Object convertResult;
+				context.setMemberName(methodExpression.getMethod().getName());
 
-    }
+				// Query
+				evalQuery(context, methodExpression.getQuery());
+
+				// Reduce
+				evalReduce(context, methodExpression.getReduce(), methodExpression.getValues());
+
+				// Convert
+				evalConvert(context, methodExpression.getConverter(), methodExpression.getValues());
+
+				// Value
+				evalValue(context, methodExpression);
+			}
+		}
+
+
+
+		private void evalValue(EvalContext context, MethodExpressionAST expression) {
+
+			List<SimpleValueAST> values = expression.getValues().getValues();
+
+			Object[] arguments = new Object[values.size()];
+
+			for (int i = 0; i < values.size(); i++) {
+				arguments[i] =  context.getValue().get(values.get(i));
+			}
+
+			ClassUtils.setValue(expression.getMethod(), context.getTarget(), arguments);
+
+		}
+
+	};
+
+
+	public static final List<ExpressionEvaluator> EXPRESSION_EVALUATORS = new ArrayList<ExpressionEvaluator>();
+	public static final List<QueryEvaluator> QUERY_EVALUATORS = new ArrayList<QueryEvaluator>();
+	public static final List<ReduceEvaluator> REDUCE_EVALUATORS = new ArrayList<ReduceEvaluator>();
+	static {
+
+		EXPRESSION_EVALUATORS.add(fieldEvaluator);
+		EXPRESSION_EVALUATORS.add(methodEvaluator);
+
+		QUERY_EVALUATORS.add(SelectQueryEvaluator.INSTANCE);
+
+		REDUCE_EVALUATORS.add(EmptyReduceEvaluator.INSTANCE);
+		REDUCE_EVALUATORS.add(AttrReduceEvaluator.INSTANCE);
+		REDUCE_EVALUATORS.add(TextReduceEvaluator.INSTANCE);
+	}
+
+	public interface QueryEvaluator {
+
+		public void evalQuery(EvalContext context, QueryAST query);
+
+	}
+	public interface ReduceEvaluator {
+
+		public void evalReduce(EvalContext context, ReduceAST reduce,  SimpleValueAST valueAST);
+
+	}
+
+	public interface ExpressionEvaluator {
+
+		public void evalExpression(EvalContext context, ExpressionAST expression);
+
+	}
+
+	@Data
+	@Builder(toBuilder=true)
+	public static class EvalContext {
+		protected Object target;
+
+		protected String memberName;
+
+		protected boolean optional = false;
+
+		protected Document document;
+
+		protected Elements queryResult;
+
+		protected Map<ValueAST,Object> value;
+
+		@Deprecated
+		protected Object reduceResult;
+
+		// alias final value
+		@Deprecated
+		protected Object convertResult;
+
+	}
 
 
 

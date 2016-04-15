@@ -60,18 +60,18 @@ public class StandardConverterTest extends EstivateTest {
 
 		Assert.assertNotNull(result);
 
-		Assert.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"), result.getInt1());
-		Assert.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"), result.getDec1());
+		Assert.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"), result.getBigInt1());
+		Assert.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"), result.getBigDec1());
 	}
 	
 	@Data
 	public static class ResultBig {
 		
 		@Text(select="#bigIntId")
-		public BigInteger int1;
+		public BigInteger bigInt1;
 		
 		@Text(select="#bigDecId")
-		public BigDecimal dec1;
+		public BigDecimal bigDec1;
 		
 	}
 	
