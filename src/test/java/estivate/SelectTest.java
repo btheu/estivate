@@ -19,7 +19,7 @@ public class SelectTest extends EstivateTest {
     @Test(expected=IllegalArgumentException.class)
     public void selectFail1() throws IOException {
 
-        InputStream document = read("/select/u1.html");
+        InputStream document = read("/select/u2.html");
 
         mapper.map(document, ResultFail1.class);
 
@@ -28,7 +28,7 @@ public class SelectTest extends EstivateTest {
     @Test(expected=IllegalArgumentException.class)
     public void selectFail2() throws IOException {
         
-        InputStream document = read("/select/u1.html");
+        InputStream document = read("/select/u2.html");
         
         mapper.map(document, ResultFail2.class);
         
