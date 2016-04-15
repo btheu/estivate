@@ -167,12 +167,14 @@ public class EstivateEvaluator2 {
 
 		// Recursive assignment
 		if(currentValue.getClass().equals(Elements.class)){
+			log.debug("> recursive convert");
 			if(value.isValueList()){
 				currentValue =  evalToList(context.document,context.getQueryResult(),value.getAst());
 			}else{
 				currentValue = eval(context.document,context.getQueryResult(),value.getAst());
 			}
 			context.getValue().put(value, currentValue);
+			log.debug("< recursive convert");
 			return;
 		}
 
@@ -209,15 +211,19 @@ public class EstivateEvaluator2 {
 	}
 
 	private static void evalReduceSimpleValue(EvalContext context, ReduceAST reduce, SimpleValueAST simpleValueAST) {
+		log.debug("{} > eval reduce : {}",context.getMemberName(),context.getQueryResult());
 		for (ReduceEvaluator eval : REDUCE_EVALUATORS) {
 			eval.evalReduce(context, reduce, simpleValueAST);
 		}
+		log.debug("{} < eval reduce : {}",context.getMemberName(),context.getQueryResult());
 	}
 
 	private static void evalQuery(EvalContext context, QueryAST query) {
+		log.debug("{} > eval query : {}",context.getMemberName(),context.getQueryResult());
 		for (QueryEvaluator eval : QUERY_EVALUATORS) {
 			eval.evalQuery(context, query);
 		}
+		log.debug("{} < eval query : {}",context.getMemberName(),context.getQueryResult());
 	}
 
 
