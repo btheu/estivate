@@ -3,11 +3,10 @@ package estivate.core.ast.parser;
 import java.lang.annotation.Annotation;
 
 import estivate.annotations.TagName;
-import estivate.core.ast.QueryAST;
-import estivate.core.ast.ReduceAST;
+import estivate.core.ast.EstivateAST;
+import estivate.core.ast.ExpressionAST;
 import estivate.core.ast.lang.TagNameReduceAST;
-import estivate.core.ast.parser.EstivateParser.QueryParser;
-import estivate.core.ast.parser.EstivateParser.ReduceParser;
+import estivate.core.ast.parser2.EstivateParser2.AnnotationParser;
 import estivate.utils.AnnotationsUtils;
 
 /**
@@ -16,44 +15,25 @@ import estivate.utils.AnnotationsUtils;
  * @author Benoit Theunissen
  *
  */
-public class TagNameParser implements QueryParser, ReduceParser {
+public class TagNameParser implements AnnotationParser {
 
+	public static final TagNameParser INSTANCE = new TagNameParser();
+	
 	public static final Class<? extends Annotation> TYPE = TagName.class;
 
-	public QueryAST parseQuery(Annotation[] annotations) {
+    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {}
 
-		TagName annotation = (TagName) AnnotationsUtils.find(annotations, TYPE);
-
-		return SelectParser.parse(annotation);
-	}
-
-	public ReduceAST parseReduce(Annotation[] annotations) {
-
-		TagName aAttr = (TagName) AnnotationsUtils.find(annotations, TYPE);
-
-		TagNameReduceAST reduce = new TagNameReduceAST();
-
-		return reduce;
-	}
-
-	public static QueryParser.Factory queryFactory = new QueryParser.Factory() {
-		@Override
-		public QueryParser queryParser(Annotation[] annotations) {
-			if (AnnotationsUtils.contains(annotations, TYPE)) {
-				return new TagNameParser();
-			}
-			return super.queryParser(annotations);
-		}
-	};
-
-	public static ReduceParser.Factory reduceFactory = new ReduceParser.Factory() {
-		@Override
-		public ReduceParser reduceParser(Annotation[] annotations) {
-			if (AnnotationsUtils.contains(annotations, TYPE)) {
-				return new TagNameParser();
-			}
-			return super.reduceParser(annotations);
-		}
-	};
+    public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
+        
+    	TagName annotation = (TagName) AnnotationsUtils.find(annotations, TYPE);
+        if(annotation != null){
+        	ast.setQuery(SelectParser.parse(annotation));
+        	
+        	TagNameReduceAST reduce = new TagNameReduceAST();
+    		
+    		ast.setReduce(reduce);
+        	
+        }
+    }
 
 }

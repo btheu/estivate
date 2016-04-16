@@ -1,29 +1,21 @@
 package estivate.core.eval.lang;
 
 import estivate.core.ast.ReduceAST;
+import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.ast.lang.TitleReduceAST;
-import estivate.core.eval.EstivateEvaluator.EvalContext;
-import estivate.core.eval.ReduceASTEvaluator;
+import estivate.core.eval.EstivateEvaluator2.EvalContext;
+import estivate.core.eval.EstivateEvaluator2.ReduceEvaluator;
 
-public class TitleReduceEvaluator implements ReduceASTEvaluator {
+public class TitleReduceEvaluator implements ReduceEvaluator {
 
-	public ReduceResult eval(EvalContext context, ReduceAST reduce) {
-		return eval(context, reduce, false);
-	}
+	public static final TitleReduceEvaluator INSTANCE = new TitleReduceEvaluator();
 
-	public ReduceResult eval(EvalContext context, ReduceAST reduce, boolean isValueList) {
-		return ReduceResult.builder().value(context.getDocument().title()).build();
-	}
-
-	public static estivate.core.eval.ReduceASTEvaluator.Factory factory = new Factory() {
-
-		@Override
-		public ReduceASTEvaluator expressionEvaluater(ReduceAST reduce) {
-			if(reduce instanceof TitleReduceAST){
-				return new TitleReduceEvaluator();
-			}
-			return super.expressionEvaluater(reduce);
+	public void evalReduce(EvalContext context, ReduceAST reduce,
+			SimpleValueAST valueAST) {
+		
+		if(reduce instanceof TitleReduceAST){
+			context.getValue().put(valueAST, context.getDocument().title());
 		}
-	};
+	}
 
 }

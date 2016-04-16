@@ -25,7 +25,10 @@ import estivate.core.ast.lang.ListValueAST;
 import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.eval.lang.AttrReduceEvaluator;
 import estivate.core.eval.lang.SelectQueryEvaluator;
+import estivate.core.eval.lang.TagNameReduceEvaluator;
 import estivate.core.eval.lang.TextReduceEvaluator;
+import estivate.core.eval.lang.TitleReduceEvaluator;
+import estivate.core.eval.lang.ValReduceEvaluator;
 import estivate.core.impl.PrimitiveConverter;
 import lombok.Builder;
 import lombok.Data;
@@ -318,6 +321,9 @@ public class EstivateEvaluator2 {
 		REDUCE_EVALUATORS.add(EmptyReduceEvaluator.INSTANCE);
 		REDUCE_EVALUATORS.add(AttrReduceEvaluator.INSTANCE);
 		REDUCE_EVALUATORS.add(TextReduceEvaluator.INSTANCE);
+		REDUCE_EVALUATORS.add(ValReduceEvaluator.INSTANCE);
+		REDUCE_EVALUATORS.add(TagNameReduceEvaluator.INSTANCE);
+		REDUCE_EVALUATORS.add(TitleReduceEvaluator.INSTANCE);
 	}
 
 	public interface QueryEvaluator {

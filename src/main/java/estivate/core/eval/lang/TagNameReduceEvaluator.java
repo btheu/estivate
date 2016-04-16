@@ -7,61 +7,53 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import estivate.core.ast.ReduceAST;
+import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.ast.lang.TagNameReduceAST;
-import estivate.core.eval.EstivateEvaluator.EvalContext;
-import estivate.core.eval.ReduceASTEvaluator;
+import estivate.core.eval.EstivateEvaluator2.EvalContext;
+import estivate.core.eval.EstivateEvaluator2.ReduceEvaluator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class TagNameReduceEvaluator implements ReduceASTEvaluator {
+public class TagNameReduceEvaluator implements ReduceEvaluator {
 
-	public ReduceResult eval(EvalContext context, ReduceAST reduce) {
-		return eval(context, reduce, false);
-	}
+	public static final TagNameReduceEvaluator INSTANCE = new TagNameReduceEvaluator();
 
-	public ReduceResult eval(EvalContext context, ReduceAST reduce, boolean isValueList) {
-		
-		Elements elements = context.getDom();
+	public void evalReduce(EvalContext context, ReduceAST reduce,
+			SimpleValueAST simpleValueAST) {
 
-		Object value;
+		if(reduce instanceof TagNameReduceAST){
 
-		if (isValueList) {
-			List<String> list = new ArrayList<String>();
-			log.debug("using list tagName()");
-			for (Element element : elements) {
-				list.add(element.tagName());
+			Elements elements = context.getQueryResult();
+
+			Object reduceValue;
+
+			if (simpleValueAST.isValueList()) {
+				List<String> list = new ArrayList<String>();
+
+				for (Element element : elements) {
+					list.add(element.tagName());
+				}
+
+				reduceValue = list;
+			} else {
+				if (elements.size() > 1) {
+					log.warn(
+							"'{}' TagName concats elements. Consider fixing the Query expression to get only one element.",
+							context.getMemberName());
+				}
+
+				StringBuilder sb = new StringBuilder(50);
+				for (Element element : elements) {
+					if (sb.length() != 0)
+						sb.append(" ");
+					sb.append(element.tagName());
+				}
+
+				reduceValue = sb.toString();
 			}
-			value = list;
-		} else {
-			if (elements.size() > 1) {
-				log.warn(
-						"'{}' tagName concats elements. Consider fixing the select expression to get only one element.",
-						context.getMemberName());
-			}
-			log.debug("using simple tagName()");
 
-			StringBuilder sb = new StringBuilder(50);
-			for (Element element : elements) {
-				if (sb.length() != 0)
-					sb.append(" ");
-				sb.append(element.tagName());
-			}
-
-			value = sb.toString();
+			context.getValue().put(simpleValueAST, reduceValue);
 		}
-
-		return ReduceResult.builder().value(value).build();
 	}
-
-	public static estivate.core.eval.ReduceASTEvaluator.Factory factory = new Factory() {
-
-		@Override
-		public ReduceASTEvaluator expressionEvaluater(ReduceAST reduce) {
-			if(reduce instanceof TagNameReduceAST){
-				return new TagNameReduceEvaluator();
-			}
-			return super.expressionEvaluater(reduce);
-		}
-	};
 
 }

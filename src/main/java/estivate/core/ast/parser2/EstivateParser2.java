@@ -21,7 +21,10 @@ import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.ast.parser.AttrParser;
 import estivate.core.ast.parser.CustomConvertorParser;
 import estivate.core.ast.parser.SelectParser;
+import estivate.core.ast.parser.TagNameParser;
 import estivate.core.ast.parser.TextParser;
+import estivate.core.ast.parser.TitleParser;
+import estivate.core.ast.parser.ValParser;
 import estivate.core.impl.DefaultMembersFinder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -178,7 +181,10 @@ public class EstivateParser2 {
         annotationParsers.add(AttrParser.INSTANCE);
         annotationParsers.add(CustomConvertorParser.INSTANCE);
         annotationParsers.add(SelectParser.INSTANCE);
+        annotationParsers.add(TagNameParser.INSTANCE);
         annotationParsers.add(TextParser.INSTANCE);
+        annotationParsers.add(TitleParser.INSTANCE);
+        annotationParsers.add(ValParser.INSTANCE);
     }
 
     public interface ClassParser {
