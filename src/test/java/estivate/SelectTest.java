@@ -16,25 +16,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SelectTest extends EstivateTest {
 
-    @Test(expected=IllegalArgumentException.class)
-    public void selectFail1() throws IOException {
-
-        InputStream document = read("/select/u2.html");
-
-        mapper.map(document, ResultFail1.class);
-
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void selectFail2() throws IOException {
-        
-        InputStream document = read("/select/u2.html");
-        
-        mapper.map(document, ResultFail2.class);
-        
-    }
-
     @Test
+    public void selectString1() throws IOException {
+
+        InputStream document = read("/select/u2.html");
+
+        ResultString result = mapper.map(document, ResultString.class);
+
+        Assert.assertNotNull(result);
+        assertNotBlank(result.getName1());
+        assertNotBlank(result.getName2());
+    }
+
+	@Test
     public void select1() throws IOException {
 
         InputStream document = read("/select/u1.html");
@@ -105,21 +99,19 @@ public class SelectTest extends EstivateTest {
     }
 
     @Data
-    public static class ResultFail1 {
+    public static class ResultString {
 
         @Select(".name")
         public String name1;
-
-    }
-
-    @Data
-    public static class ResultFail2 {
+        
+		private String name2;
 
         @Select(".name")
         public void setName2(String name) {
+			this.name2 = name;
 
         }
-
+        
     }
 
 }

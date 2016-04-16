@@ -11,6 +11,11 @@ public abstract class EstivateTest {
 
 	protected EstivateMapper2 mapper = new EstivateMapper2();
 	
+	protected void assertNotBlank(String object) {
+		Assert.assertNotNull(object);
+		Assert.assertNotEquals("", object.trim());
+	}
+	
 	protected InputStream read(String string) {
 		InputStream resourceAsStream = EstivateMapper.class.getResourceAsStream(string);
 		Assert.assertNotNull(resourceAsStream);

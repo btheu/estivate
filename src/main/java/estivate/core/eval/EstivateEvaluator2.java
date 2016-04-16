@@ -165,6 +165,14 @@ public class EstivateEvaluator2 {
 			return;
 		}
 
+		// HTML to String
+		if(currentValue.getClass().equals(Elements.class) && targetType.equals(String.class)){
+			log.debug("> String convert");
+			context.getValue().put(value, currentValue.toString());
+			log.debug("< String convert");
+			return;
+		}
+		
 		// Recursive assignment
 		if(currentValue.getClass().equals(Elements.class)){
 			log.debug("> recursive convert");
