@@ -10,7 +10,7 @@ public interface QueryASTEvaluator {
 	 * Give a new context after eval of the query
 	 * 
 	 * @param context
-	 * @param expression
+	 * @param query
 	 * @return a new context after eval of the query
 	 */
 	public EvalContext eval(EvalContext context, QueryAST query);
