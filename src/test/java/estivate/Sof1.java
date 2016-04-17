@@ -14,40 +14,32 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Sof1 {
+public class Sof1 extends EstivateTest {
 
-    EstivateMapper mapper = new EstivateMapper();
+	@Test
+	public void sof_36333383() throws IOException {
+		// http://stackoverflow.com/questions/36333383/data-scraping-for-an-android-app-from-a-local-html-page
 
-    @Test
-    public void sof_36333383() throws IOException {
-        // http://stackoverflow.com/questions/36333383/data-scraping-for-an-android-app-from-a-local-html-page
+		InputStream document = read("/sof/u36333383.html");
 
-        InputStream document = read("/sof/u36333383.html");
+		Document doc = Jsoup.parse(document, "UTF-8", "/");
 
-        Document doc = Jsoup.parse(document, "UTF-8", "/");
+		Result_36333383 result = mapper.map(doc, Result_36333383.class);
 
-        Result_36333383 result = mapper.map(doc, Result_36333383.class);
+		Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result);
+		log.info(result.toString());
+	}
 
-        log.info(result.toString());
-    }
+	@Data
+	public static class Result_36333383 {
 
-    @Data
-    public static class Result_36333383 {
+		@Text(select = "font:matchesOwn(.*:.*)")
+		public List<String> times;
 
-        @Text(select = "font:matchesOwn(.*:.*)")
-        public List<String> times;
+		@Text(select = "font:not(:matchesOwn(.*:.*))")
+		public List<String> others;
 
-        @Text(select = "font:not(:matchesOwn(.*:.*))")
-        public List<String> others;
+	}
 
-    }
-
-    private InputStream read(String string) {
-        InputStream resourceAsStream = EstivateMapper.class
-                .getResourceAsStream(string);
-        Assert.assertNotNull(resourceAsStream);
-        return resourceAsStream;
-    }
 }

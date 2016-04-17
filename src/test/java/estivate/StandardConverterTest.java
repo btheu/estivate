@@ -1,5 +1,6 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -7,18 +8,15 @@ import java.math.BigInteger;
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.EstivateMapper;
 import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ConverterTest {
-
-	EstivateMapper mapper = new EstivateMapper();
+public class StandardConverterTest extends EstivateTest {
 
 	@Test
-	public void convertorPrimitive1() {
+	public void convertorPrimitive1() throws IOException {
 
 		InputStream document = read("/converter/u1.html");
 
@@ -55,25 +53,25 @@ public class ConverterTest {
 	}
 
 	@Test
-	public void convertorBigNumber1() {
+	public void convertorBigNumber1() throws IOException {
 		InputStream document = read("/converter/u2.html");
 
 		ResultBig result = mapper.map(document, ResultBig.class);
 
 		Assert.assertNotNull(result);
 
-		Assert.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"), result.getInt1());
-		Assert.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"), result.getDec1());
+		Assert.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"), result.getBigInt1());
+		Assert.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"), result.getBigDec1());
 	}
 	
 	@Data
 	public static class ResultBig {
 		
 		@Text(select="#bigIntId")
-		public BigInteger int1;
+		public BigInteger bigInt1;
 		
 		@Text(select="#bigDecId")
-		public BigDecimal dec1;
+		public BigDecimal bigDec1;
 		
 	}
 	
@@ -134,10 +132,4 @@ public class ConverterTest {
 
 	}
 
-	private InputStream read(String string) {
-		InputStream resourceAsStream = EstivateMapper.class
-				.getResourceAsStream(string);
-		Assert.assertNotNull(resourceAsStream);
-		return resourceAsStream;
-	}
 }

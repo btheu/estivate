@@ -6,7 +6,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -38,7 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * <ul>
- * <li>browse members and call tasks implementing speciifc interfaces</li>
+ * <li>parse members and call registered implementation</li>
+ * <li>use dialect JSoup by default</li>
  * <li>get members ordered to evaluate</li>
  * <li>evaluate select elements</li>
  * <li>evaluate reduce value</li>
@@ -50,6 +50,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Slf4j
+@Deprecated
 public class EstivateMapper {
 
     @Getter
@@ -60,10 +61,9 @@ public class EstivateMapper {
     @Setter
     protected String baseURI = "/";
 
-    protected static final String PACKAGE_NAME = Select.class.getPackage()
-            .getName();
+    protected static final String PACKAGE_NAME = Select.class.getPackage().getName();
 
-    protected static final List<Class<?>> STANDARD_TARGET_TYPES = new ArrayList<>();
+    protected static final List<Class<?>> STANDARD_TARGET_TYPES = new ArrayList<Class<?>>();
     static {
         STANDARD_TARGET_TYPES.add(Document.class);
         STANDARD_TARGET_TYPES.add(Elements.class);
@@ -106,8 +106,7 @@ public class EstivateMapper {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
             // Handle type parameter class
-            Class<?> classArgument = (Class<?>) parameterizedType
-                    .getActualTypeArguments()[0];
+            Class<?> classArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
             // Handle type class
             Class<?> rowClass = (Class<?>) parameterizedType.getRawType();
@@ -119,17 +118,14 @@ public class EstivateMapper {
             } else {
                 log.debug(rowClass.getCanonicalName() + " is not a collection");
 
-                throw new IllegalArgumentException(
-                        "Parameterized type not handled: "
-                                + rowClass.getCanonicalName());
+                throw new IllegalArgumentException("Parameterized type not handled: " + rowClass.getCanonicalName());
             }
         } else {
             return map(document, elements, (Class<?>) type);
         }
     }
 
-    public static <T> List<T> mapToList(Document document, Elements element,
-            Class<T> clazz) {
+    public static <T> List<T> mapToList(Document document, Elements element, Class<T> clazz) {
         List<T> result = new ArrayList<T>();
 
         Elements elementsCur = element;
@@ -150,8 +146,7 @@ public class EstivateMapper {
         return result;
     }
 
-    public static <T> T map(Document document, Elements elements,
-            Class<T> clazz) {
+    public static <T> T map(Document document, Elements elements, Class<T> clazz) {
         try {
 
             Elements elementsCurr = elements;
@@ -164,13 +159,10 @@ public class EstivateMapper {
             }
 
             return map(document, elementsCurr, clazz, clazz.newInstance());
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
 
-            throw new IllegalArgumentException(
-                    "Cant create new instance of " + clazz.getCanonicalName(),
-                    e);
-
+            throw new IllegalArgumentException("Cant create new instance of " + clazz.getCanonicalName(), e);
         }
     }
 
@@ -183,8 +175,7 @@ public class EstivateMapper {
      * @param target
      * @return
      */
-    public static <T> T map(Document document, Elements element, Class<T> clazz,
-            T target) {
+    public static <T> T map(Document document, Elements element, Class<T> clazz, T target) {
 
         List<AccessibleObject> members = membersFinder.list(clazz);
         for (AccessibleObject member : members) {
@@ -194,25 +185,22 @@ public class EstivateMapper {
         return target;
     }
 
-    protected static <T> void map(Document document, Elements elementsIn,
-            AccessibleObject member, T target) {
+    protected static <T> void map(Document document, Elements elementsIn, AccessibleObject member, T target) {
 
         if (hasOneAnnotationMapper(member)) {
 
             // find all types arguments for method member
-            Type[] valueTypes = getMemberTypes(member);
+            Type[] valueTypes = ClassUtils.getMemberTypes(member);
 
             Type valueTypeTarget = getValueTypeTarget(valueTypes);
 
             boolean isValueTypeList = checkListNature(valueTypeTarget);
 
             // select
-            Elements elementsOut = selecter.select(document, elementsIn,
-                    member);
+            Elements elementsOut = selecter.select(document, elementsIn, member);
 
             // reduce
-            Object valueIn = reducter.reduce(document, elementsOut, member,
-                    isValueTypeList);
+            Object valueIn = reducter.reduce(document, elementsOut, member, isValueTypeList);
 
             // Handle optional on member scope
             Boolean optional = false;
@@ -222,12 +210,13 @@ public class EstivateMapper {
                 optional = aOptional.value();
             }
             if (!optional && valueIn == null) {
-                throw new IllegalStateException(
-                        "No value matched and not optional for "
-                                + getName(member));
+                throw new IllegalStateException("No value matched and not optional for " + getName(member));
+            }
+            if (optional && valueIn == null) {
+                return;
             }
 
-            List<Object> valuesOut = new ArrayList<>();
+            List<Object> valuesOut = new ArrayList<Object>();
 
             for (Type valueType : valueTypes) {
 
@@ -243,8 +232,7 @@ public class EstivateMapper {
                 } else if (isStandardType(valueIn, valueClass)) {
                     // standard converter
                     log.debug("Convert with standard converter");
-                    valuesOut.add(standardConverter(document, elementsOut,
-                            valueIn, valueClass));
+                    valuesOut.add(standardConverter(document, elementsOut, valueIn, valueClass));
                 } else if (converter.canConvert(valueIn, valueClass)) {
                     // inner converter
                     log.debug("Convert with inner converter");
@@ -274,12 +262,11 @@ public class EstivateMapper {
     }
 
     private static boolean checkListNature(Type valueType) {
-        return valueType == null ? false
-                : ClassUtils.rawType(valueType).equals(List.class);
+        return valueType == null ? false : ClassUtils.rawType(valueType).equals(List.class);
     }
 
-    private static Object standardConverter(Document document,
-            Elements elementsIn, Object valueIn, Class<?> valueClass) {
+    private static Object standardConverter(Document document, Elements elementsIn, Object valueIn,
+            Class<?> valueClass) {
         if (valueClass.equals(Document.class)) {
             return document;
         }
@@ -291,8 +278,7 @@ public class EstivateMapper {
                 return elementsIn.first();
             } else {
                 throw new IllegalArgumentException(
-                        "Cant set 'Element' object with Elements of size:"
-                                + elementsIn.size());
+                        "Cant set 'Element' object with Elements of size:" + elementsIn.size());
             }
         }
         return null;
@@ -302,8 +288,7 @@ public class EstivateMapper {
         return STANDARD_TARGET_TYPES.contains(valueClass);
     }
 
-    private static <T> void setValueToTarget(Document document,
-            Elements elementsIn, T target, AccessibleObject member,
+    private static <T> void setValueToTarget(Document document, Elements elementsIn, T target, AccessibleObject member,
             List<Object> valuesIn) {
         try {
 
@@ -313,26 +298,24 @@ public class EstivateMapper {
             if (member instanceof Field) {
                 Field field = (Field) member;
 
-                setValue(document, elementsIn, target, field, values[0]);
+                ClassUtils.setValue(field, target, values[0]);
 
             } else if (member instanceof Method) {
                 Method method = (Method) member;
 
-                setValue(document, elementsIn, target, method, values);
+                ClassUtils.setValue(method, target, values);
             }
 
-        } catch (IllegalArgumentException | IllegalAccessException
-                | InvocationTargetException e) {
-            throw new IllegalArgumentException("Cannot set values [" + valuesIn
-                    + "] for member [" + getName(member) + "]", e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Cannot set values [" + valuesIn + "] for member [" + getName(member) + "]", e);
         }
 
     }
 
-    private static Object[] prepareArgumentValues(Document document,
-            Elements elementsIn, AccessibleObject member,
+    private static Object[] prepareArgumentValues(Document document, Elements elementsIn, AccessibleObject member,
             List<Object> valuesIn) {
-        Type[] memberTypes = getMemberTypes(member);
+        Type[] memberTypes = ClassUtils.getMemberTypes(member);
 
         Object[] arguments = new Object[memberTypes.length];
 
@@ -376,26 +359,11 @@ public class EstivateMapper {
     private static boolean hasOneAnnotationMapper(AccessibleObject member) {
         Annotation[] annotations = member.getAnnotations();
         for (Annotation annotation : annotations) {
-            if (annotation.annotationType().getPackage().getName()
-                    .equals(PACKAGE_NAME)) {
+            if (annotation.annotationType().getPackage().getName().equals(PACKAGE_NAME)) {
                 return true;
             }
         }
         return false;
-    }
-
-    public static Type[] getMemberTypes(AccessibleObject member) {
-        if (member instanceof Field) {
-            Field field = (Field) member;
-
-            return new Type[] { field.getGenericType() };
-
-        } else if (member instanceof Method) {
-            Method method = (Method) member;
-
-            return method.getGenericParameterTypes();
-        }
-        return null;
     }
 
     protected Document parseDocument(InputStream document) {
@@ -404,52 +372,6 @@ public class EstivateMapper {
         } catch (IOException e) {
             throw new RuntimeException("Cant parse document.", e);
         }
-    }
-
-    /**
-     * 
-     * 
-     * @param document
-     * @param element
-     * @param target
-     * @param field
-     * @param value
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     */
-    protected static void setValue(Document document, Elements element,
-            Object target, Field field, Object value)
-            throws IllegalArgumentException, IllegalAccessException {
-
-        log.debug("set value on field ['{}' => '{}']", value, field.getName());
-
-        if (ClassUtils.isAssignableValue(field.getType(), value)) {
-
-            boolean accessibleBack = field.isAccessible();
-
-            field.setAccessible(true);
-
-            field.set(target, value);
-
-            field.setAccessible(accessibleBack);
-
-        } else {
-            log.error("set value is not assignable with field '{}'",
-                    field.getName());
-            throw new IllegalArgumentException(
-                    "Cant set " + value.toString() + " to " + field.getName());
-        }
-
-    }
-
-    protected static void setValue(Document document, Elements element,
-            Object target, Method method, Object... values)
-            throws IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException {
-
-        log.debug("set value by method [{} ({})]", method.getName(), values);
-
-        method.invoke(target, values);
     }
 
     protected static Object getName(AnnotatedElement member) {

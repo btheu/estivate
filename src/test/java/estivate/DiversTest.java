@@ -1,22 +1,20 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.EstivateMapper;
 import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DiversTest {
-
-    EstivateMapper mapper = new EstivateMapper();
+public class DiversTest extends EstivateTest {
 
     @Test
-    public void first() {
+    public void first() throws IOException {
 
         InputStream document = read("/divers/u2.html");
 
@@ -31,7 +29,7 @@ public class DiversTest {
     }
     
     @Test
-    public void last() {
+    public void last() throws IOException {
     	
     	InputStream document = read("/divers/u2.html");
     	
@@ -46,7 +44,7 @@ public class DiversTest {
     }
     
     @Test(expected=IllegalArgumentException.class)
-    public void failure() {
+    public void failure() throws IOException {
     	
     	InputStream document = read("/divers/u2.html");
     	
@@ -99,10 +97,4 @@ public class DiversTest {
     	
     }
 
-    private InputStream read(String string) {
-        InputStream resourceAsStream = EstivateMapper.class
-                .getResourceAsStream(string);
-        Assert.assertNotNull(resourceAsStream);
-        return resourceAsStream;
-    }
 }

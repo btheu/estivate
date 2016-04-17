@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<users>
+    <user id="1">
+        <login>james.bond</login>
+        <password>12345</password>
+        <enabled>true</enabled>
+    </user>
+    <user id="2">
+        <login>john.doe</login>
+        <password>67890</password>
+        <enabled>false</enabled>
+    </user>
+</users>

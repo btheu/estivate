@@ -1,0 +1,46 @@
+package estivate.core.eval.lang;
+
+import org.jsoup.helper.StringUtil;
+import org.jsoup.select.Elements;
+
+import estivate.core.ast.QueryAST;
+import estivate.core.ast.lang.SelectQueryAST;
+import estivate.core.eval.EstivateEvaluator2.EvalContext;
+import estivate.core.eval.EstivateEvaluator2.QueryEvaluator;
+
+public class SelectQueryEvaluator implements QueryEvaluator {
+
+	public static final SelectQueryEvaluator INSTANCE = new SelectQueryEvaluator();
+	
+	public void evalQuery(EvalContext context, QueryAST query) {
+		if (query instanceof SelectQueryAST) {
+			SelectQueryAST ast = (SelectQueryAST) query;
+
+			Elements queryResult = context.getQueryResult();
+
+			String queryString = ast.getQueryString();
+
+
+			if ( ! StringUtil.isBlank(queryString)) {
+				
+				Elements select = context.getQueryResult().select(queryString);
+
+				if (ast.isFirst()) {
+					queryResult = new Elements(select.first());
+				} else if (ast.isLast()) {
+					queryResult = new Elements(select.last());
+				} else if (ast.isUnique() && select.size() != 1) {
+					throw new RuntimeException("No unique element after query");
+				} else {
+					queryResult = select;
+				}
+
+			}
+
+			context.setQueryResult(queryResult);
+
+		}
+		
+	}
+	
+}

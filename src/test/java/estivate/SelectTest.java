@@ -1,5 +1,6 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
@@ -7,18 +8,28 @@ import org.jsoup.nodes.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.EstivateMapper;
 import estivate.annotations.Select;
+import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SelectTest {
-
-    EstivateMapper mapper = new EstivateMapper();
+public class SelectTest extends EstivateTest {
 
     @Test
-    public void select1() {
+    public void selectString1() throws IOException {
+
+        InputStream document = read("/select/u2.html");
+
+        ResultString result = mapper.map(document, ResultString.class);
+
+        Assert.assertNotNull(result);
+        assertNotBlank(result.getName1());
+        assertNotBlank(result.getName2());
+    }
+
+	@Test
+    public void select1() throws IOException {
 
         InputStream document = read("/select/u1.html");
 
@@ -36,7 +47,7 @@ public class SelectTest {
     }
 
     @Test
-    public void selectList1() {
+    public void selectList1() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -59,7 +70,7 @@ public class SelectTest {
     @Data
     public static class ResultElement {
 
-        @Select("#id1 input")
+        @Select(select="#id1 input")
         public Element input1;
 
         public Element input2;
@@ -75,22 +86,32 @@ public class SelectTest {
     @Select(".someClass")
     public static class ResultList {
 
-        @Select(".name")
+        @Text(select=".name")
         public String name1;
 
         public String name2;
 
-        @Select(".name")
+        @Text(select=".name")
         public void setName2(String name) {
             this.name2 = name;
         }
 
     }
 
-    private InputStream read(String string) {
-        InputStream resourceAsStream = EstivateMapper.class
-                .getResourceAsStream(string);
-        Assert.assertNotNull(resourceAsStream);
-        return resourceAsStream;
+    @Data
+    public static class ResultString {
+
+        @Select(".name")
+        public String name1;
+        
+		private String name2;
+
+        @Select(".name")
+        public void setName2(String name) {
+			this.name2 = name;
+
+        }
+        
     }
+
 }

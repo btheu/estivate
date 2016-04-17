@@ -16,32 +16,35 @@ import estivate.core.MembersFinder;
  */
 public class DefaultMembersFinder implements MembersFinder {
 
-    @Override
-    public List<AccessibleObject> list(Class<?> clazz) {
-        List<AccessibleObject> members = new ArrayList<>();
+	public List<Field> listFields(Class<?> clazz) {
+		return getAllFields(clazz);
+	}
 
-        members.addAll(getAllFields(clazz));
+	public List<Method> listMethods(Class<?> clazz) {
+		return Arrays.asList(clazz.getDeclaredMethods());
+	}
 
-        Method[] methods = clazz.getMethods();
-        for (Method method : methods) {
-            members.add(method);
-        }
+	public List<AccessibleObject> list(Class<?> clazz) {
+		List<AccessibleObject> members = new ArrayList<AccessibleObject>();
 
-        return members;
-    }
+		members.addAll(listFields(clazz));
+		members.addAll(listMethods(clazz));
 
-    public static List<Field> getAllFields(Class<?> clazz) {
+		return members;
+	}
 
-        List<Field> res = new ArrayList<Field>();
+	public static List<Field> getAllFields(Class<?> clazz) {
 
-        Class<?> index = clazz;
-        while (index != Object.class) {
-            res.addAll(Arrays.asList(index.getDeclaredFields()));
+		List<Field> res = new ArrayList<Field>();
 
-            index = index.getSuperclass();
-        }
+		Class<?> index = clazz;
+		while (index != Object.class && index != null) {
+			res.addAll(Arrays.asList(index.getDeclaredFields()));
 
-        return res;
-    }
+			index = index.getSuperclass();
+		}
+
+		return res;
+	}
 
 }

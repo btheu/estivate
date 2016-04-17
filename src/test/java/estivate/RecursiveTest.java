@@ -1,5 +1,6 @@
 package estivate;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -13,12 +14,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RecursiveTest {
-
-    EstivateMapper mapper = new EstivateMapper();
+public class RecursiveTest extends EstivateTest {
 
     @Test
-    public void selectRec3() {
+    public void selectRec3() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -36,7 +35,7 @@ public class RecursiveTest {
     }
 
     @Test
-    public void selectRec3Bis() {
+    public void selectRec3Bis() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -73,7 +72,7 @@ public class RecursiveTest {
     }
 
     @Test
-    public void selectRec1() {
+    public void selectRec1() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -81,17 +80,17 @@ public class RecursiveTest {
 
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getSubResult());
+        Assert.assertNotNull(result.getSubResult1());
         Assert.assertNotNull(result.getSubResult2());
 
-        Assert.assertEquals("Name 2", result.getSubResult().getName());
+        Assert.assertEquals("Name 2", result.getSubResult1().getName());
         Assert.assertEquals("Name 2", result.getSubResult2().getName());
 
         log.info(result.toString());
     }
 
     @Test
-    public void selectRec2() {
+    public void selectRec2() throws IOException {
 
         InputStream document = read("/select/u2.html");
 
@@ -99,13 +98,13 @@ public class RecursiveTest {
 
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getSubResults());
+        Assert.assertNotNull(result.getSubResults1());
         Assert.assertNotNull(result.getSubResults2());
 
-        Assert.assertEquals(3, result.getSubResults().size());
+        Assert.assertEquals(3, result.getSubResults1().size());
         Assert.assertEquals(3, result.getSubResults2().size());
 
-        List<SubResult> subResults = result.getSubResults();
+        List<SubResult> subResults = result.getSubResults1();
         for (SubResult subResult : subResults) {
             subResult.getName();
         }
@@ -123,7 +122,7 @@ public class RecursiveTest {
     public static class ResultSingle {
 
         @Select("#div2")
-        public SubResult subResult;
+        public SubResult subResult1;
 
         public SubResult subResult2;
 
@@ -138,13 +137,13 @@ public class RecursiveTest {
     public static class ResultList {
 
         @Select(".someClass")
-        public List<SubResult> subResults;
+        public List<SubResult> subResults1;
 
         public List<SubResult> subResults2;
 
         @Select(".someClass")
         public void setSubResult2(List<SubResult> subResults) {
-            subResults2 = subResults;
+            this.subResults2 = subResults;
         }
 
     }
@@ -157,10 +156,4 @@ public class RecursiveTest {
 
     }
 
-    private InputStream read(String string) {
-        InputStream resourceAsStream = EstivateMapper.class
-                .getResourceAsStream(string);
-        Assert.assertNotNull(resourceAsStream);
-        return resourceAsStream;
-    }
 }

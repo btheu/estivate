@@ -1,5 +1,9 @@
 
-## 0.1.2 - pending
+## 0.2.1 - pending
+
+## 0.2.0 - 17/04/2016
+
+*	second major refactor of core module
 
 ## 0.1.1 - 03/04/2016
 
