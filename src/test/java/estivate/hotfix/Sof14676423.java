@@ -1,4 +1,4 @@
-package estivate;
+package estivate.hotfix;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.junit.Assert;
 import org.junit.Test;
 
+import estivate.EstivateTest;
 import estivate.annotations.Select;
 import estivate.annotations.Text;
 import lombok.Data;

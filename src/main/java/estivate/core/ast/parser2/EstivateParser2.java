@@ -180,11 +180,12 @@ public class EstivateParser2 {
 
         annotationParsers.add(AttrParser.INSTANCE);
         annotationParsers.add(CustomConvertorParser.INSTANCE);
-        annotationParsers.add(SelectParser.INSTANCE);
         annotationParsers.add(TagNameParser.INSTANCE);
         annotationParsers.add(TextParser.INSTANCE);
         annotationParsers.add(TitleParser.INSTANCE);
         annotationParsers.add(ValParser.INSTANCE);
+        // select Query at the end for prevailing on select inside Reduces
+        annotationParsers.add(SelectParser.INSTANCE);
     }
 
     public interface ClassParser {
