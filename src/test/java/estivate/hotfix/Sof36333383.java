@@ -1,4 +1,4 @@
-package estivate;
+package estivate.hotfix;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,12 +9,13 @@ import org.jsoup.nodes.Document;
 import org.junit.Assert;
 import org.junit.Test;
 
+import estivate.EstivateTest;
 import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Sof1 extends EstivateTest {
+public class Sof36333383 extends EstivateTest {
 
 	@Test
 	public void sof_36333383() throws IOException {
