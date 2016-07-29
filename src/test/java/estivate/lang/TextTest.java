@@ -1,4 +1,4 @@
-package estivate;
+package estivate.lang;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +10,7 @@ import org.junit.Test;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import estivate.EstivateTest;
 import estivate.annotations.Select;
 import estivate.annotations.Text;
 
