@@ -16,102 +16,142 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SelectTest extends EstivateTest {
 
-    @Test
-    public void selectString1() throws IOException {
+	@Test
+	public void selectIndex1() throws IOException {
 
-        InputStream document = read("/select/u2.html");
+		InputStream document = read("/select/u2.html");
 
-        ResultString result = mapper.map(document, ResultString.class);
+		ResultIndex result = mapper.map(document, ResultIndex.class);
 
-        Assert.assertNotNull(result);
-        assertNotBlank(result.getName1());
-        assertNotBlank(result.getName2());
-    }
+		Assert.assertNotNull(result);
+		assertContains("Name 1", result.getName1());
+		assertContains("Name 2", result.getName2());
+		assertContains("Name 3", result.getName3());
+
+		assertNotContains("Name 2", result.getName1());
+		assertNotContains("Name 3", result.getName1());
+
+		assertNotContains("Name 1", result.getName2());
+		assertNotContains("Name 3", result.getName2());
+
+		assertNotContains("Name 1", result.getName3());
+		assertNotContains("Name 2", result.getName3());
+	}
 
 	@Test
-    public void select1() throws IOException {
+	public void selectString1() throws IOException {
 
-        InputStream document = read("/select/u1.html");
+		InputStream document = read("/select/u2.html");
 
-        ResultElement result = mapper.map(document, ResultElement.class);
+		ResultString result = mapper.map(document, ResultString.class);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getInput1());
-        Assert.assertNotNull(result.getInput2());
+		Assert.assertNotNull(result);
+		assertNotBlank(result.getName1());
+		assertNotBlank(result.getName2());
+	}
 
-        Assert.assertEquals("input", result.getInput1().tagName());
-        Assert.assertEquals("input", result.getInput2().tagName());
+	@Test
+	public void select1() throws IOException {
 
-        log.info(result.toString());
+		InputStream document = read("/select/u1.html");
 
-    }
+		ResultElement result = mapper.map(document, ResultElement.class);
 
-    @Test
-    public void selectList1() throws IOException {
+		Assert.assertNotNull(result);
+		Assert.assertNotNull(result.getInput1());
+		Assert.assertNotNull(result.getInput2());
 
-        InputStream document = read("/select/u2.html");
+		Assert.assertEquals("input", result.getInput1().tagName());
+		Assert.assertEquals("input", result.getInput2().tagName());
 
-        Collection<ResultList> results = mapper.mapToList(document,
-                ResultList.class);
+		log.info(result.toString());
 
-        Assert.assertNotNull(results);
-        Assert.assertEquals(3, results.size());
+	}
 
-        for (ResultList result : results) {
-            Assert.assertNotNull(result);
-            Assert.assertNotNull(result.getName1());
-            Assert.assertNotNull(result.getName2());
-        }
+	@Test
+	public void selectList1() throws IOException {
 
-        log.info(results.toString());
+		InputStream document = read("/select/u2.html");
 
-    }
+		Collection<ResultList> results = mapper.mapToList(document, ResultList.class);
 
-    @Data
-    public static class ResultElement {
+		Assert.assertNotNull(results);
+		Assert.assertEquals(3, results.size());
 
-        @Select(select="#id1 input")
-        public Element input1;
+		for (ResultList result : results) {
+			Assert.assertNotNull(result);
+			Assert.assertNotNull(result.getName1());
+			Assert.assertNotNull(result.getName2());
+		}
 
-        public Element input2;
+		log.info(results.toString());
 
-        @Select("#id1 input")
-        public void setName2(Element input) {
-            this.input2 = input;
-        }
+	}
 
-    }
+	@Data
+	public static class ResultElement {
 
-    @Data
-    @Select(".someClass")
-    public static class ResultList {
+		@Select(select = "#id1 input")
+		public Element input1;
 
-        @Text(select=".name")
-        public String name1;
+		public Element input2;
 
-        public String name2;
+		@Select("#id1 input")
+		public void setName2(Element input) {
+			this.input2 = input;
+		}
 
-        @Text(select=".name")
-        public void setName2(String name) {
-            this.name2 = name;
-        }
+	}
 
-    }
+	@Data
+	@Select(".someClass")
+	public static class ResultList {
 
-    @Data
-    public static class ResultString {
+		@Text(select = ".name")
+		public String name1;
 
-        @Select(".name")
-        public String name1;
-        
+		public String name2;
+
+		@Text(select = ".name")
+		public void setName2(String name) {
+			this.name2 = name;
+		}
+
+	}
+
+	@Data
+	public static class ResultString {
+
+		@Select(".name")
+		public String name1;
+
 		private String name2;
 
-        @Select(".name")
-        public void setName2(String name) {
+		@Select(".name")
+		public void setName2(String name) {
 			this.name2 = name;
 
-        }
-        
-    }
+		}
+
+	}
+
+	@Data
+	public static class ResultIndex {
+
+		@Select(value = ".name", index = 1)
+		public String name1;
+
+		@Select(value = ".name", index = 3)
+		public String name3;
+
+		private String name2;
+
+		@Select(value = ".name", index = 2)
+		public void setName2(String name) {
+			this.name2 = name;
+
+		}
+
+	}
 
 }
