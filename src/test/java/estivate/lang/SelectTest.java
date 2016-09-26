@@ -18,6 +18,28 @@ import lombok.extern.slf4j.Slf4j;
 public class SelectTest extends EstivateTest {
 
     @Test
+	public void selectIndex1() throws IOException {
+
+		InputStream document = read("/select/u2.html");
+
+		ResultIndex result = mapper.map(document, ResultIndex.class);
+
+		Assert.assertNotNull(result);
+		assertContains("Name 1", result.getName1());
+		assertContains("Name 2", result.getName2());
+		assertContains("Name 3", result.getName3());
+
+		assertNotContains("Name 2", result.getName1());
+		assertNotContains("Name 3", result.getName1());
+
+		assertNotContains("Name 1", result.getName2());
+		assertNotContains("Name 3", result.getName2());
+
+		assertNotContains("Name 1", result.getName3());
+		assertNotContains("Name 2", result.getName3());
+	}
+
+	@Test
     public void selectString1() throws IOException {
 
         InputStream document = read("/select/u2.html");
@@ -114,5 +136,24 @@ public class SelectTest extends EstivateTest {
         }
         
     }
+
+	@Data
+	public static class ResultIndex {
+
+		@Select(value = ".name", index = 1)
+		public String name1;
+
+		@Select(value = ".name", index = 3)
+		public String name3;
+
+		private String name2;
+
+		@Select(value = ".name", index = 2)
+		public void setName2(String name) {
+			this.name2 = name;
+
+		}
+
+	}
 
 }
