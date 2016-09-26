@@ -1,4 +1,4 @@
-package estivate;
+package estivate.lang;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,9 +7,12 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
+import estivate.EstivateTest;
+import estivate.annotations.Select;
+import estivate.annotations.Text;
 
 @Slf4j
 public class TextTest extends EstivateTest {
@@ -17,9 +20,9 @@ public class TextTest extends EstivateTest {
     @Test
     public void text2() throws IOException {
 
-        InputStream document = read("/text/u2.html");
+        InputStream document = this.read("/text/u2.html");
 
-        Result2 result = mapper.map(document, Result2.class);
+        Result2 result = this.mapper.map(document, Result2.class);
 
         Assert.assertNotNull(result);
         Assert.assertEquals("Text1 Text2 Text3 child of 3", result.getCas1());
@@ -41,9 +44,9 @@ public class TextTest extends EstivateTest {
     @Data
     public static class Result2 {
 
-    	@Text(select = "span")
-    	public List<String> cas3;
-    	
+        @Text(select = "span")
+        public List<String> cas3;
+
         @Text(select = "span")
         public String cas1;
 
@@ -58,13 +61,14 @@ public class TextTest extends EstivateTest {
     @Test
     public void text1() throws IOException {
 
-        InputStream document = read("/text/u1.html");
+        InputStream document = this.read("/text/u1.html");
 
-        Result result = mapper.map(document, Result.class);
+        Result result = this.mapper.map(document, Result.class);
 
         Assert.assertNotNull(result);
         Assert.assertEquals("This is my name: John", result.getName1());
         Assert.assertEquals("This is my name: John", result.getName2());
+        Assert.assertEquals("This is my name: John", result.getName3());
 
         log.info(result.toString());
 
@@ -73,9 +77,9 @@ public class TextTest extends EstivateTest {
     @Test
     public void textOwn1() throws IOException {
 
-        InputStream document = read("/text/u1.html");
+        InputStream document = this.read("/text/u1.html");
 
-        ResultOwn result = mapper.map(document, ResultOwn.class);
+        ResultOwn result = this.mapper.map(document, ResultOwn.class);
 
         Assert.assertNotNull(result);
         Assert.assertNotNull(result.getName1());
@@ -90,6 +94,10 @@ public class TextTest extends EstivateTest {
 
     @Data
     public static class Result {
+
+        @Text
+        @Select(select = "#name")
+        public String name3;
 
         @Text(select = "#name")
         public String name1;
