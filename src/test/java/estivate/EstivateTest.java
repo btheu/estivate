@@ -12,8 +12,8 @@ public abstract class EstivateTest {
 	protected EstivateMapper2 mapper = new EstivateMapper2();
 
 	protected void assertNotBlank(String object) {
-		Assert.assertNotNull(object);
-		Assert.assertNotEquals("", object.trim());
+		Assert.assertNotNull("Should not be blank", object);
+		Assert.assertNotEquals("Should not be blank", "", object.trim());
 	}
 
 	protected void assertContains(String contains, String word) {
