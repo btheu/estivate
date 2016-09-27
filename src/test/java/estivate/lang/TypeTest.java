@@ -34,6 +34,7 @@ public class TypeTest extends EstivateTest {
 
         InputStream document = this.read("/select/u2.html");
 
+        // sinumlate a use case from other api
         Type type = TypeTest.class.getDeclaredField("resultListField").getGenericType();
 
         List<ResultList> result = (List<ResultList>) this.mapper.map(document, type);

@@ -23,6 +23,8 @@ public class SelectQueryEvaluator implements QueryEvaluator {
 			String queryString = ast.getQueryString();
 
 			if (!StringUtil.isBlank(queryString)) {
+			    
+			    log.debug("> eval Select Query [{}]", queryString);
 
 				Elements select = context.getQueryResult().select(queryString);
 
@@ -44,6 +46,7 @@ public class SelectQueryEvaluator implements QueryEvaluator {
 					queryResult = select;
 				}
 
+				log.debug("< eval Select Query [{}] : {}", queryString, queryResult);
 			}
 
 			context.setQueryResult(queryResult);

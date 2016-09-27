@@ -45,17 +45,17 @@ public class EstivateEvaluator2 {
 
 	private static Object eval(Document document, Elements queryResult, EstivateAST ast) {
 
+	    // eval class query 
+        EvalContext context = evalQuery(document, queryResult, ast);
+	    
 		Object target = ClassUtils.newInstance(ast.getTargetRawClass());
-
-		EvalContext context = new EvalContext.EvalContextBuilder()
-				.target(target)
-				.document(document)
-				.queryResult(queryResult)
-				.optional(ast.isOptional())
-				.value(new HashMap<ValueAST, Object>())
-				.build();
-
-		evalExpressions(context.toBuilder().build(), ast);
+		
+		evalExpressions(context.toBuilder()
+		        .target(target)
+                .document(document)
+                .queryResult(queryResult)
+                .optional(ast.isOptional())
+                .build(), ast);
 
 		return target;
 	}
@@ -78,6 +78,7 @@ public class EstivateEvaluator2 {
 			// copy of the context with new queryResult
 			evalExpressions(context.toBuilder()
 					.target(target)
+					.memberName(ast.getTargetRawClass().getSimpleName())
 					.queryResult(new Elements(element))
 					.build(), ast);
 
@@ -101,9 +102,6 @@ public class EstivateEvaluator2 {
 	}
 
 	public static void evalExpressions(EvalContext context, ExpressionsAST ast) {
-
-		// Eval Query
-		evalQuery(context,ast.getQuery());
 
 		List<ExpressionAST> expressions = ast.getExpressions();
 		for (ExpressionAST expression : expressions) {
