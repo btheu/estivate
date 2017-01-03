@@ -122,6 +122,8 @@ public class EstivateEvaluator2 {
 
 		Class<?> targetType = value.getRawClass();
 
+		Class<?> targetRawClass = value.getAst().getTargetRawClass();
+		
 		// Standard assignment
 		if(targetType.equals(Document.class)){
 			context.getValue().put(value, context.getDocument());
@@ -158,14 +160,36 @@ public class EstivateEvaluator2 {
 		// Primitive Convert
 
 		if(primitiveConverter.canConvert(currentValue, targetType)){
-
+			log.debug("> Primitive convert");
+			
 			Object convertedValue = primitiveConverter.convert(currentValue, targetType);
 
 			context.getValue().put(value, convertedValue);
 
+			log.debug("< Primitive convert");
 			return;
 		}
 
+		// Primitive List Convert
+		
+		if(value.isValueList() && primitiveConverter.isPrimitive(targetRawClass)){
+			log.debug("> Primitive list convert");
+			
+			List<Object> currentValueList = new ArrayList<Object>();
+			
+			for (String valueString : (List<String>)currentValue) {
+				
+				Object convertedValue = primitiveConverter.convert(valueString, targetRawClass);
+				
+				currentValueList.add(convertedValue);
+			}
+			
+			context.getValue().put(value, currentValueList);
+			
+			log.debug("< Primitive list convert");
+			return;
+		}
+		
 		// HTML to String
 		if(currentValue.getClass().equals(Elements.class) && targetType.equals(String.class)){
 			log.debug("> String convert");

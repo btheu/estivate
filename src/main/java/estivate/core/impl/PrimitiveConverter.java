@@ -106,4 +106,8 @@ public class PrimitiveConverter implements Converter {
 
 	private static final Set<Type> primitivesAndBoxes = mLBD.keySet();
 
+	public boolean isPrimitive(Type type) {
+		return primitivesAndBoxes.contains(type);
+	}
+
 }

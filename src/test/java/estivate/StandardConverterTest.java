@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,20 +37,39 @@ public class StandardConverterTest extends EstivateTest {
 		Assert.assertEquals(new Byte("11"), result.getByte1());
 		Assert.assertEquals(11, result.getByte2());
 
-		
-        Assert.assertEquals(new Double("5.5"), result.getDouble1());
-        Assert.assertEquals(5.5d, result.getDouble2(),0);
+		Assert.assertEquals(new Double("5.5"), result.getDouble1());
+		Assert.assertEquals(5.5d, result.getDouble2(), 0);
 
-        Assert.assertEquals(new Long("6"), result.getLong1());
-        Assert.assertEquals(6L, result.getLong2());
+		Assert.assertEquals(new Long("6"), result.getLong1());
+		Assert.assertEquals(6L, result.getLong2());
 
-        Assert.assertEquals(new Short("7"), result.getShort1());
-        Assert.assertEquals(7, result.getShort2());
+		Assert.assertEquals(new Short("7"), result.getShort1());
+		Assert.assertEquals(7, result.getShort2());
 
-        Assert.assertEquals(new Float("10.2"), result.getFloat1());
-        Assert.assertEquals(10.2f, result.getFloat2(),0);
-		 
+		Assert.assertEquals(new Float("10.2"), result.getFloat1());
+		Assert.assertEquals(10.2f, result.getFloat2(), 0);
+
 		log.info(result.toString());
+	}
+
+	@Test
+	public void convertorListPrimitive1() throws IOException {
+		InputStream document = read("/converter/u4.html");
+
+		ResultList1 result = mapper.map(document, ResultList1.class);
+
+		Assert.assertNotNull(result);
+
+		List<Integer> integers = result.getIntegers1();
+		for (Integer integer : integers) {
+			log.debug(integer + "");
+		}
+
+		integers = result.getIntegers2();
+		for (Integer integer : integers) {
+			log.debug(integer + "");
+		}
+
 	}
 
 	@Test
@@ -60,74 +80,86 @@ public class StandardConverterTest extends EstivateTest {
 
 		Assert.assertNotNull(result);
 
-		Assert.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"), result.getBigInt1());
-		Assert.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"), result.getBigDec1());
+		Assert.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"),
+				result.getBigInt1());
+		Assert.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"),
+				result.getBigDec1());
 	}
-	
+
+	@Data
+	public static class ResultList1 {
+
+		@Text(select = "div")
+		public List<Integer> integers1;
+
+		public List<Integer> integers2;
+
+		@Text(select = "div")
+		public void setIntegers2(List<Integer> integers) {
+			integers2 = integers;
+		}
+	}
+
 	@Data
 	public static class ResultBig {
-		
-		@Text(select="#bigIntId")
+
+		@Text(select = "#bigIntId")
 		public BigInteger bigInt1;
-		
-		@Text(select="#bigDecId")
+
+		@Text(select = "#bigDecId")
 		public BigDecimal bigDec1;
-		
+
 	}
-	
+
 	@Data
 	public static class Result {
 
-		@Text(select="#intId")
+		@Text(select = "#intId")
 		public Integer int1;
 
-		@Text(select="#intId")
+		@Text(select = "#intId")
 		public int int2;
 
-		@Text(select="#charId")
+		@Text(select = "#charId")
 		public Character char1;
 
-		@Text(select="#charId")
+		@Text(select = "#charId")
 		public char char2;
 
-
-		@Text(select="#byteId")
+		@Text(select = "#byteId")
 		public Byte byte1;
 
-		@Text(select="#byteId")
+		@Text(select = "#byteId")
 		public byte byte2;
 
-		@Text(select="#boolId")
+		@Text(select = "#boolId")
 		public Boolean bool1;
 
-		@Text(select="#boolId")
+		@Text(select = "#boolId")
 		public boolean bool2;
 
-
-		@Text(select="#floatId")
+		@Text(select = "#floatId")
 		public Float float1;
 
-		@Text(select="#floatId")
+		@Text(select = "#floatId")
 		public float float2;
 
-		@Text(select="#doubleId")
+		@Text(select = "#doubleId")
 		public Double double1;
 
-		@Text(select="#doubleId")
+		@Text(select = "#doubleId")
 		public double double2;
 
-
-		@Text(select="#longId")
+		@Text(select = "#longId")
 		public Long long1;
 
-		@Text(select="#longId")
+		@Text(select = "#longId")
 		public long long2;
 
-
-		@Text(select="#shortId")
+		@Text(select = "#shortId")
 		public Short short1;
 
-		@Text(select="#shortId")
+		@Text(select = "#shortId")
 		public short short2;
 
 	}
