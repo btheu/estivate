@@ -85,7 +85,7 @@ public class StandardConverterTest extends EstivateTest {
 	@Data
 	public static class ResultList1 {
 
-		@Select("div")
+		@Text(select = "div")
 		public List<Integer> integers;
 
 	}
