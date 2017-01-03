@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import estivate.annotations.Select;
 import estivate.annotations.Text;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +60,12 @@ public class StandardConverterTest extends EstivateTest {
 
 		Assert.assertNotNull(result);
 
-		List<Integer> integers = result.getIntegers();
+		List<Integer> integers = result.getIntegers1();
+		for (Integer integer : integers) {
+			log.debug(integer + "");
+		}
+
+		integers = result.getIntegers2();
 		for (Integer integer : integers) {
 			log.debug(integer + "");
 		}
@@ -86,8 +90,14 @@ public class StandardConverterTest extends EstivateTest {
 	public static class ResultList1 {
 
 		@Text(select = "div")
-		public List<Integer> integers;
+		public List<Integer> integers1;
 
+		public List<Integer> integers2;
+
+		@Text(select = "div")
+		public void setIntegers2(List<Integer> integers) {
+			integers2 = integers;
+		}
 	}
 
 	@Data
