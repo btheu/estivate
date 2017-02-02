@@ -25,7 +25,7 @@ public abstract class EstivateTest {
 	}
 
 	protected InputStream read(String string) {
-		InputStream resourceAsStream = EstivateMapper.class.getResourceAsStream(string);
+		InputStream resourceAsStream = EstivateMapper2.class.getResourceAsStream(string);
 		Assert.assertNotNull(resourceAsStream);
 		return resourceAsStream;
 	}
