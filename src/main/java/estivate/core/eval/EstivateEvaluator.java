@@ -7,7 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import estivate.EstivateMapper2;
+import estivate.EstivateMapper;
 import estivate.core.ClassUtils;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ExpressionAST;
@@ -243,7 +243,7 @@ public class EstivateEvaluator {
         protected Object target;
         
         @Deprecated
-        protected EstivateMapper2 mapper;
+        protected EstivateMapper mapper;
         
     }
 

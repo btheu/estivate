@@ -9,7 +9,7 @@ import org.junit.Assert;
 
 public abstract class EstivateTest {
 
-	protected EstivateMapper2 mapper = new EstivateMapper2();
+	protected EstivateMapper mapper = new EstivateMapper();
 
 	protected void assertNotBlank(String object) {
 		Assert.assertNotNull("Should not be blank", object);
