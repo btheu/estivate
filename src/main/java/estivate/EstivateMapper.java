@@ -37,7 +37,7 @@ import estivate.core.eval.EstivateEvaluator2;
  *
  */
 @Slf4j
-public class EstivateMapper2 {
+public class EstivateMapper {
 
     @Getter
     @Setter

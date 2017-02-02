@@ -9,7 +9,7 @@ import org.junit.Assert;
 
 public abstract class EstivateTest {
 
-	protected EstivateMapper2 mapper = new EstivateMapper2();
+	protected EstivateMapper mapper = new EstivateMapper();
 
 	protected void assertNotBlank(String object) {
 		Assert.assertNotNull("Should not be blank", object);
@@ -25,7 +25,7 @@ public abstract class EstivateTest {
 	}
 
 	protected InputStream read(String string) {
-		InputStream resourceAsStream = EstivateMapper2.class.getResourceAsStream(string);
+		InputStream resourceAsStream = EstivateMapper.class.getResourceAsStream(string);
 		Assert.assertNotNull(resourceAsStream);
 		return resourceAsStream;
 	}
