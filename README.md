@@ -366,10 +366,10 @@ Estivate handles primitive types for fields or methods arguments mapping.
 public class Rapport {
 
 	@Text(select="#nbTeachers")
-	public Integer ;
+	public Integer numberOfTeachers;
 	
 	@Text(select="#nbStudents")
-	public int ;
+	public int numberOfStudents;
 
 }
 ```
@@ -392,7 +392,7 @@ public class Rapport {
 
 The MIT License
 
-© 2016, Benoit Theunissen <benoit.theunissen@gmail.com>
+© 2016-2017, Benoit Theunissen <benoit.theunissen@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
