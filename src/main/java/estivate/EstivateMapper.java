@@ -45,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
  * <li>converts value</li>
  * <li>sets value to target</li>
  * </ul>
- * 
+ * @deprecated use {@link EstivateMapper2}
  * @author Benoit Theunissen
  *
  */
