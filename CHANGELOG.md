@@ -1,5 +1,7 @@
 
-## 0.3.4 - pending
+## 0.3.5 - pending
+
+## 0.3.4 - 02/02/2017
 
 *	feat:deprecated remove EstivateMapper
 
