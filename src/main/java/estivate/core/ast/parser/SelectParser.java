@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import org.jsoup.helper.StringUtil;
 
 import estivate.annotations.Attr;
+import estivate.annotations.Is;
 import estivate.annotations.Select;
 import estivate.annotations.TagName;
 import estivate.annotations.Text;
@@ -82,6 +83,20 @@ public class SelectParser implements AnnotationParser {
 		return query;
 	}
 	
+    public static QueryAST parse(Is annotation) {
+        SelectQueryAST query = new SelectQueryAST();
+
+        query.setUnique(annotation.unique());
+        query.setIndex(annotation.index());
+        query.setFirst(annotation.first());
+        query.setLast(annotation.last());
+        query.setQueryString(annotation.select());
+
+        valid(query);
+
+        return query;
+    }
+
 	public static QueryAST parse(Attr annotation) {
 		SelectQueryAST query = new SelectQueryAST();
 		

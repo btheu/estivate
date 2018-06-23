@@ -181,6 +181,21 @@ public class Result {
 }
 ```
 
+### ```@Is```
+
+Makes JSoup's ``` element.is(...) ``` operation on the DOM Element.
+
+Check if this element matches the given Selector CSS query.
+
+```java
+public class Result {
+
+	@Is(select="#setting", value=".specific")
+	public boolean isSpecific;
+
+}
+```
+
 ### ```Optional```
 
 Indicate that Estivate wont throw a exception if the mapping of this field

@@ -20,6 +20,7 @@ import estivate.core.ast.lang.ListValueAST;
 import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.ast.parser.AttrParser;
 import estivate.core.ast.parser.CustomConvertorParser;
+import estivate.core.ast.parser.IsParser;
 import estivate.core.ast.parser.SelectParser;
 import estivate.core.ast.parser.TagNameParser;
 import estivate.core.ast.parser.TextParser;
@@ -178,6 +179,7 @@ public class EstivateParser2 {
         memberParsers.add(fieldParser);
         memberParsers.add(methodParser);
 
+        annotationParsers.add(IsParser.INSTANCE);
         annotationParsers.add(AttrParser.INSTANCE);
         annotationParsers.add(CustomConvertorParser.INSTANCE);
         annotationParsers.add(TagNameParser.INSTANCE);
