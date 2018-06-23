@@ -16,6 +16,36 @@ import lombok.extern.slf4j.Slf4j;
 public class IsTest extends EstivateTest {
 
     @Test
+    public void is2() throws IOException {
+
+        InputStream document = this.read("/is/u1.html");
+
+        Result2 result = this.mapper.map(document, Result2.class);
+
+        Assert.assertNotNull(result);
+
+        Assert.assertEquals(false, result.isValue1());
+        Assert.assertEquals(false, result.isValue2());
+        Assert.assertEquals(true, result.isValue3());
+
+        log.info(result.toString());
+    }
+
+    @Data
+    public static class Result2 {
+
+        @Is(select = "#id1", value = ".someClass2")
+        public boolean value1;
+
+        @Is(select = "#id1", value = ".someClass3")
+        public boolean value2;
+
+        @Is(select = "#id3", value = ".someClass1")
+        public boolean value3;
+
+    }
+
+    @Test
     public void is1() throws IOException {
 
         InputStream document = this.read("/is/u1.html");
@@ -24,7 +54,7 @@ public class IsTest extends EstivateTest {
 
         Assert.assertNotNull(result);
 
-        Assert.assertEquals(true, result.isValue1());
+        Assert.assertEquals(true, result.getValue1());
         Assert.assertEquals(true, result.isValue2());
         Assert.assertEquals(true, result.isValue3());
 
@@ -35,7 +65,7 @@ public class IsTest extends EstivateTest {
     public static class Result {
 
         @Is(select = "#id1", value = ".someClass1")
-        public boolean value1;
+        public Boolean value1;
 
         @Is(".someClass1")
         @Select("#id1")
