@@ -49,7 +49,7 @@ Definition of Result class POJO definition which is:
 <dependency>
 	<groupId>com.github.btheu.estivate</groupId>
 	<artifactId>estivate</artifactId>
-	<version>0.3.4</version>
+	<version>0.3.5</version>
 </dependency>
 ```
 
@@ -177,6 +177,21 @@ public class Result {
 
 	@Attr(select="#picture", value="abs:href")
 	public String absoluteUrl;
+
+}
+```
+
+### ```@Is```
+
+Makes JSoup's ``` element.is(...) ``` operation on the DOM Element.
+
+Check if this element matches the given Selector CSS query.
+
+```java
+public class Result {
+
+	@Is(select="#setting", value=".specific")
+	public boolean isSpecific;
 
 }
 ```

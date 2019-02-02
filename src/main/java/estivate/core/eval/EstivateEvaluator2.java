@@ -24,6 +24,7 @@ import estivate.core.ast.lang.CustomConverterAST;
 import estivate.core.ast.lang.ListValueAST;
 import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.eval.lang.AttrReduceEvaluator;
+import estivate.core.eval.lang.IsReduceEvaluator;
 import estivate.core.eval.lang.SelectQueryEvaluator;
 import estivate.core.eval.lang.TagNameReduceEvaluator;
 import estivate.core.eval.lang.TextReduceEvaluator;
@@ -341,6 +342,7 @@ public class EstivateEvaluator2 {
 		QUERY_EVALUATORS.add(SelectQueryEvaluator.INSTANCE);
 
 		REDUCE_EVALUATORS.add(EmptyReduceEvaluator.INSTANCE);
+		REDUCE_EVALUATORS.add(IsReduceEvaluator.INSTANCE);
 		REDUCE_EVALUATORS.add(AttrReduceEvaluator.INSTANCE);
 		REDUCE_EVALUATORS.add(TextReduceEvaluator.INSTANCE);
 		REDUCE_EVALUATORS.add(ValReduceEvaluator.INSTANCE);

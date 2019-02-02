@@ -1,6 +1,8 @@
 
 ## 0.3.5 - pending
 
+*  chore: update dependencies
+
 ## 0.3.4 - 02/02/2017
 
 *	feat:deprecated remove EstivateMapper
