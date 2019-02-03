@@ -1,7 +1,11 @@
 
 ## 0.3.5 - pending
 
+
+## 0.3.5 - 03/02/2019
+
 *  chore: update dependencies
+*  feat: add @Is support
 
 ## 0.3.4 - 02/02/2017
 
