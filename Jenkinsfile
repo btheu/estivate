@@ -16,7 +16,8 @@ node('slave-build') {
     def context = [:]
 
     if(rule.TYPE == 'RELEASE'){
-      context['COMPILE_MVN_PROFILE'] = '-P sonatype-oss-release -P estivate'
+      context['DEPLOY_MVN_TARGET'] = 'clean deploy'
+      context['DEPLOY_MVN_PROFILE'] = '-P sonatype-oss-release -P estivate'
     }
 
     tools.checkoutBase(rule,context)
