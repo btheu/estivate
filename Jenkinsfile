@@ -15,6 +15,10 @@ node('slave-build') {
     def rule = tools.findRule(env.BRANCH_NAME,rules)
     def context = [:]
 
+    if(rule.type == 'RELEASE'){
+      context['COMPILE_MVN_PROFILE'] = 'estivate'
+    }
+
     tools.checkoutBase(rule,context)
 
     tools.compileBase(rule,context)
