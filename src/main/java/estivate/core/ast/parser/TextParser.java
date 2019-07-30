@@ -7,7 +7,7 @@ import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ExpressionAST;
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.lang.TextReduceAST;
-import estivate.core.ast.parser2.EstivateParser2.AnnotationParser;
+import estivate.core.ast.parser.EstivateParser.AnnotationParser;
 import estivate.utils.AnnotationsUtils;
 
 /**

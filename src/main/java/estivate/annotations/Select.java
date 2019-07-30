@@ -8,12 +8,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import estivate.core.Selecter;
+import estivate.core.eval.EstivateEvaluator.QueryEvaluator;
 
 /**
- * Find elements that match the {@link Selecter} CSS query, with this element as
- * the starting context. Matched elements may include this element, or any of
- * its children.
+ * Find elements that match the {@link QueryEvaluator} CSS query, with this
+ * element as the starting context. Matched elements may include this element,
+ * or any of its children.
  * <p>
  * This method is generally more powerful to use than the DOM-type
  * {@code getElementBy*} methods, because multiple filters can be combined,

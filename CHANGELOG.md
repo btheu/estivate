@@ -1,11 +1,14 @@
 
-## 0.3.5 - pending
+## 0.3.6 - pending
 
+*	build: dependencies updates
+*	fix: dependencies breaking changes
+*	refactor: remove deprecated classes
 
 ## 0.3.5 - 03/02/2019
 
-*  chore: update dependencies
-*  feat: add @Is support
+*	chore: update dependencies
+*	feat: add @Is support
 
 ## 0.3.4 - 02/02/2017
 

@@ -6,7 +6,7 @@ import estivate.annotations.Is;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ExpressionAST;
 import estivate.core.ast.lang.IsReduceAST;
-import estivate.core.ast.parser2.EstivateParser2.AnnotationParser;
+import estivate.core.ast.parser.EstivateParser.AnnotationParser;
 import estivate.utils.AnnotationsUtils;
 
 public class IsParser implements AnnotationParser {
