@@ -5,8 +5,8 @@ import org.jsoup.select.Elements;
 
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.lang.SelectQueryAST;
-import estivate.core.eval.EstivateEvaluator2.EvalContext;
-import estivate.core.eval.EstivateEvaluator2.QueryEvaluator;
+import estivate.core.eval.EstivateEvaluator.EvalContext;
+import estivate.core.eval.EstivateEvaluator.QueryEvaluator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

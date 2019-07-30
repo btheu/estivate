@@ -9,7 +9,7 @@ import org.jsoup.select.Elements;
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.lang.SimpleValueAST;
 import estivate.core.ast.lang.TextReduceAST;
-import estivate.core.eval.EstivateEvaluator2.ReduceEvaluator;
+import estivate.core.eval.EstivateEvaluator.ReduceEvaluator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -18,7 +18,7 @@ public class TextReduceEvaluator implements ReduceEvaluator {
     public static final TextReduceEvaluator INSTANCE = new TextReduceEvaluator();
 
     public void evalReduce(
-            estivate.core.eval.EstivateEvaluator2.EvalContext context,
+            estivate.core.eval.EstivateEvaluator.EvalContext context,
             ReduceAST reduce, SimpleValueAST valueAST) {
 
         if(reduce instanceof TextReduceAST){

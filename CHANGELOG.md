@@ -3,6 +3,7 @@
 
 *	build: dependencies updates
 *	fix: dependencies breaking changes
+*	refactor: remove deprecated classes
 
 ## 0.3.5 - 03/02/2019
 

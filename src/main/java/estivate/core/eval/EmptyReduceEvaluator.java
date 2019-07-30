@@ -2,8 +2,8 @@ package estivate.core.eval;
 
 import estivate.core.ast.ReduceAST;
 import estivate.core.ast.lang.SimpleValueAST;
-import estivate.core.eval.EstivateEvaluator2.EvalContext;
-import estivate.core.eval.EstivateEvaluator2.ReduceEvaluator;
+import estivate.core.eval.EstivateEvaluator.EvalContext;
+import estivate.core.eval.EstivateEvaluator.ReduceEvaluator;
 
 public class EmptyReduceEvaluator implements ReduceEvaluator{
 
