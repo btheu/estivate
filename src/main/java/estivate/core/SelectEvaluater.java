@@ -3,7 +3,7 @@ package estivate.core;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 
-import org.jsoup.helper.StringUtil;
+import org.jsoup.internal.StringUtil;
 import org.jsoup.select.Elements;
 
 import estivate.annotations.Attr;
@@ -23,25 +23,21 @@ import lombok.extern.slf4j.Slf4j;
 @Deprecated
 public abstract class SelectEvaluater {
 
-    public static Elements select(SelectBean bean, Elements elementsIn,
-            AnnotatedElement member) {
+    public static Elements select(SelectBean bean, Elements elementsIn, AnnotatedElement member) {
 
         String select = bean.getSelect();
         if (StringUtil.isBlank(select)) {
-            log.debug("no select expr on '{}' for '{}'", bean.getName(),
-                    ClassUtils.getName(member));
+            log.debug("no select expr on '{}' for '{}'", bean.getName(), ClassUtils.getName(member));
             return elementsIn;
         }
 
-        log.debug("selecting '{}' with '{}' for '{}'", select, bean.getName(),
-                ClassUtils.getName(member));
+        log.debug("selecting '{}' with '{}' for '{}'", select, bean.getName(), ClassUtils.getName(member));
         log.trace("select in '{}'", elementsIn.toString());
 
         Elements elementsOut = elementsIn.select(select);
 
         if (bean.isFirst() && bean.isLast()) {
-            throw new IllegalArgumentException(
-                    "Select cant be true for first() and last() a the same time");
+            throw new IllegalArgumentException("Select cant be true for first() and last() a the same time");
         }
         if (bean.isFirst()) {
             log.trace("select first element");
@@ -56,28 +52,23 @@ public abstract class SelectEvaluater {
         return elementsOut;
     }
 
-    public static Elements select(Text annotation, Elements elements,
-            AnnotatedElement member) {
+    public static Elements select(Text annotation, Elements elements, AnnotatedElement member) {
         return select(new SelectBean(annotation), elements, member);
     }
 
-    public static Elements select(Select annotation, Elements elements,
-            AnnotatedElement member) {
+    public static Elements select(Select annotation, Elements elements, AnnotatedElement member) {
         return select(new SelectBean(annotation), elements, member);
     }
 
-    public static Elements select(Attr annotation, Elements elements,
-            AnnotatedElement member) {
+    public static Elements select(Attr annotation, Elements elements, AnnotatedElement member) {
         return select(new SelectBean(annotation), elements, member);
     }
 
-    public static Elements select(TagName annotation, Elements elements,
-            AnnotatedElement member) {
+    public static Elements select(TagName annotation, Elements elements, AnnotatedElement member) {
         return select(new SelectBean(annotation), elements, member);
     }
 
-    public static Elements select(Val annotation, Elements elements,
-            AnnotatedElement member) {
+    public static Elements select(Val annotation, Elements elements, AnnotatedElement member) {
         return select(new SelectBean(annotation), elements, member);
     }
 

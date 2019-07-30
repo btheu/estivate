@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.4</version>
+			<version>1.18.8</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -44,6 +44,7 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.22</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -55,7 +56,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.11.3</version>
+			<version>1.12.1</version>
 		</dependency>
 	</dependencies>
 
