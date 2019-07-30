@@ -15,6 +15,11 @@ node('slave-build') {
     def rule = tools.findRule(env.BRANCH_NAME,rules)
     def context = [:]
 
+    if(rule.TYPE == 'RELEASE'){
+      context['DEPLOY_MVN_TARGET'] = 'clean deploy'
+      context['DEPLOY_MVN_PROFILE'] = '-P sonatype-oss-release -P estivate'
+    }
+
     tools.checkoutBase(rule,context)
 
     tools.compileBase(rule,context)
