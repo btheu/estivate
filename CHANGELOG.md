@@ -1,5 +1,9 @@
 
-## 0.3.6 - pending
+## 0.3.7 - pending
+
+*	
+
+## 0.3.6 - 30/07/2019
 
 *	build: dependencies updates
 *	fix: dependencies breaking changes
