@@ -19,6 +19,14 @@ public @interface Val {
 
     String select() default "";
 
+    /**
+     * <p>
+     * 1 based element index
+     * <p>
+     * -1 means no access by index to an item of Elements collection.
+     * 
+     * @return element position selection
+     */
     int index() default -1;
 
     boolean unique() default false;
