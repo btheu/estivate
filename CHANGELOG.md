@@ -1,7 +1,9 @@
 
-## 0.3.7 - pending
+## 0.3.8 - pending
 
-*	
+## 0.3.7 - 06/09/2019
+
+*	fix: remove dependency to org.jsoup.internal.StringUtil
 
 ## 0.3.6 - 30/07/2019
 

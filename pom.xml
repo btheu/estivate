@@ -7,7 +7,7 @@
 	</parent>
 	<groupId>com.github.btheu.estivate</groupId>
 	<artifactId>estivate</artifactId>
-	<version>0.3.6</version>
+	<version>0.3.7</version>
 	<url>http://github.com/btheu/estivate/</url>
 	<inceptionYear>2016</inceptionYear>
 	<description>Estivate fills pojo from HTML with CSS Query Syntax and annotations</description>
@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.8</version>
+			<version>1.18.10</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

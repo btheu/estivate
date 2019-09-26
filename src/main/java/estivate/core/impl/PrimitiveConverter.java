@@ -31,7 +31,7 @@ public class PrimitiveConverter implements Converter {
 
 	public static Function<String, Object> parseInt = new Function<String, Object>() {
 		public Object apply(String s) {
-			return Integer.parseInt(s);
+			return Integer.parseInt(s.replaceAll(" ", ""));
 		}
 	};
 	public static Function<String, Object> parseChar = new Function<String, Object>() {
@@ -51,32 +51,32 @@ public class PrimitiveConverter implements Converter {
 	};
 	public static Function<String, Object> parseFloat = new Function<String, Object>() {
 		public Object apply(String s) {
-			return Float.parseFloat(s);
+			return Float.parseFloat(s.replaceAll(" ", ""));
 		}
 	};
 	public static Function<String, Object> parseDouble = new Function<String, Object>() {
 		public Object apply(String s) {
-			return Double.parseDouble(s);
+			return Double.parseDouble(s.replaceAll(" ", ""));
 		}
 	};
 	public static Function<String, Object> parseLong = new Function<String, Object>() {
 		public Object apply(String s) {
-			return Long.parseLong(s);
+			return Long.parseLong(s.replaceAll(" ", ""));
 		}
 	};
 	public static Function<String, Object> parseShort = new Function<String, Object>() {
 		public Object apply(String s) {
-			return Short.parseShort(s);
+			return Short.parseShort(s.replaceAll(" ", ""));
 		}
 	};
 	public static Function<String, Object> parseBigDecimal = new Function<String, Object>() {
 		public Object apply(String s) {
-			return new BigDecimal(s);
+			return new BigDecimal(s.replaceAll(" ", ""));
 		}
 	};
 	public static Function<String, Object> parseBigInteger = new Function<String, Object>() {
 		public Object apply(String s) {
-			return new BigInteger(s);
+			return new BigInteger(s.replaceAll(" ", ""));
 		}
 	};
 

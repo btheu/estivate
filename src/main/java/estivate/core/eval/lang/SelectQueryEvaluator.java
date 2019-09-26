@@ -1,12 +1,12 @@
 package estivate.core.eval.lang;
 
-import org.jsoup.internal.StringUtil;
 import org.jsoup.select.Elements;
 
 import estivate.core.ast.QueryAST;
 import estivate.core.ast.lang.SelectQueryAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
 import estivate.core.eval.EstivateEvaluator.QueryEvaluator;
+import estivate.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

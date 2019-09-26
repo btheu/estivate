@@ -2,8 +2,6 @@ package estivate.core.ast.parser;
 
 import java.lang.annotation.Annotation;
 
-import org.jsoup.internal.StringUtil;
-
 import estivate.annotations.Attr;
 import estivate.annotations.Is;
 import estivate.annotations.Select;
@@ -16,6 +14,7 @@ import estivate.core.ast.QueryAST;
 import estivate.core.ast.lang.SelectQueryAST;
 import estivate.core.ast.parser.EstivateParser.AnnotationParser;
 import estivate.utils.AnnotationsUtils;
+import estivate.utils.StringUtil;
 
 /**
  * Parse {@link Select} annotation
