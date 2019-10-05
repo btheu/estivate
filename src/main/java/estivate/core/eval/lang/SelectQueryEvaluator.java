@@ -6,6 +6,7 @@ import estivate.core.ast.QueryAST;
 import estivate.core.ast.lang.SelectQueryAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
 import estivate.core.eval.EstivateEvaluator.QueryEvaluator;
+import estivate.core.eval.EstivateEvaluatorException;
 import estivate.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,8 +41,8 @@ public class SelectQueryEvaluator implements QueryEvaluator {
                     } else {
                         queryResult = new Elements(select.get(ast.getIndex() - 1));
                     }
-                } else if (ast.isUnique() && select.size() != 1) {
-                    throw new RuntimeException("No unique element after query");
+                } else if (ast.isUnique() && select.size() > 1) {
+                    throw new EstivateEvaluatorException(context, "No unique element after query: " + queryString);
                 } else {
                     queryResult = select;
                 }

@@ -13,14 +13,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-
 import estivate.annotations.Select;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.parser.EstivateParser;
 import estivate.core.eval.EstivateEvaluator;
+import estivate.core.eval.EstivateEvaluator.EvalContext;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <ul>
@@ -66,7 +66,9 @@ public class EstivateMapper {
 
         EstivateAST ast = EstivateParser.parse(clazz);
 
-        return (T) EstivateEvaluator.eval(document, ast);
+        EvalContext context = EstivateEvaluator.buildEvalContext(document, new Elements(document), ast);
+
+        return (T) EstivateEvaluator.eval(context, ast);
     }
 
     public <T> List<T> mapToList(InputStream document, Class<T> clazz) throws IOException {
@@ -79,7 +81,9 @@ public class EstivateMapper {
 
         EstivateAST ast = EstivateParser.parse(clazz);
 
-        return (List<T>) EstivateEvaluator.evalToList(document, ast);
+        EvalContext context = EstivateEvaluator.buildEvalContext(document, new Elements(document), ast);
+
+        return (List<T>) EstivateEvaluator.evalToList(context, ast);
     }
 
     public Object map(InputStream document, Type type) throws IOException {

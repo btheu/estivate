@@ -49,7 +49,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(or(annotation.select(), annotation.value()));
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -63,7 +63,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -77,7 +77,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -91,7 +91,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -105,7 +105,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -119,12 +119,12 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
 
-    private static void valid(SelectQueryAST ast) {
+    public static void validate(SelectQueryAST ast) {
         if (ast.isFirst() && ast.isLast()) {
             throw new IllegalArgumentException("Select cant be true for first() and last() a the same time");
         }

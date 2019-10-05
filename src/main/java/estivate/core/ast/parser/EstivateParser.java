@@ -24,8 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EstivateParser {
 
-    protected static List<ClassParser> classParsers = new ArrayList<ClassParser>();
-    protected static List<MemberParser> memberParsers = new ArrayList<MemberParser>();
+    protected static List<ClassParser>      classParsers      = new ArrayList<ClassParser>();
+    protected static List<MemberParser>     memberParsers     = new ArrayList<MemberParser>();
     protected static List<AnnotationParser> annotationParsers = new ArrayList<AnnotationParser>();
 
     protected static MembersFinder membersFinder = new DefaultMembersFinder();
@@ -37,7 +37,7 @@ public class EstivateParser {
             parser.parseClass(ast, clazz);
         }
 
-        log.debug("AST of '{}' is {}",clazz.toString(), ast);
+        log.debug("AST of '{}' is {}", clazz.toString(), ast);
 
         return ast;
     }
@@ -60,7 +60,6 @@ public class EstivateParser {
                 }
             }
 
-
         }
     };
 
@@ -75,18 +74,17 @@ public class EstivateParser {
         value.setRawClass(rawType);
         value.setValueList(isValueList);
 
-        if(isValueList){
+        if (isValueList) {
             Class<?>[] typeArguments = ClassUtils.typeArguments(value.getType());
             if (typeArguments.length != 1) {
                 throw new IllegalArgumentException("Cant handle such generic type: " + value.getType().toString());
             }
-            
+
             value.setAst(EstivateParser.parse(ClassUtils.rawType(typeArguments[0])));
 
-        }else{
+        } else {
             value.setAst(EstivateParser.parse(value.getRawClass()));
         }
-
 
         return value;
     }
@@ -94,7 +92,7 @@ public class EstivateParser {
     public static MemberParser fieldParser = new MemberParser() {
 
         public void parseMember(EstivateAST ast, AccessibleObject member) {
-            if(member instanceof Field){
+            if (member instanceof Field) {
                 Field field = (Field) member;
 
                 FieldExpressionAST fieldAST = new FieldExpressionAST();
@@ -104,7 +102,7 @@ public class EstivateParser {
                     parser.parseAnnotation(fieldAST, field.getAnnotations());
                 }
 
-                if(!isEmptyExpression(fieldAST)){
+                if (!isEmptyExpression(fieldAST)) {
                     parseType(fieldAST, field.getGenericType());
 
                     ast.getExpressions().add(fieldAST);
@@ -114,19 +112,18 @@ public class EstivateParser {
 
         public void parseType(FieldExpressionAST ast, Type type) {
 
-            SimpleValueAST value = EstivateParser.parseType(ast,type);
+            SimpleValueAST value = EstivateParser.parseType(ast, type);
 
             ast.setValue(value);
 
         }
-
 
     };
 
     public static MemberParser methodParser = new MemberParser() {
 
         public void parseMember(EstivateAST ast, AccessibleObject member) {
-            if(member instanceof Method){
+            if (member instanceof Method) {
                 Method method = (Method) member;
 
                 MethodExpressionAST methodAST = new MethodExpressionAST();
@@ -136,7 +133,7 @@ public class EstivateParser {
                     parser.parseAnnotation(methodAST, method.getAnnotations());
                 }
 
-                if(!isEmptyExpression(methodAST)){
+                if (!isEmptyExpression(methodAST)) {
                     parseTypes(methodAST, method.getGenericParameterTypes());
 
                     ast.getExpressions().add(methodAST);
@@ -150,7 +147,7 @@ public class EstivateParser {
 
             for (Type type : types) {
 
-                SimpleValueAST value = EstivateParser.parseType(ast,type);
+                SimpleValueAST value = EstivateParser.parseType(ast, type);
 
                 list.getValues().add(value);
 
@@ -165,8 +162,8 @@ public class EstivateParser {
     private static boolean isEmptyExpression(ExpressionAST exp) {
         return exp.getReduce() instanceof EmptyReduceAST && exp.getQuery() instanceof EmptyQueryAST;
     }
-    
-    static{
+
+    static {
         classParsers.add(cParser);
         memberParsers.add(fieldParser);
         memberParsers.add(methodParser);
@@ -180,6 +177,8 @@ public class EstivateParser {
         annotationParsers.add(ValParser.INSTANCE);
         // select Query at the end for prevailing on select inside Reduces
         annotationParsers.add(SelectParser.INSTANCE);
+        annotationParsers.add(TableParser.INSTANCE);
+        annotationParsers.add(CellParser.INSTANCE);
     }
 
     public interface ClassParser {
