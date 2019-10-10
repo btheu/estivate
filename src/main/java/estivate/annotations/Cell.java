@@ -8,6 +8,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * 
+ * @author Benoit Theunissen
+ *
+ */
 @Target({ TYPE, FIELD, METHOD })
 @Retention(RUNTIME)
 public @interface Cell {
@@ -17,4 +22,6 @@ public @interface Cell {
     String name() default "";
 
     boolean regex() default false;
+
+    boolean optional() default false;
 }

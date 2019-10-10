@@ -11,10 +11,8 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class EstivateAST extends ExpressionsAST {
 
-	protected Type targetType;
+    protected Type targetType;
 
-	protected Class<?> targetRawClass;
-
-	protected boolean optional = false;
+    protected Class<?> targetRawClass;
 
 }

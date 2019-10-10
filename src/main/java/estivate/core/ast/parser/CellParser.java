@@ -33,6 +33,7 @@ public class CellParser implements AnnotationParser {
     public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
         Cell annotation = AnnotationsUtils.find(annotations, Cell.class);
         if (annotation != null) {
+            ast.setOptional(annotation.optional());
             ast.setQuery(parse(annotation));
         }
     }

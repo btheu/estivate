@@ -32,6 +32,7 @@ public class TableParser implements AnnotationParser {
     public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
         Table annotation = AnnotationsUtils.find(annotations, TYPE);
         if (annotation != null) {
+            ast.setOptional(annotation.optional());
             ast.setQuery(parse(annotation));
         }
     }

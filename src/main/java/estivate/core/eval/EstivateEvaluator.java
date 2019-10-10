@@ -48,7 +48,10 @@ public class EstivateEvaluator {
 
         Object target = ClassUtils.newInstance(ast.getTargetRawClass());
 
-        evalExpressions(context.toBuilder().target(target).optional(ast.isOptional()).build(), ast);
+        evalExpressions(context.toBuilder()//
+                .target(target)//
+                .optional(ast.isOptional())//
+                .build(), ast);
 
         return target;
     }
@@ -64,6 +67,7 @@ public class EstivateEvaluator {
             // copy of the context with new queryResult
             evalExpressions(context.toBuilder()//
                     .target(target)//
+                    .optional(ast.isOptional()) //
                     .memberName(ast.getTargetRawClass().getSimpleName())//
                     .queryResult(new Elements(element))//
                     .build(), ast);
@@ -77,7 +81,8 @@ public class EstivateEvaluator {
     public static EvalContext buildEvalContext(Document document, Elements queryResult, EstivateAST ast) {
         EvalContext context = new EvalContext.EvalContextBuilder()//
                 .document(document)//
-                .queryResult(queryResult).optional(ast.isOptional())//
+                .queryResult(queryResult)//
+                .optional(ast.isOptional())//
                 .value(new HashMap<ValueAST, Object>())//
                 .build();
 
@@ -89,12 +94,19 @@ public class EstivateEvaluator {
 
         List<ExpressionAST> expressions = ast.getExpressions();
         for (ExpressionAST expression : expressions) {
-            // copy of the context
-            evalExpression(context.toBuilder().build(), expression);
+            try {
+                // copy of the context
+                evalExpression(context.toBuilder().build(), expression);
+            } catch (RuntimeException e) {
+                if (!(expression.getOptional() || context.isOptional())) {
+                    throw e;
+                }
+            }
         }
     }
 
     protected static void evalExpression(EvalContext context, ExpressionAST expression) {
+        context.setOptional(expression.getOptional());
         for (ExpressionEvaluator eval : EXPRESSION_EVALUATORS) {
             eval.evalExpression(context, expression);
         }
@@ -389,6 +401,7 @@ public class EstivateEvaluator {
         protected Map<ValueAST, Object> value;
 
         protected TableIndex tableIndex;
+
     }
 
 }

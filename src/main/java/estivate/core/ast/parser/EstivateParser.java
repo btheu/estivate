@@ -179,6 +179,8 @@ public class EstivateParser {
         annotationParsers.add(SelectParser.INSTANCE);
         annotationParsers.add(TableParser.INSTANCE);
         annotationParsers.add(CellParser.INSTANCE);
+        // optional after all for overriding
+        annotationParsers.add(OptionalParser.INSTANCE);
     }
 
     public interface ClassParser {

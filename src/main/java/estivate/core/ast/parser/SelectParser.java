@@ -36,6 +36,7 @@ public class SelectParser implements AnnotationParser {
     public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
         Select annotation = AnnotationsUtils.find(annotations, Select.class);
         if (annotation != null) {
+            ast.setOptional(annotation.optional());
             ast.setQuery(parse(annotation));
         }
     }

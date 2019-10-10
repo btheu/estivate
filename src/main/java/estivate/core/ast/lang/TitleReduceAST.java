@@ -10,6 +10,4 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class TitleReduceAST extends ReduceAST {
 
-	protected boolean optional;
-	
 }

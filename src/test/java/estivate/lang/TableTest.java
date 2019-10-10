@@ -48,6 +48,10 @@ public class TableTest extends EstivateTest {
             @Text(select = "span")
             public String street;
 
+            @Cell(name = "unknow", optional = false)
+            @Text(select = "span", optional = true)
+            public String unknow;
+
             @Cell(name = "Name.*", regex = true)
             @Text(select = "span.name")
             public String name;
