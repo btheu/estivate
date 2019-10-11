@@ -183,7 +183,7 @@ public class Result {
 
 ### ```@Table & @Cell```
 
-Parse Table HTML DOM as data frame 
+Parse Table HTML DOM and match data by column name
 
 Each cells of each row are mapped to java class field/method.
 
@@ -198,17 +198,73 @@ List<Result> result = mapper.mapToList(document, Result.class);
 ```java
 @Table(select="#table1")
 public class Result {
-	@Cell("Number")
+	@Cell("Number Column")
 	public int number;
-	@Cell("Name")
-	public int name;
-	@Cell(name="City.*Name", regex=true)
-	public String city;
+	@Cell("Street Column")
+	public int street;
+	@Cell(name="Name.*Column", regex=true)
+	@Attr("title")
+	public String name;
 }
 ```
 
+```html
+<html>
+<head>
+	<title>table-u1</title>
+</head>
+<body>
+	<div id="content">
 
 
+<table id="table1">
+<thead>
+<tr>
+	<th><span>Number Column</span></th>
+	<th><span>Street Column</span></th>
+	<th><span>Name Column</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>
+	<span>1</span>
+  </td>
+  <td>
+	<span>streetA</span>
+  </td>
+  <td>
+	<span title="nameA" />
+  </td>
+</tr>
+<tr>
+  <td>
+	<span>2</span>
+  </td>
+  <td>
+	<span>streetB</span>
+  </td>
+  <td>
+	<span title="nameB" />
+  </td>
+</tr>
+<tr>
+  <td>
+	<span>3</span>
+  </td>
+  <td>
+	<span>streetC</span>
+  </td>
+  <td>
+	<span title="nameC" />
+  </td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>
+```
 
 ### ```@Is```
 
