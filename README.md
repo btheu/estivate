@@ -49,7 +49,7 @@ Definition of Result class POJO definition which is:
 <dependency>
 	<groupId>com.github.btheu.estivate</groupId>
 	<artifactId>estivate</artifactId>
-	<version>0.3.5</version>
+	<version>0.3.8</version>
 </dependency>
 ```
 
@@ -180,6 +180,35 @@ public class Result {
 
 }
 ```
+
+### ```@Table & @Cell```
+
+Parse Table HTML DOM as data frame 
+
+Each cells of each row are mapped to java class field/method.
+
+```java
+InputStream document = ...
+
+EstivateMapper mapper = new EstivateMapper();
+
+List<Result> result = mapper.mapToList(document, Result.class);
+```
+
+```java
+@Table(select="#table1")
+public class Result {
+	@Cell("Number")
+	public int number;
+	@Cell("Name")
+	public int name;
+	@Cell(name="City.*Name", regex=true)
+	public String city;
+}
+```
+
+
+
 
 ### ```@Is```
 

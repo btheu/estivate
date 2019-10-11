@@ -1,6 +1,9 @@
 
 ## 0.3.8 - pending
 
+*	feat: add @Table and @Cell support
+*	fix: optional behavior
+
 ## 0.3.7 - 06/09/2019
 
 *	fix: remove dependency to org.jsoup.internal.StringUtil
