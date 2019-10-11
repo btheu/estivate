@@ -203,7 +203,7 @@ public class Result {
 	@Cell("Street Column")
 	public int street;
 	@Cell(name="Name.*Column", regex=true)
-	@Attr("title")
+	@Attr(select="span", value="title")
 	public String name;
 }
 ```
