@@ -10,7 +10,6 @@ import java.util.List;
 
 import estivate.core.ClassUtils;
 import estivate.core.MembersFinder;
-import estivate.core.ast.EmptyQueryAST;
 import estivate.core.ast.EmptyReduceAST;
 import estivate.core.ast.EstivateAST;
 import estivate.core.ast.ExpressionAST;
@@ -160,7 +159,7 @@ public class EstivateParser {
     };
 
     private static boolean isEmptyExpression(ExpressionAST exp) {
-        return exp.getReduce() instanceof EmptyReduceAST && exp.getQuery() instanceof EmptyQueryAST;
+        return exp.getReduce() instanceof EmptyReduceAST && exp.getQueries().isEmpty();
     }
 
     static {
@@ -168,6 +167,12 @@ public class EstivateParser {
         memberParsers.add(fieldParser);
         memberParsers.add(methodParser);
 
+        // selects
+        annotationParsers.add(SelectParser.INSTANCE);
+        annotationParsers.add(TableParser.INSTANCE);
+        annotationParsers.add(ColumnParser.INSTANCE);
+
+        // reduces
         annotationParsers.add(IsParser.INSTANCE);
         annotationParsers.add(AttrParser.INSTANCE);
         annotationParsers.add(CustomConvertorParser.INSTANCE);
@@ -175,10 +180,6 @@ public class EstivateParser {
         annotationParsers.add(TextParser.INSTANCE);
         annotationParsers.add(TitleParser.INSTANCE);
         annotationParsers.add(ValParser.INSTANCE);
-        // select Query at the end for prevailing on select inside Reduces
-        annotationParsers.add(SelectParser.INSTANCE);
-        annotationParsers.add(TableParser.INSTANCE);
-        annotationParsers.add(ColumnParser.INSTANCE);
         // optional after all for overriding
         annotationParsers.add(OptionalParser.INSTANCE);
     }

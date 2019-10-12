@@ -22,7 +22,7 @@ public class IsParser implements AnnotationParser {
         Is annotation = (Is) AnnotationsUtils.find(annotations, TYPE);
         if (annotation != null) {
             ast.setOptional(annotation.optional());
-            ast.setQuery(SelectParser.parse(annotation));
+            ast.addQuery(SelectParser.parse(annotation));
 
             IsReduceAST reduce = new IsReduceAST();
 

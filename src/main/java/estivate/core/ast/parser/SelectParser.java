@@ -29,7 +29,7 @@ public class SelectParser implements AnnotationParser {
     public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
         Select annotation = AnnotationsUtils.find(annotations, Select.class);
         if (annotation != null) {
-            ast.setQuery(parse(annotation));
+            ast.addQuery(parse(annotation));
         }
     }
 
@@ -37,7 +37,7 @@ public class SelectParser implements AnnotationParser {
         Select annotation = AnnotationsUtils.find(annotations, Select.class);
         if (annotation != null) {
             ast.setOptional(annotation.optional());
-            ast.setQuery(parse(annotation));
+            ast.addQuery(parse(annotation));
         }
     }
 

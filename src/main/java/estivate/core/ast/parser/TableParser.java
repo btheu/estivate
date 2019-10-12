@@ -25,7 +25,7 @@ public class TableParser implements AnnotationParser {
     public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
         Table annotation = AnnotationsUtils.find(annotations, TYPE);
         if (annotation != null) {
-            ast.setQuery(parse(annotation));
+            ast.addQuery(parse(annotation));
         }
     }
 
@@ -33,7 +33,7 @@ public class TableParser implements AnnotationParser {
         Table annotation = AnnotationsUtils.find(annotations, TYPE);
         if (annotation != null) {
             ast.setOptional(annotation.optional());
-            ast.setQuery(parse(annotation));
+            ast.addQuery(parse(annotation));
         }
     }
 

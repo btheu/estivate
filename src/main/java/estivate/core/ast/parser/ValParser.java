@@ -29,7 +29,7 @@ public class ValParser implements AnnotationParser {
         Val annotation = (Val) AnnotationsUtils.find(annotations, TYPE);
         if (annotation != null) {
             ast.setOptional(annotation.optional());
-            ast.setQuery(SelectParser.parse(annotation));
+            ast.addQuery(SelectParser.parse(annotation));
 
             ValReduceAST reduce = new ValReduceAST();
             ast.setReduce(reduce);

@@ -26,7 +26,7 @@ public class ColumnParser implements AnnotationParser {
     public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
         Column annotation = AnnotationsUtils.find(annotations, Column.class);
         if (annotation != null) {
-            ast.setQuery(parse(annotation));
+            ast.addQuery(parse(annotation));
         }
     }
 
@@ -34,7 +34,7 @@ public class ColumnParser implements AnnotationParser {
         Column annotation = AnnotationsUtils.find(annotations, Column.class);
         if (annotation != null) {
             ast.setOptional(annotation.optional());
-            ast.setQuery(parse(annotation));
+            ast.addQuery(parse(annotation));
         }
     }
 

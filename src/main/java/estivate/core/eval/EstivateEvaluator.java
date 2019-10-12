@@ -86,7 +86,7 @@ public class EstivateEvaluator {
                 .value(new HashMap<ValueAST, Object>())//
                 .build();
 
-        evalQuery(context, ast.getQuery());
+        evalQuery(context, ast.getQueries());
         return context;
     }
 
@@ -246,12 +246,14 @@ public class EstivateEvaluator {
         log.debug("{} < eval reduce : {}", context.getMemberName(), context.getQueryResult());
     }
 
-    private static void evalQuery(EvalContext context, QueryAST query) {
-        log.debug("{} > eval query : {}", context.getMemberName(), context.getQueryResult());
-        for (QueryEvaluator eval : QUERY_EVALUATORS) {
-            eval.evalQuery(context, query);
+    private static void evalQuery(EvalContext context, List<QueryAST> list) {
+        log.debug("'{}' > eval query : {}", context.getMemberName(), context.getQueryResult());
+        for (QueryAST queryAST : list) {
+            for (QueryEvaluator eval : QUERY_EVALUATORS) {
+                eval.evalQuery(context, queryAST);
+            }
         }
-        log.debug("{} < eval query : {}", context.getMemberName(), context.getQueryResult());
+        log.debug("'{}' < eval query : {}", context.getMemberName(), context.getQueryResult());
     }
 
     public static final ExpressionEvaluator fieldEvaluator  = new ExpressionEvaluator() {
@@ -266,7 +268,8 @@ public class EstivateEvaluator {
                                                                                 fieldExpression.getField().getName());
 
                                                                         // Query
-                                                                        evalQuery(context, fieldExpression.getQuery());
+                                                                        evalQuery(context,
+                                                                                fieldExpression.getQueries());
 
                                                                         // Reduce
                                                                         evalReduce(context, fieldExpression.getReduce(),
@@ -302,7 +305,8 @@ public class EstivateEvaluator {
                                                                                 methodExpression.getMethod().getName());
 
                                                                         // Query
-                                                                        evalQuery(context, methodExpression.getQuery());
+                                                                        evalQuery(context,
+                                                                                methodExpression.getQueries());
 
                                                                         // Reduce
                                                                         evalReduce(context,

@@ -29,7 +29,7 @@ public class TextParser implements AnnotationParser {
             ast.setOptional(annotation.optional());
 
             QueryAST query = SelectParser.parse(annotation);
-            ast.setQuery(query);
+            ast.addQuery(query);
 
             TextReduceAST reduce = new TextReduceAST();
             reduce.setOwn(annotation.own());

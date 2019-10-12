@@ -17,24 +17,25 @@ import estivate.utils.AnnotationsUtils;
  */
 public class AttrParser implements AnnotationParser {
 
-	public static final AttrParser INSTANCE = new AttrParser();
-	
-	public static final Class<? extends Annotation> TYPE = Attr.class;
+    public static final AttrParser INSTANCE = new AttrParser();
 
-    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {}
+    public static final Class<? extends Annotation> TYPE = Attr.class;
+
+    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
+    }
 
     public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
-        
-        Attr annotation = (Attr) AnnotationsUtils.find(annotations, TYPE);
-        if(annotation != null){
-        	ast.setQuery(SelectParser.parse(annotation));
-        	
-        	AttrReduceAST reduce = new AttrReduceAST();
 
-    		reduce.setAttr(annotation.value());
-    		
-    		ast.setReduce(reduce);
-        	
+        Attr annotation = (Attr) AnnotationsUtils.find(annotations, TYPE);
+        if (annotation != null) {
+            ast.addQuery(SelectParser.parse(annotation));
+
+            AttrReduceAST reduce = new AttrReduceAST();
+
+            reduce.setAttr(annotation.value());
+
+            ast.setReduce(reduce);
+
         }
     }
 

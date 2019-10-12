@@ -29,7 +29,7 @@ public class TagNameParser implements AnnotationParser {
         TagName annotation = (TagName) AnnotationsUtils.find(annotations, TYPE);
         if (annotation != null) {
             ast.setOptional(annotation.optional());
-            ast.setQuery(SelectParser.parse(annotation));
+            ast.addQuery(SelectParser.parse(annotation));
 
             TagNameReduceAST reduce = new TagNameReduceAST();
 

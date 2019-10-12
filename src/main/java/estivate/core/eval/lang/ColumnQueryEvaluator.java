@@ -37,12 +37,13 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
 
             if (currentElements.size() > 1) {
                 throw new EstivateEvaluatorException(context,
-                        "Column must be applied on only one tr tag: " + currentElements.size());
+                        "Column must be applied on only one tr tag, was: " + currentElements.size());
             }
 
             Element row = currentElements.first();
             if (!row.tagName().equalsIgnoreCase("tr")) {
-                throw new EstivateEvaluatorException(context, "Column must be applied on tr tag: " + row.tagName());
+                throw new EstivateEvaluatorException(context,
+                        "Column must be applied on tr tag, was: " + row.tagName());
             }
 
             TableIndex tableIndex = context.getTableIndex();
