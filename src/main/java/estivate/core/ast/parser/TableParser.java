@@ -44,7 +44,7 @@ public class TableParser implements AnnotationParser {
         query.setIndex(annotation.index());
         query.setFirst(annotation.first());
         query.setLast(annotation.last());
-        query.setQueryString(annotation.select());
+        query.setQueryString(SelectParser.or(annotation.select(), annotation.value()));
 
         SelectParser.validate(query);
 

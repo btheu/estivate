@@ -132,7 +132,7 @@ public class SelectParser implements AnnotationParser {
 
     }
 
-    private static String or(String value1, String value2) {
+    public static String or(String value1, String value2) {
         return StringUtil.isBlank(value1) ? value2 : value1;
     }
 
