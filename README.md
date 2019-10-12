@@ -181,11 +181,11 @@ public class Result {
 }
 ```
 
-### ```@Table & @Cell```
+### ```@Table & @Column```
 
 Parse Table HTML DOM and match data by column name
 
-Each cells of each row are mapped to java class field/method.
+Each column are mapped to java class field/method.
 
 ```java
 InputStream document = ...
@@ -198,11 +198,11 @@ List<Result> result = mapper.mapToList(document, Result.class);
 ```java
 @Table(select="#table1")
 public class Result {
-	@Cell("Number Column")
+	@Column("Number Column")
 	public int number;
-	@Cell("Street Column")
+	@Column("Street Column")
 	public int street;
-	@Cell(name="Name.*Column", regex=true)
+	@Column(name="Name.*Column", regex=true)
 	@Attr(select="span", value="title")
 	public String name;
 }

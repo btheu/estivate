@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  */
 @Target({ TYPE, FIELD, METHOD })
 @Retention(RUNTIME)
-public @interface Cell {
+public @interface Column {
 
     String value() default "";
 
@@ -24,4 +24,10 @@ public @interface Cell {
     boolean regex() default false;
 
     boolean optional() default false;
+
+    boolean trim() default true;
+
+    boolean ignoreCase() default true;
+
+    boolean ignoreSpace() default true;
 }

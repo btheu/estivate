@@ -10,7 +10,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class CellQueryAST extends QueryAST {
+public class ColumnQueryAST extends QueryAST {
 
     protected String columnName;
 

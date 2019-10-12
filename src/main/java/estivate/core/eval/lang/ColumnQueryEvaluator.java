@@ -10,7 +10,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import estivate.core.ast.QueryAST;
-import estivate.core.ast.lang.CellQueryAST;
+import estivate.core.ast.lang.ColumnQueryAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
 import estivate.core.eval.EstivateEvaluator.QueryEvaluator;
 import estivate.core.eval.EstivateEvaluatorException;
@@ -19,36 +19,36 @@ import estivate.core.eval.lang.TableQueryEvaluator.TableIndex;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CellQueryEvaluator implements QueryEvaluator {
+public class ColumnQueryEvaluator implements QueryEvaluator {
 
-    public static final CellQueryEvaluator INSTANCE = new CellQueryEvaluator();
+    public static final ColumnQueryEvaluator INSTANCE = new ColumnQueryEvaluator();
 
     public void evalQuery(EvalContext context, QueryAST query) {
-        if (query instanceof CellQueryAST) {
-            CellQueryAST ast = (CellQueryAST) query;
+        if (query instanceof ColumnQueryAST) {
+            ColumnQueryAST ast = (ColumnQueryAST) query;
 
             Elements currentElements = context.getQueryResult();
 
             currentElements.forEach(new Consumer<Element>() {
                 public void accept(Element t) {
-                    log.debug("Cell query entry type: {}", t.tag().toString());
+                    log.debug("Column query entry type: {}", t.tag().toString());
                 }
             });
 
             if (currentElements.size() > 1) {
                 throw new EstivateEvaluatorException(context,
-                        "Cell must be applied on only one tr tag: " + currentElements.size());
+                        "Column must be applied on only one tr tag: " + currentElements.size());
             }
 
             Element row = currentElements.first();
             if (!row.tagName().equalsIgnoreCase("tr")) {
-                throw new EstivateEvaluatorException(context, "Cell must be applied on tr tag: " + row.tagName());
+                throw new EstivateEvaluatorException(context, "Column must be applied on tr tag: " + row.tagName());
             }
 
             TableIndex tableIndex = context.getTableIndex();
             if (tableIndex == null) {
                 throw new EstivateEvaluatorException(context,
-                        "Cell annotation must be applied under an Table annotation");
+                        "Column annotation must be applied under an Table annotation");
             }
 
             context.setQueryResult(new Elements());

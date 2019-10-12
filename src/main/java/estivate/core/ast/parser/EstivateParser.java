@@ -178,7 +178,7 @@ public class EstivateParser {
         // select Query at the end for prevailing on select inside Reduces
         annotationParsers.add(SelectParser.INSTANCE);
         annotationParsers.add(TableParser.INSTANCE);
-        annotationParsers.add(CellParser.INSTANCE);
+        annotationParsers.add(ColumnParser.INSTANCE);
         // optional after all for overriding
         annotationParsers.add(OptionalParser.INSTANCE);
     }

@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import estivate.EstivateTest;
-import estivate.annotations.Cell;
+import estivate.annotations.Column;
 import estivate.annotations.Table;
 import estivate.annotations.Text;
 import lombok.Data;
@@ -40,24 +40,24 @@ public class TableTest extends EstivateTest {
 
         @Data
         public static class LineResult {
-            @Cell(name = "Number Column")
+            @Column(name = "Number Column")
             @Text(select = "span")
             public int number;
 
-            @Cell(name = "Street Column")
+            @Column(name = "Street Column")
             @Text(select = "span")
             public String street;
 
-            @Cell(name = "unknow", optional = false)
+            @Column(name = "unknow", optional = false)
             @Text(select = "span", optional = true)
             public String unknow;
 
-            @Cell(name = "Name.*", regex = true)
+            @Column(name = "Name.*", regex = true)
             @Text(select = "span.name")
             public String name;
             public String name2;
 
-            @Cell(name = "Name.*", regex = true)
+            @Column(name = "Name.*", regex = true)
             @Text(select = "span.name")
             public void setName2(String name2) {
                 this.name2 = name2;
@@ -80,20 +80,20 @@ public class TableTest extends EstivateTest {
     @Table("table")
     public static class Result1List {
 
-        @Cell(name = "Number Column")
+        @Column(name = "Number Column")
         @Text(select = "span")
         public int number;
 
-        @Cell(name = "Street Column")
+        @Column(name = "Street Column")
         @Text(select = "span")
         public String street;
 
-        @Cell(name = "Name.*", regex = true)
+        @Column(name = "Name.*", regex = true)
         @Text(select = "span.name")
         public String name;
         public String name2;
 
-        @Cell(name = "Name.*", regex = true)
+        @Column(name = "Name.*", regex = true)
         @Text(select = "span.name")
         public void setName2(String name2) {
             this.name2 = name2;
@@ -123,15 +123,15 @@ public class TableTest extends EstivateTest {
 
         @Data
         public static class LineResult {
-            @Cell(name = "col 1")
+            @Column(name = "col 1")
             @Text(select = "span")
             public int number;
 
-            @Cell(name = "col 2")
+            @Column(name = "col 2")
             @Text(select = "span")
             public String street;
 
-            @Cell(name = "col 3")
+            @Column(name = "col 3")
             @Text(select = "span")
             public String value;
 
@@ -160,15 +160,15 @@ public class TableTest extends EstivateTest {
 
         @Data
         public static class LineResult {
-            @Cell(name = "col 1")
+            @Column(name = "col 1")
             @Text(select = "span")
             public int number;
 
-            @Cell(name = "col 2")
+            @Column(name = "col 2")
             @Text(select = "span")
             public String street;
 
-            @Cell(name = "col 7")
+            @Column(name = "col 7")
             @Text(select = "span")
             public String value;
 
@@ -213,19 +213,19 @@ public class TableTest extends EstivateTest {
 
         @Data
         public static class LineResult {
-            @Cell(name = "col 1")
+            @Column(name = "col 1")
             @Text(select = "span")
             public int number;
 
-            @Cell(name = "col 2")
+            @Column(name = "col 2")
             @Text(select = "span")
             public String street;
 
-            @Cell(name = "col 9")
+            @Column(name = "col 9")
             @Text(select = "span")
             public String col9;
 
-            @Cell(name = "col 10")
+            @Column(name = "col 10")
             @Text(select = "span")
             public String value;
 

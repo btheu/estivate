@@ -1,7 +1,7 @@
 
 ## 0.4.0 - pending
 
-*	feat: add @Table and @Cell support
+*	feat: add @Table and @Column support
 *	fix: optional behavior
 
 ## 0.3.7 - 06/09/2019
