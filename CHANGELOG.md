@@ -1,5 +1,5 @@
 
-## 0.3.8 - pending
+## 0.4.0 - pending
 
 *	feat: add @Table and @Cell support
 *	fix: optional behavior
