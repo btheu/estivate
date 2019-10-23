@@ -232,4 +232,69 @@ public class TableTest extends EstivateTest {
         }
     }
 
+    @Test
+    public void table7samecolname() throws IOException {
+
+        InputStream document = this.read("/table/u7.html");
+
+        Result7 result = this.mapper.map(document, Result7.class);
+
+        Assert.assertEquals("name1A", result.lines.get(0).getName());
+        Assert.assertEquals("name1B", result.lines.get(1).getName());
+
+        Assert.assertEquals("value246A", result.lines.get(0).getValue246());
+        Assert.assertEquals("value257A", result.lines.get(0).getValue257());
+        Assert.assertEquals("value346A", result.lines.get(0).getValue346());
+        Assert.assertEquals("value357A", result.lines.get(0).getValue357());
+
+        Assert.assertEquals("value356A value357A", result.lines.get(0).getValue35());
+
+        Assert.assertEquals("value246B", result.lines.get(1).getValue246());
+        Assert.assertEquals("value257B", result.lines.get(1).getValue257());
+        Assert.assertEquals("value346B", result.lines.get(1).getValue346());
+        Assert.assertEquals("value357B", result.lines.get(1).getValue357());
+
+        Assert.assertEquals("value356B value357B", result.lines.get(1).getValue35());
+
+        log.info(result.toString());
+    }
+
+    @Data
+    public static class Result7 {
+
+        @Table("#table1")
+        public List<LineResult> lines;
+
+        @Data
+        public static class LineResult {
+            @Column(name = "col\\/1")
+            @Text(select = "span")
+            public String name;
+
+            @Column(name = "col.1", regex = true)
+            @Text(select = "span")
+            public String name2;
+
+            @Column(name = "col.2/col 4/col 6", regex = true)
+            @Text(select = "span")
+            public String value246;
+
+            @Column(name = "col 2/col 5/col 7")
+            @Text(select = "span")
+            public String value257;
+
+            @Column(name = "col 3/col 4/col 6")
+            @Text(select = "span")
+            public String value346;
+
+            @Column(name = "col 3/col 5/col 7")
+            @Text(select = "span")
+            public String value357;
+
+            @Column(name = "col 3/col 5")
+            @Text(select = "span")
+            public String value35;
+
+        }
+    }
 }

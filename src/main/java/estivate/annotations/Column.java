@@ -17,8 +17,18 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface Column {
 
+    /**
+     * <p>
+     * For multiple row header, path can be specified with a slash (/) separator.
+     * 
+     */
     String value() default "";
 
+    /**
+     * <p>
+     * For multiple row header, path can be specified with a slash (/) separator.
+     * 
+     */
     String name() default "";
 
     boolean regex() default false;

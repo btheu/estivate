@@ -3,6 +3,7 @@ package estivate.core.eval.lang;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -12,6 +13,7 @@ import estivate.core.ast.lang.TableQueryAST;
 import estivate.core.eval.EstivateEvaluator.EvalContext;
 import estivate.core.eval.EstivateEvaluatorException;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,12 +36,13 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
 
             Elements headRows = tableRootElement.select("thead tr");
 
-            // index table head cols
+            // index table header row
+            int currRow = 0;
+            // index table header cols
             int numberOfCols = numberOfCols(headRows);
             int[] rowCarries = new int[numberOfCols];
             int[] colCarries = new int[numberOfCols];
             for (Element row : headRows) {
-
                 Iterator<Element> headers = row.select("th").iterator();
                 for (int currCol = 0; currCol < numberOfCols;) {
                     int rowCarry = rowCarries[currCol];
@@ -57,7 +60,7 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
                     if (!headers.hasNext()) {
                         log.error("Missing 'th' element, html was {}", headRows);
                         throw new EstivateEvaluatorException(context,
-                                "Mal formed HTML, should be an other table header 'th'");
+                                "Mal formed HTML, an other table header 'th' is missing");
                     }
 
                     Element header = headers.next();
@@ -65,14 +68,14 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
                     int rowSpan = readIntAttr(header, "rowspan", 1);
                     int colSpan = readIntAttr(header, "colspan", 1);
 
-                    tableIndex.getColMap().put(header.text(), IntRange.of(currCol, currCol + colSpan));
+                    tableIndex.put(currRow, header.text(), IntRange.of(currCol, currCol + colSpan - 1));
 
                     rowCarries[currCol] = rowSpan;
                     colCarries[currCol] = colSpan;
 
                     currCol += colSpan;
                 }
-
+                currRow++;
             }
 
             context.setTableIndex(tableIndex);
@@ -110,8 +113,8 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
         Elements results = new Elements();
         int currCol = 0;
         for (Element td : tds) {
-            int colspan = TableQueryEvaluator.readIntAttr(td, "colspan", 1);
-            if (range.begin <= currCol && range.end > currCol) {
+            int colspan = readIntAttr(td, "colspan", 1);
+            if (range.include(currCol)) {
                 results.add(td);
             }
             currCol += colspan;
@@ -125,10 +128,41 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
      * <p>
      * IntRange if for the first and the last column index in case of colspan.
      */
-    @Data
     public static class TableIndex {
 
+        private static final String COL_SEP = "/";
+
+        // <Path, IntRange>
+        @Getter
         Map<String, IntRange> colMap = new HashMap<String, IntRange>();
+
+        // <Row, Path, IntRange>
+        Map<Integer, Map<String, IntRange>> rowColMap = new HashMap<Integer, Map<String, IntRange>>();
+
+        protected void put(int row, String column, IntRange range) {
+
+            String col = column.replace(COL_SEP, "\\" + COL_SEP);
+
+            log.debug("put {} {} {}", col, row, range);
+            Map<String, IntRange> map = rowColMap.get(row);
+            if (map == null) {
+                map = new HashMap<String, IntRange>();
+                rowColMap.put(row, map);
+            }
+            colMap.put(col, range);
+            if (row == 0) {
+                map.put(col, range);
+            } else {
+                // find parent cell
+                Map<String, IntRange> map2 = rowColMap.get(row - 1);
+                for (Entry<String, IntRange> lastRowEntry : map2.entrySet()) {
+                    if (lastRowEntry.getValue().include(range.begin)) {
+                        map.put(lastRowEntry.getKey() + COL_SEP + col, range);
+                        colMap.put(lastRowEntry.getKey() + COL_SEP + col, range);
+                    }
+                }
+            }
+        }
 
     }
 

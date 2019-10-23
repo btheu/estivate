@@ -29,15 +29,17 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
 
             Elements currentElements = context.getQueryResult();
 
-            currentElements.forEach(new Consumer<Element>() {
-                public void accept(Element t) {
-                    log.debug("Column query entry type: {}", t.tag().toString());
-                }
-            });
+            if (log.isDebugEnabled()) {
+                currentElements.forEach(new Consumer<Element>() {
+                    public void accept(Element t) {
+                        log.debug("Column query entry type: {}", t.tag().toString());
+                    }
+                });
+            }
 
             if (currentElements.size() > 1) {
                 throw new EstivateEvaluatorException(context,
-                        "Column must be applied on only one tr tag, was: " + currentElements.size());
+                        "Column must be applied on only one tr tag, counted: " + currentElements.size());
             }
 
             Element row = currentElements.first();
@@ -49,7 +51,7 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
             TableIndex tableIndex = context.getTableIndex();
             if (tableIndex == null) {
                 throw new EstivateEvaluatorException(context,
-                        "Column annotation must be applied under an Table annotation");
+                        "Column annotation must be applied under an @Table annotation");
             }
 
             context.setQueryResult(new Elements());
@@ -69,7 +71,7 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
 
                 Set<Entry<String, IntRange>> entrySet = colMap.entrySet();
                 for (Entry<String, IntRange> entry : entrySet) {
-                    if (regex.matcher(entry.getKey()).matches()) {
+                    if (regex.matcher(entry.getKey().replaceAll("\\\\/", "/")).matches()) {
                         IntRange indexOf = entry.getValue();
                         context.setQueryResult(TableQueryEvaluator.findTdsInRange(row.select("td"), indexOf));
                         break;
