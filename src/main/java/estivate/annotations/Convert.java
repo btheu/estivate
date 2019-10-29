@@ -19,4 +19,10 @@ public @interface Convert {
 
     Class<? extends Converter> value();
 
+    /**
+     * 
+     * @return String format to pass to the converter
+     */
+    String format() default "";
+
 }

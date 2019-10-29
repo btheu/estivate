@@ -25,7 +25,7 @@ public class PrimitiveConverter implements Converter {
 		return primitivesAndBoxes.contains(targetType);
 	}
 
-	public Object convert(Object value, Class<?> targetType) {
+	public Object convert(Object value, Class<?> targetType, String format) {
 		return mLBD.get(targetType).apply((String) value);
 	}
 

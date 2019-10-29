@@ -147,7 +147,7 @@ public class EstivateEvaluator {
 
             Converter newInstance = ClassUtils.newInstance(customConverter.getConverterClass());
 
-            Object convertedValue = newInstance.convert(currentValue, targetType);
+            Object convertedValue = newInstance.convert(currentValue, targetType, customConverter.getFormat());
 
             context.getValue().put(value, convertedValue);
 
@@ -159,7 +159,7 @@ public class EstivateEvaluator {
         if (primitiveConverter.canConvert(currentValue, targetType)) {
             log.debug("> Primitive convert");
 
-            Object convertedValue = primitiveConverter.convert(currentValue, targetType);
+            Object convertedValue = primitiveConverter.convert(currentValue, targetType, "");
 
             context.getValue().put(value, convertedValue);
 
@@ -176,7 +176,7 @@ public class EstivateEvaluator {
 
             for (String valueString : (List<String>) currentValue) {
 
-                Object convertedValue = primitiveConverter.convert(valueString, targetRawClass);
+                Object convertedValue = primitiveConverter.convert(valueString, targetRawClass, "");
 
                 currentValueList.add(convertedValue);
             }
