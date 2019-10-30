@@ -42,7 +42,8 @@ public class SelectQueryEvaluator implements QueryEvaluator {
                         queryResult = new Elements(select.get(ast.getIndex() - 1));
                     }
                 } else if (ast.isUnique() && select.size() > 1) {
-                    throw new EstivateEvaluatorException(context, "No unique element after query: " + queryString);
+                    throw new EstivateEvaluatorException(context,
+                            "No unique element after query '" + queryString + "' found " + select.size());
                 } else {
                     queryResult = select;
                 }

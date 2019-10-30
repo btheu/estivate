@@ -21,10 +21,10 @@ public abstract class ClassUtils {
      * @param target
      * @param value
      */
-    public static void setValue(Field field, Object target, Object value){
+    public static void setValue(Field field, Object target, Object value) {
 
         log.debug("set value on field ['{}' => '{}']", value, field.getName());
-        
+
         try {
 
             if (ClassUtils.isAssignableValue(field.getType(), value)) {
@@ -39,30 +39,33 @@ public abstract class ClassUtils {
 
             } else {
                 log.error("set value is not assignable with field '{}'", field.getName());
-                throw new IllegalArgumentException("Cant set " + value.toString() + " to " + field.getName());
+                throw new IllegalArgumentException(
+                        "Cant set (" + value.getClass().getSimpleName() + ") '" + value.toString() + "' to ("
+                                + field.getType().getSimpleName() + ") '" + field.getName() + "'");
             }
         } catch (Exception e) {
-            log.error("set value is not assignable with field ",e);
-            throw new RuntimeException("Cant set " + value.toString() + " to " + field.getName(),e);
+            log.error("set value is not assignable with field ", e);
+            throw new RuntimeException("Cant set (" + value.getClass().getSimpleName() + ") '" + value.toString()
+                    + "' to (" + field.getType().getSimpleName() + ") '" + field.getName() + "'", e);
         }
 
     }
 
-	public static void setValue(Method method, Object target, Object... values) {
+    public static void setValue(Method method, Object target, Object... values) {
 
-		log.debug("set value by method [{} ({})]", method.getName(), values);
+        log.debug("set value by method [{} ({})]", method.getName(), values);
 
-		try {
-			if (values.length == 0) {
-				method.invoke(target);
-			} else {
-				method.invoke(target, values);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("Cant set " + values.toString() + " to " + method.getName() + "()", e);
-		}
-	}
-    
+        try {
+            if (values.length == 0) {
+                method.invoke(target);
+            } else {
+                method.invoke(target, values);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Cant set " + values.toString() + " to " + method.getName() + "()", e);
+        }
+    }
+
     public static Type[] getMemberTypes(AccessibleObject member) {
         if (member instanceof Field) {
             Field field = (Field) member;
@@ -162,20 +165,20 @@ public abstract class ClassUtils {
     }
 
     public static Class<?>[] typeArguments(Type type) {
-        
+
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type[] typeArguments = parameterizedType.getActualTypeArguments();
             Class<?>[] types = new Class<?>[typeArguments.length];
             for (int i = 0; i < typeArguments.length; i++) {
-               types[i] = rawType(typeArguments[i]);
+                types[i] = rawType(typeArguments[i]);
             }
             return types;
         }
-        
+
         return null;
     }
-    
+
     public static String getName(AnnotatedElement member) {
         if (member instanceof Member) {
             return ((Member) member).getName();

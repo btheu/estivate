@@ -12,7 +12,8 @@ import org.junit.Test;
 import estivate.annotations.Convert;
 import estivate.annotations.Text;
 import estivate.converter.DateConvertor;
-import estivate.converter.IntegerExtractorConvertor;
+import estivate.converter.RegexExtractorConvertor;
+import estivate.converter.UrlParameterExtractor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,7 +57,7 @@ public class CustomConverterTest extends EstivateTest {
     @Data
     public static class ResultDate {
 
-        @Convert(value =  DateConvertor.class,  format = "yyyy-MM-dd HH:mm:ss")
+        @Convert(value = DateConvertor.class, format = "yyyy-MM-dd HH:mm:ss")
         @Text(select = "#thatDate")
         public Date date1;
 
@@ -68,13 +69,17 @@ public class CustomConverterTest extends EstivateTest {
             this.date2 = date2;
         }
 
-        @Convert(value = IntegerExtractorConvertor.class, format = "\\d{2}(\\d{3})\\d*")
+        @Convert(value = RegexExtractorConvertor.class, format = "\\d{2}(\\d{3})\\d*")
         @Text(select = "#thatNumber")
         public int integer;
 
-        @Convert(value = IntegerExtractorConvertor.class, format = "(\\d{2})(\\d{3})(\\d*)")
+        @Convert(value = RegexExtractorConvertor.class, format = "(\\d{2})(\\d{3})(\\d*)")
         @Text(select = "#thatNumber")
         public int[] integers;
+
+        @Convert(value = UrlParameterExtractor.class, format = "dateId")
+        @Text(select = "#thatUrl")
+        public int dateInt;
 
     }
 
