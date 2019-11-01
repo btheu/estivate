@@ -297,4 +297,39 @@ public class TableTest extends EstivateTest {
 
         }
     }
+
+    @Test
+    public void table8emptyHeader() throws IOException {
+
+        InputStream document = this.read("/table/u8.html");
+
+        Result8 result = this.mapper.map(document, Result8.class);
+
+        Assert.assertEquals("name1A", result.lines.get(0).getName());
+        Assert.assertEquals("name1B", result.lines.get(1).getName());
+
+        Assert.assertEquals("value4A", result.lines.get(0).getValue4());
+        Assert.assertEquals("value4B", result.lines.get(1).getValue4());
+
+        log.info(result.toString());
+    }
+
+    @Data
+    public static class Result8 {
+
+        @Table("#table1")
+        public List<LineResult> lines;
+
+        @Data
+        public static class LineResult {
+            @Column(name = "col 1")
+            @Text(select = "span")
+            public String name;
+
+            @Column(name = "col 4")
+            @Text(select = "span")
+            public String value4;
+
+        }
+    }
 }
