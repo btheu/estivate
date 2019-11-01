@@ -43,7 +43,7 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
             int[] rowCarries = new int[numberOfCols];
             int[] colCarries = new int[numberOfCols];
             for (Element row : headRows) {
-                Iterator<Element> headers = row.select("th").iterator();
+                Iterator<Element> headers = row.select("th,td").iterator();
                 for (int currCol = 0; currCol < numberOfCols;) {
                     int rowCarry = rowCarries[currCol];
                     int colCarry = colCarries[currCol];
@@ -95,7 +95,7 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
      */
     private static int numberOfCols(Elements headRows) {
         int size = 0;
-        Elements select = headRows.first().select("th");
+        Elements select = headRows.first().select("th,td");
         for (Element element : select) {
             size += readIntAttr(element, "colspan", 1);
         }
