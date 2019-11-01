@@ -23,6 +23,7 @@ public class RegexExtractorConvertor implements Converter {
 
     public boolean canConvert(Object value, Class<?> targetType) {
         return targetType.isAssignableFrom(int.class) || targetType.isAssignableFrom(int[].class)
+                || targetType.isAssignableFrom(short.class) || targetType.isAssignableFrom(short[].class)
                 || targetType.isAssignableFrom(String.class) || targetType.isAssignableFrom(String[].class);
     }
 
@@ -48,12 +49,25 @@ public class RegexExtractorConvertor implements Converter {
         if (targetType.isAssignableFrom(int.class)) {
             return Integer.parseInt(matches.get(0));
         }
+        if (targetType.isAssignableFrom(short.class)) {
+            return Short.parseShort(matches.get(0));
+        }
         if (targetType.isAssignableFrom(int[].class)) {
 
             int[] result = new int[matches.size()];
             int idx = 0;
             for (String match : matches) {
                 result[idx++] = Integer.parseInt(match);
+            }
+
+            return result;
+        }
+        if (targetType.isAssignableFrom(short[].class)) {
+
+            short[] result = new short[matches.size()];
+            int idx = 0;
+            for (String match : matches) {
+                result[idx++] = Short.parseShort(match);
             }
 
             return result;
