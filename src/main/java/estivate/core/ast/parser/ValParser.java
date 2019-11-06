@@ -17,21 +17,22 @@ import estivate.utils.AnnotationsUtils;
  */
 public class ValParser implements AnnotationParser {
 
-	public static final ValParser INSTANCE = new ValParser();
-	
-	public static final Class<? extends Annotation> TYPE = Val.class;
+    public static final ValParser INSTANCE = new ValParser();
 
-    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {}
+    public static final Class<? extends Annotation> TYPE = Val.class;
+
+    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
+    }
 
     public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
-        
-    	Val annotation = (Val) AnnotationsUtils.find(annotations, TYPE);
-        if(annotation != null){
-        	ast.setQuery(SelectParser.parse(annotation));
-        	
-        	ValReduceAST reduce = new ValReduceAST();
-    		
-    		ast.setReduce(reduce);
+
+        Val annotation = (Val) AnnotationsUtils.find(annotations, TYPE);
+        if (annotation != null) {
+            ast.setOptional(annotation.optional());
+            ast.addQuery(SelectParser.parse(annotation));
+
+            ValReduceAST reduce = new ValReduceAST();
+            ast.setReduce(reduce);
         }
     }
 

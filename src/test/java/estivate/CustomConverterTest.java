@@ -2,8 +2,6 @@ package estivate;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -13,71 +11,76 @@ import org.junit.Test;
 
 import estivate.annotations.Convert;
 import estivate.annotations.Text;
-import estivate.core.Converter;
+import estivate.converter.DateConvertor;
+import estivate.converter.RegexExtractorConvertor;
+import estivate.converter.UrlParameterExtractor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CustomConverterTest extends EstivateTest {
 
-	@Test
-	public void converterCustom1() throws IOException {
+    @Test
+    public void converterCustom1() throws IOException {
 
-		InputStream document = read("/converter/u3.html");
+        InputStream document = read("/converter/u3.html");
 
-		ResultDate result = mapper.map(document, ResultDate.class);
+        ResultDate result = mapper.map(document, ResultDate.class);
 
-		Calendar instance = Calendar.getInstance();
-		instance.set(Calendar.SECOND, 59);
-		instance.set(Calendar.MINUTE, 21);
-		instance.set(Calendar.HOUR_OF_DAY, 23);
+        Calendar instance = Calendar.getInstance();
+        instance.set(Calendar.SECOND, 59);
+        instance.set(Calendar.MINUTE, 21);
+        instance.set(Calendar.HOUR_OF_DAY, 23);
 
-		instance.set(Calendar.DAY_OF_MONTH, 5);
-		instance.set(Calendar.MONTH, 0);
-		instance.set(Calendar.YEAR, 2016);
+        instance.set(Calendar.DAY_OF_MONTH, 5);
+        instance.set(Calendar.MONTH, 0);
+        instance.set(Calendar.YEAR, 2016);
 
-		Assert.assertEquals(instance.getTime().toString(), result.getDate1().toString());
+        Assert.assertEquals(instance.getTime().toString(), result.getDate1().toString());
 
-		Assert.assertEquals(instance.getTime().toString(), result.getDate2().toString());
+        Assert.assertEquals(instance.getTime().toString(), result.getDate2().toString());
 
-	}
+        Assert.assertEquals(345, result.getInteger());
 
-	@Data
-	public static class ResultDate {
+        assertEquals(new int[] { 12, 345, 6789 }, result.getIntegers());
+    }
 
-		@Convert(DateConvertor.class)
-		@Text(select = "#thatDate")
-		public Date date1;
+    private void assertEquals(int[] expected, int[] current) {
+        Assert.assertEquals(expected.length, current.length);
 
-		public Date date2;
+        for (int i = 0; i < current.length; i++) {
+            Assert.assertEquals(expected[i], current[i]);
+        }
 
-		@Convert(DateConvertor.class)
-		@Text(select = "#thatDate")
-		public void setDate2(Elements elements, Date date2) {
-			this.date2 = date2;
-		}
+    }
 
-	}
+    @Data
+    public static class ResultDate {
 
-	public static class DateConvertor implements Converter {
+        @Convert(value = DateConvertor.class, format = "yyyy-MM-dd HH:mm:ss")
+        @Text(select = "#thatDate")
+        public Date date1;
 
-		SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        public Date date2;
 
-		public boolean canConvert(Object value, Class<?> targetType) {
-			return targetType.isAssignableFrom(Date.class) && value.getClass().equals(String.class);
-		}
+        @Convert(value = DateConvertor.class, format = "yyyy-MM-dd HH:mm:ss")
+        @Text(select = "#thatDate")
+        public void setDate2(Elements elements, Date date2) {
+            this.date2 = date2;
+        }
 
-		public Object convert(Object value, Class<?> targetType) {
-			try {
-				log.info("converting Date with custom converter");
-				Date parse = SDF.parse((String) value);
-				log.info("custom converter {}", parse);
-				return parse;
-			} catch (ParseException e) {
-				log.error(e.getMessage(), e);
-				return null;
-			}
-		}
-	}
+        @Convert(value = RegexExtractorConvertor.class, format = "\\d{2}(\\d{3})\\d*")
+        @Text(select = "#thatNumber")
+        public int integer;
+
+        @Convert(value = RegexExtractorConvertor.class, format = "(\\d{2})(\\d{3})(\\d*)")
+        @Text(select = "#thatNumber")
+        public int[] integers;
+
+        @Convert(value = UrlParameterExtractor.class, format = "dateId")
+        @Text(select = "#thatUrl")
+        public int dateInt;
+
+    }
 
 }

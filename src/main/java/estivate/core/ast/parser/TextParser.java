@@ -18,20 +18,21 @@ import estivate.utils.AnnotationsUtils;
  */
 public class TextParser implements AnnotationParser {
 
-	public static final TextParser INSTANCE = new TextParser();
+    public static final TextParser INSTANCE = new TextParser();
 
-    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {}
+    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
+    }
 
     public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
         Text annotation = AnnotationsUtils.find(annotations, Text.class);
-        if(annotation != null){
-            
+        if (annotation != null) {
+            ast.setOptional(annotation.optional());
+
             QueryAST query = SelectParser.parse(annotation);
-            ast.setQuery(query);
-            
+            ast.addQuery(query);
+
             TextReduceAST reduce = new TextReduceAST();
             reduce.setOwn(annotation.own());
-            
             ast.setReduce(reduce);
         }
     }

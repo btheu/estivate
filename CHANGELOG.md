@@ -1,5 +1,10 @@
 
-## 0.3.8 - pending
+## 0.4.0 - pending
+
+*	feat: add @Table and @Column support
+*	fix: optional behavior
+*	feat: format option for customs converter
+*	feat: include DateConvertor and IntegerExtractorConvertor
 
 ## 0.3.7 - 06/09/2019
 

@@ -10,7 +10,9 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class CustomConverterAST extends ConverterAST {
-    
+
     protected Class<? extends Converter> converterClass;
-    
+
+    protected String format;
+
 }

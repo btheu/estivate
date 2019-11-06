@@ -29,14 +29,15 @@ public class SelectParser implements AnnotationParser {
     public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
         Select annotation = AnnotationsUtils.find(annotations, Select.class);
         if (annotation != null) {
-            ast.setQuery(parse(annotation));
+            ast.addQuery(parse(annotation));
         }
     }
 
     public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
         Select annotation = AnnotationsUtils.find(annotations, Select.class);
         if (annotation != null) {
-            ast.setQuery(parse(annotation));
+            ast.setOptional(annotation.optional());
+            ast.addQuery(parse(annotation));
         }
     }
 
@@ -49,7 +50,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(or(annotation.select(), annotation.value()));
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -63,7 +64,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -77,7 +78,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -91,7 +92,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -105,7 +106,7 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
@@ -119,19 +120,19 @@ public class SelectParser implements AnnotationParser {
         query.setLast(annotation.last());
         query.setQueryString(annotation.select());
 
-        valid(query);
+        validate(query);
 
         return query;
     }
 
-    private static void valid(SelectQueryAST ast) {
+    public static void validate(SelectQueryAST ast) {
         if (ast.isFirst() && ast.isLast()) {
             throw new IllegalArgumentException("Select cant be true for first() and last() a the same time");
         }
 
     }
 
-    private static String or(String value1, String value2) {
+    public static String or(String value1, String value2) {
         return StringUtil.isBlank(value1) ? value2 : value1;
     }
 

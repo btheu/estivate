@@ -1,6 +1,8 @@
 package estivate.core.ast.lang;
 
-import estivate.core.ast.ReduceAST;
+import java.util.regex.Pattern;
+
+import estivate.core.ast.QueryAST;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -8,6 +10,10 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class TitleReduceAST extends ReduceAST {
+public class ColumnQueryAST extends QueryAST {
+
+    protected String columnName;
+
+    protected Pattern regex;
 
 }

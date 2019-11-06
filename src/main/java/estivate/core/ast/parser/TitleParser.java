@@ -17,19 +17,22 @@ import estivate.utils.AnnotationsUtils;
  */
 public class TitleParser implements AnnotationParser {
 
-	public static final TitleParser INSTANCE = new TitleParser();
-	
-	public static final Class<? extends Annotation> TYPE = Title.class;
+    public static final TitleParser INSTANCE = new TitleParser();
 
-    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {}
+    public static final Class<? extends Annotation> TYPE = Title.class;
+
+    public void parseAnnotation(EstivateAST ast, Annotation[] annotations) {
+    }
 
     public void parseAnnotation(ExpressionAST ast, Annotation[] annotations) {
-        
-    	Title annotation = (Title) AnnotationsUtils.find(annotations, TYPE);
-        if(annotation != null){
-        	TitleReduceAST reduce = new TitleReduceAST();
-    		
-    		ast.setReduce(reduce);
+
+        Title annotation = (Title) AnnotationsUtils.find(annotations, TYPE);
+        if (annotation != null) {
+            ast.setOptional(annotation.optional());
+
+            TitleReduceAST reduce = new TitleReduceAST();
+
+            ast.setReduce(reduce);
         }
     }
 

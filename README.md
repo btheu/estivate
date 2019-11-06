@@ -49,7 +49,7 @@ Definition of Result class POJO definition which is:
 <dependency>
 	<groupId>com.github.btheu.estivate</groupId>
 	<artifactId>estivate</artifactId>
-	<version>0.3.5</version>
+	<version>0.4.0</version>
 </dependency>
 ```
 
@@ -179,6 +179,91 @@ public class Result {
 	public String absoluteUrl;
 
 }
+```
+
+### ```@Table & @Column```
+
+Parse Table HTML DOM and match data by column name
+
+Each column are mapped to java class field/method.
+
+```java
+InputStream document = ...
+
+EstivateMapper mapper = new EstivateMapper();
+
+List<Result> result = mapper.mapToList(document, Result.class);
+```
+
+```java
+@Table(select="#table1")
+public class Result {
+	@Column("Number Column")
+	public int number;
+	@Column("Street Column")
+	public int street;
+	@Column(name="Name.*Column", regex=true)
+	@Attr(select="span", value="title")
+	public String name;
+}
+```
+
+```html
+<html>
+<head>
+	<title>table-u1</title>
+</head>
+<body>
+	<div id="content">
+
+
+<table id="table1">
+<thead>
+<tr>
+	<th><span>Number Column</span></th>
+	<th><span>Street Column</span></th>
+	<th><span>Name Column</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>
+	<span>1</span>
+  </td>
+  <td>
+	<span>streetA</span>
+  </td>
+  <td>
+	<span title="nameA" />
+  </td>
+</tr>
+<tr>
+  <td>
+	<span>2</span>
+  </td>
+  <td>
+	<span>streetB</span>
+  </td>
+  <td>
+	<span title="nameB" />
+  </td>
+</tr>
+<tr>
+  <td>
+	<span>3</span>
+  </td>
+  <td>
+	<span>streetC</span>
+  </td>
+  <td>
+	<span title="nameC" />
+  </td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>
 ```
 
 ### ```@Is```
