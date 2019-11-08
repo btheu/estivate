@@ -40,6 +40,7 @@ public class TableParser implements AnnotationParser {
     public static QueryAST parse(Table annotation) {
         TableQueryAST query = new TableQueryAST();
 
+        query.setRowSelector(annotation.rowSelect());
         query.setUnique(true);
         query.setIndex(annotation.index());
         query.setFirst(annotation.first());

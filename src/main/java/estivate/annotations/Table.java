@@ -25,6 +25,8 @@ public @interface Table {
 
     String select() default "";
 
+    String rowSelect() default "tbody tr";
+
     /**
      * <p>
      * 1 based element index
@@ -40,4 +42,5 @@ public @interface Table {
     boolean last() default false;
 
     boolean optional() default false;
+
 }

@@ -9,4 +9,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class TableQueryAST extends SelectQueryAST {
 
+    String rowSelector;
+
 }
