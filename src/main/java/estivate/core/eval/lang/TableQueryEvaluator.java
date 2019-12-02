@@ -81,7 +81,7 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
             context.setTableIndex(tableIndex);
 
             // select table data rows
-            Elements dataRows = tableRootElement.select("tbody tr");
+            Elements dataRows = tableRootElement.select(ast.getRowSelector());
 
             context.setQueryResult(dataRows);
         }
