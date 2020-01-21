@@ -1,5 +1,7 @@
 package estivate;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
@@ -75,7 +77,27 @@ public class EstivateMapper {
     }
 
     private Document parseStream(InputStream stream) throws IOException {
-        return Jsoup.parse(stream, this.encoding, this.baseURI);
+        return Jsoup.parse(bufferize(stream), this.encoding, this.baseURI);
+    }
+
+    /**
+     * Workaround of JSoup stream parsing that fail on very rare byte configuration
+     * 
+     * @param inputStream
+     * @return new InputStream with datas get fetched
+     * @throws IOException
+     */
+    private InputStream bufferize(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        buffer.flush();
+        byte[] byteArray = buffer.toByteArray();
+
+        return new ByteArrayInputStream(byteArray);
     }
 
     @SuppressWarnings("unchecked")
