@@ -395,11 +395,11 @@ public class TableTest extends EstivateTest {
 
         @Data
         public static class LineResult {
-            @Column(cssClass = "col1")
+            @Column(thClass = "col1")
             @Text(select = "span")
             public String name;
 
-            @Column(cssClass = "col4")
+            @Column(thClass = "col4")
             @Text(select = "span")
             public String value4;
 

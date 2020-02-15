@@ -37,7 +37,7 @@ public @interface Column {
      * <p>
      * Class name to match the column from &lt;th&gt; tag
      */
-    String cssClass() default "";
+    String thClass() default "";
 
     boolean regex() default false;
 
