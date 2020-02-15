@@ -19,17 +19,25 @@ public @interface Column {
 
     /**
      * <p>
-     * For multiple row header, path can be specified with a slash (/) separator.
+     * For multiple row header, path can be specified with a slash (/)
+     * separator.
      * 
      */
     String value() default "";
 
     /**
      * <p>
-     * For multiple row header, path can be specified with a slash (/) separator.
+     * For multiple row header, path can be specified with a slash (/)
+     * separator.
      * 
      */
     String name() default "";
+
+    /**
+     * <p>
+     * Class name to match the column from &lt;th&gt; tag
+     */
+    String cssClass() default "";
 
     boolean regex() default false;
 
@@ -40,4 +48,5 @@ public @interface Column {
     boolean ignoreCase() default true;
 
     boolean ignoreSpace() default true;
+
 }

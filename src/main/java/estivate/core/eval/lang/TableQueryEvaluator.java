@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -68,7 +69,7 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
                     int rowSpan = readIntAttr(header, "rowspan", 1);
                     int colSpan = readIntAttr(header, "colspan", 1);
 
-                    tableIndex.put(currRow, header.text(), IntRange.of(currCol, currCol + colSpan - 1));
+                    tableIndex.put(currRow, header, IntRange.of(currCol, currCol + colSpan - 1));
 
                     rowCarries[currCol] = rowSpan;
                     colCarries[currCol] = colSpan;
@@ -132,33 +133,42 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
 
         private static final String COL_SEP = "/";
 
-        // <Path, IntRange>
+        // <Class() Path, IntRange>
         @Getter
-        Map<String, IntRange> colMap = new HashMap<String, IntRange>();
+        Map<String, IntRange> classColMap = new HashMap<String, IntRange>();
 
-        // <Row, Path, IntRange>
+        // <Tex() Path, IntRange>
+        @Getter
+        Map<String, IntRange> textColMap = new HashMap<String, IntRange>();
+
+        // <Row, Text() Path, IntRange>
         Map<Integer, Map<String, IntRange>> rowColMap = new HashMap<Integer, Map<String, IntRange>>();
 
-        protected void put(int row, String column, IntRange range) {
+        protected void put(int row, Element header, IntRange range) {
 
-            String col = column.replace(COL_SEP, "\\" + COL_SEP);
+            String col = header.text().replace(COL_SEP, "\\" + COL_SEP);
+
+            Set<String> classNames = header.classNames();
 
             log.debug("put {} {} {}", col, row, range);
-            Map<String, IntRange> map = rowColMap.get(row);
-            if (map == null) {
-                map = new HashMap<String, IntRange>();
-                rowColMap.put(row, map);
+            Map<String, IntRange> colRangeMap = rowColMap.get(row);
+            if (colRangeMap == null) {
+                colRangeMap = new HashMap<String, IntRange>();
+                rowColMap.put(row, colRangeMap);
             }
-            colMap.put(col, range);
+            textColMap.put(col, range);
+            for (String className : classNames) {
+                classColMap.put(className, range);
+            }
             if (row == 0) {
-                map.put(col, range);
+                colRangeMap.put(col, range);
             } else {
                 // find parent cell
                 Map<String, IntRange> map2 = rowColMap.get(row - 1);
                 for (Entry<String, IntRange> lastRowEntry : map2.entrySet()) {
                     if (lastRowEntry.getValue().include(range.begin)) {
-                        map.put(lastRowEntry.getKey() + COL_SEP + col, range);
-                        colMap.put(lastRowEntry.getKey() + COL_SEP + col, range);
+                        colRangeMap.put(lastRowEntry.getKey() + COL_SEP + col, range);
+                        textColMap.put(lastRowEntry.getKey() + COL_SEP + col, range);
                     }
                 }
             }

@@ -47,6 +47,8 @@ public class ColumnParser implements AnnotationParser {
             query.setRegex(Pattern.compile(value));
         }
 
+        query.setClassName(annotation.cssClass());
+
         return query;
     }
 
