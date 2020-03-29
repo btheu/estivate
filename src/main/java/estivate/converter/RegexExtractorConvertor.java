@@ -45,12 +45,37 @@ public class RegexExtractorConvertor implements Converter {
         if (matches.isEmpty()) {
             throw new RuntimeException("Expression '" + format + "' cant match '" + value.toString() + "'");
         }
-
+        if (targetType.isAssignableFrom(double.class)) {
+            return Double.parseDouble(matches.get(0));
+        }
+        if (targetType.isAssignableFrom(long.class)) {
+            return Long.parseLong(matches.get(0));
+        }
         if (targetType.isAssignableFrom(int.class)) {
             return Integer.parseInt(matches.get(0));
         }
         if (targetType.isAssignableFrom(short.class)) {
             return Short.parseShort(matches.get(0));
+        }
+        if (targetType.isAssignableFrom(double[].class)) {
+
+            double[] result = new double[matches.size()];
+            int idx = 0;
+            for (String match : matches) {
+                result[idx++] = Double.parseDouble(match);
+            }
+
+            return result;
+        }
+        if (targetType.isAssignableFrom(long[].class)) {
+
+            long[] result = new long[matches.size()];
+            int idx = 0;
+            for (String match : matches) {
+                result[idx++] = Long.parseLong(match);
+            }
+
+            return result;
         }
         if (targetType.isAssignableFrom(int[].class)) {
 
