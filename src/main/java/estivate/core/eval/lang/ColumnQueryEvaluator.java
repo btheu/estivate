@@ -58,7 +58,6 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
             context.setQueryResult(new Elements());
 
             Map<String, IntRange> textColMap = tableIndex.getTextColMap();
-            Map<String, IntRange> classColMap = tableIndex.getClassColMap();
 
             if (ast.getRegex() != null) {
                 Pattern regex = ast.getRegex();
@@ -74,7 +73,7 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
                 if (context.getQueryResult().isEmpty()) {
                     throw new EstivateEvaluatorException(context, "Column not found: " + regex.toString());
                 }
-            } else if (!StringUtil.isBlank(ast.getColumnName())) {
+            } else if (StringUtil.isNotBlank(ast.getColumnName())) {
                 String columnName = ast.getColumnName();
                 IntRange indexOf = textColMap.get(columnName);
                 if (indexOf == null) {
@@ -82,11 +81,11 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
                 }
 
                 context.setQueryResult(TableQueryEvaluator.findTdsInRange(row.select("td"), indexOf));
-            } else if (!StringUtil.isBlank(ast.getClassName())) {
-                String className = ast.getClassName();
-                IntRange indexOf = classColMap.get(className);
+            } else if (StringUtil.isNotBlank(ast.getHavingExpr())) {
+                String havingExpr = ast.getHavingExpr();
+                IntRange indexOf = context.getTableIndex().eval(havingExpr);
                 if (indexOf == null) {
-                    throw new EstivateEvaluatorException(context, "Column not found: ." + className);
+                    throw new EstivateEvaluatorException(context, "Column not found: " + havingExpr);
                 }
 
                 context.setQueryResult(TableQueryEvaluator.findTdsInRange(row.select("td"), indexOf));

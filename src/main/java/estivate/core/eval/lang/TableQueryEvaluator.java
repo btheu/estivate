@@ -1,7 +1,9 @@
 package estivate.core.eval.lang;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -33,9 +35,9 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
 
             // here set table select datas and column indexation result
 
-            TableIndex tableIndex = new TableIndex();
-
             Elements headRows = tableRootElement.select("thead tr");
+
+            TableIndex tableIndex = new TableIndex(headRows);
 
             // index table header row
             int currRow = 0;
@@ -133,9 +135,7 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
 
         private static final String COL_SEP = "/";
 
-        // <Class() Path, IntRange>
-        @Getter
-        Map<String, IntRange> classColMap = new HashMap<String, IntRange>();
+        Elements headerRows;
 
         // <Tex() Path, IntRange>
         @Getter
@@ -143,6 +143,13 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
 
         // <Row, Text() Path, IntRange>
         Map<Integer, Map<String, IntRange>> rowColMap = new HashMap<Integer, Map<String, IntRange>>();
+
+        // <havingExpr, IntRange>
+        Map<String, IntRange> evalCache = new HashMap<String, IntRange>();
+
+        public TableIndex(Elements headRows) {
+            headerRows = headRows;
+        }
 
         protected void put(int row, Element header, IntRange range) {
 
@@ -157,9 +164,6 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
                 rowColMap.put(row, colRangeMap);
             }
             textColMap.put(col, range);
-            for (String className : classNames) {
-                classColMap.put(className, range);
-            }
             if (row == 0) {
                 colRangeMap.put(col, range);
             } else {
@@ -174,6 +178,50 @@ public class TableQueryEvaluator extends SelectQueryEvaluator {
             }
         }
 
+        public IntRange eval(String havingExpr) {
+            IntRange intRange = evalCache.get(havingExpr);
+            if (intRange == null) {
+                intRange = evalWithoutCache(havingExpr);
+                evalCache.put(havingExpr, intRange);
+            }
+            return intRange;
+        }
+
+        private IntRange evalWithoutCache(String havingExpr) {
+            List<IntRange> results = new ArrayList<IntRange>();
+
+            // index table header cols
+            int numberOfCols = numberOfCols(headerRows);
+            for (Element row : headerRows) {
+                Iterator<Element> headers = row.select("th,td").iterator();
+                for (int currCol = 0; currCol < numberOfCols;) {
+                    if (!headers.hasNext()) {
+                        log.error("Missing 'th' element, html was {}", headerRows);
+                        throw new EstivateEvaluatorException("Mal formed HTML, an other table header 'th' is missing");
+                    }
+                    Element header = headers.next();
+
+                    int colSpan = readIntAttr(header, "colspan", 1);
+
+                    if (header.is(havingExpr) || header.is(":has(" + havingExpr + ")")) {
+                        results.add(IntRange.of(currCol, currCol + colSpan - 1));
+                    }
+
+                    currCol += colSpan;
+                }
+            }
+            if (results.isEmpty()) {
+                log.error("having expr '{}' match nothing, was {}", havingExpr, headerRows);
+                throw new EstivateEvaluatorException("having expr match nothing, was " + havingExpr);
+            }
+            if (results.size() >= 2) {
+                log.error("having expr '{}' match {} columns, only one is expected, was {}", //
+                        havingExpr, results.size(), headerRows);
+                throw new EstivateEvaluatorException(
+                        "having expr match " + results.size() + " columns, only one is expected, was " + havingExpr);
+            }
+            return results.get(0);
+        }
     }
 
     @Data

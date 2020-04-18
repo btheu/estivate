@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ColumnQueryAST extends QueryAST {
 
-    protected String className;
+    protected String havingExpr;
 
     protected String columnName;
 

@@ -19,16 +19,14 @@ public @interface Column {
 
     /**
      * <p>
-     * For multiple row header, path can be specified with a slash (/)
-     * separator.
+     * For multiple row header, path can be specified with a slash (/) separator.
      * 
      */
     String value() default "";
 
     /**
      * <p>
-     * For multiple row header, path can be specified with a slash (/)
-     * separator.
+     * For multiple row header, path can be specified with a slash (/) separator.
      * 
      */
     String name() default "";
@@ -38,6 +36,8 @@ public @interface Column {
      * Class name to match the column from &lt;th&gt; tag
      */
     String thClass() default "";
+
+    String thHaving() default "";
 
     boolean regex() default false;
 
