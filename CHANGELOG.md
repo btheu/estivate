@@ -1,5 +1,14 @@
+## 0.4.1 - 2020-05-17
 
-## 0.4.0 - pending
+* update dependencies
+* refactor: add facade parse methods
+* fix: JSoup workaround inputStream document parse - byte buffer
+* feat(table): add classname selector to match head from <th> class
+* feat(table): rename cssClass => thClass
+* fix(RegexExtractorConvertor): handle long & double
+* feat(table): add thHaving() feature & refactor thClass
+
+## 0.4.0 - 2019-12-02
 
 *	feat: add @Table and @Column support
 *	fix: optional behavior
