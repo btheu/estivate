@@ -6,4 +6,8 @@ public class StringUtil {
         return word == null || word.trim().length() == 0;
     }
 
+    public static boolean isNotBlank(String word) {
+        return !isBlank(word);
+    }
+
 }

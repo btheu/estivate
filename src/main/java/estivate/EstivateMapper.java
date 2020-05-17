@@ -1,5 +1,7 @@
 package estivate;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
@@ -56,9 +58,46 @@ public class EstivateMapper {
         STANDARD_TARGET_TYPES.add(Element.class);
     }
 
-    public <T> T map(InputStream document, Class<T> clazz) throws IOException {
-        Document doc = Jsoup.parse(document, this.encoding, this.baseURI);
+    public <T> T map(InputStream stream, Class<T> clazz) throws IOException {
+        Document doc = parseStream(stream);
+        log.debug("{}", doc.toString());
         return this.map(doc, clazz);
+    }
+
+    public <T> List<T> mapToList(InputStream stream, Class<T> clazz) throws IOException {
+        Document doc = parseStream(stream);
+        log.debug("{}", doc.toString());
+        return this.mapToList(doc, clazz);
+    }
+
+    public Object map(InputStream stream, Type type) throws IOException {
+        Document doc = parseStream(stream);
+        log.debug("{}", doc.toString());
+        return map(doc, type);
+    }
+
+    private Document parseStream(InputStream stream) throws IOException {
+        return Jsoup.parse(bufferize(stream), this.encoding, this.baseURI);
+    }
+
+    /**
+     * Workaround of JSoup stream parsing that fail on very rare byte configuration
+     * 
+     * @param inputStream
+     * @return new InputStream with datas get fetched
+     * @throws IOException
+     */
+    private InputStream bufferize(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        buffer.flush();
+        byte[] byteArray = buffer.toByteArray();
+
+        return new ByteArrayInputStream(byteArray);
     }
 
     @SuppressWarnings("unchecked")
@@ -71,11 +110,6 @@ public class EstivateMapper {
         return (T) EstivateEvaluator.eval(context, ast);
     }
 
-    public <T> List<T> mapToList(InputStream document, Class<T> clazz) throws IOException {
-        Document doc = Jsoup.parse(document, this.encoding, this.baseURI);
-        return this.mapToList(doc, clazz);
-    }
-
     @SuppressWarnings("unchecked")
     public <T> List<T> mapToList(Document document, Class<T> clazz) {
 
@@ -86,7 +120,7 @@ public class EstivateMapper {
         return (List<T>) EstivateEvaluator.evalToList(context, ast);
     }
 
-    public Object map(InputStream document, Type type) throws IOException {
+    public Object map(Document document, Type type) throws IOException {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
@@ -97,11 +131,11 @@ public class EstivateMapper {
             Class<?> rowClass = (Class<?>) parameterizedType.getRawType();
 
             if (Collection.class.isAssignableFrom(rowClass)) {
+                log.debug(rowClass.getCanonicalName() + " is a Collection type");
 
                 return this.mapToList(document, classArgument);
-
             } else {
-                log.debug(rowClass.getCanonicalName() + " is not a collection");
+                log.error(rowClass.getCanonicalName() + " is not a Collection type");
 
                 throw new IllegalArgumentException("Parameterized type not handled: " + rowClass.getCanonicalName());
             }
@@ -109,5 +143,4 @@ public class EstivateMapper {
             return this.map(document, (Class<?>) type);
         }
     }
-
 }

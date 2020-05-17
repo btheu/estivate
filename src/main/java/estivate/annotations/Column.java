@@ -31,6 +31,14 @@ public @interface Column {
      */
     String name() default "";
 
+    /**
+     * <p>
+     * Class name to match the column from &lt;th&gt; tag
+     */
+    String thClass() default "";
+
+    String thHaving() default "";
+
     boolean regex() default false;
 
     boolean optional() default false;
@@ -40,4 +48,5 @@ public @interface Column {
     boolean ignoreCase() default true;
 
     boolean ignoreSpace() default true;
+
 }

@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import estivate.EstivateTest;
 import estivate.annotations.Column;
@@ -16,6 +18,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@FixMethodOrder(MethodSorters.JVM)
 public class TableTest extends EstivateTest {
 
     @Test
@@ -362,6 +365,76 @@ public class TableTest extends EstivateTest {
             public String name;
 
             @Column(name = "col 4")
+            @Text(select = "span")
+            public String value4;
+
+        }
+    }
+
+    @Test
+    public void table10CssClassHeader() throws IOException {
+
+        InputStream document = this.read("/table/u10.html");
+
+        Result10 result = this.mapper.map(document, Result10.class);
+
+        Assert.assertEquals("name1A", result.lines.get(0).getName());
+        Assert.assertEquals("name1B", result.lines.get(1).getName());
+
+        Assert.assertEquals("value4A", result.lines.get(0).getValue4());
+        Assert.assertEquals("value4B", result.lines.get(1).getValue4());
+
+        log.info(result.toString());
+    }
+
+    @Data
+    public static class Result10 {
+
+        @Table("#table1")
+        public List<LineResult> lines;
+
+        @Data
+        public static class LineResult {
+            @Column(thClass = "col1")
+            @Text(select = "span")
+            public String name;
+
+            @Column(thClass = "col4")
+            @Text(select = "span")
+            public String value4;
+
+        }
+    }
+
+    @Test
+    public void table11ThHaving() throws IOException {
+
+        InputStream document = this.read("/table/u11.html");
+
+        Result11 result = this.mapper.map(document, Result11.class);
+
+        Assert.assertEquals("name1A", result.lines.get(0).getName());
+        Assert.assertEquals("name1B", result.lines.get(1).getName());
+
+        Assert.assertEquals("value4A", result.lines.get(0).getValue4());
+        Assert.assertEquals("value4B", result.lines.get(1).getValue4());
+
+        log.info(result.toString());
+    }
+
+    @Data
+    public static class Result11 {
+
+        @Table("#table1")
+        public List<LineResult> lines;
+
+        @Data
+        public static class LineResult {
+            @Column(thClass = "col1")
+            @Text(select = "span")
+            public String name;
+
+            @Column(thHaving = "img[alt*=alt4]")
             @Text(select = "span")
             public String value4;
 

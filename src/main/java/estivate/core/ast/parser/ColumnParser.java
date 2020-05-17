@@ -47,6 +47,13 @@ public class ColumnParser implements AnnotationParser {
             query.setRegex(Pattern.compile(value));
         }
 
+        if (StringUtil.isNotBlank(annotation.thClass())) {
+            query.setHavingExpr("." + annotation.thClass());
+        }
+        if (StringUtil.isNotBlank(annotation.thHaving())) {
+            query.setHavingExpr(annotation.thHaving());
+        }
+
         return query;
     }
 

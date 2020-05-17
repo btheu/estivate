@@ -9,6 +9,10 @@ public class EstivateEvaluatorException extends RuntimeException {
     @Getter
     private EvalContext context;
 
+    public EstivateEvaluatorException(String message) {
+        super(message);
+    }
+
     public EstivateEvaluatorException(EvalContext context, String message) {
         super(message);
         this.context = context.toBuilder().build();

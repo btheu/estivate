@@ -16,6 +16,7 @@ import estivate.core.eval.EstivateEvaluator.QueryEvaluator;
 import estivate.core.eval.EstivateEvaluatorException;
 import estivate.core.eval.lang.TableQueryEvaluator.IntRange;
 import estivate.core.eval.lang.TableQueryEvaluator.TableIndex;
+import estivate.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -56,20 +57,12 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
 
             context.setQueryResult(new Elements());
 
-            Map<String, IntRange> colMap = tableIndex.getColMap();
+            Map<String, IntRange> textColMap = tableIndex.getTextColMap();
 
-            if (ast.getRegex() == null) {
-                String columnName = ast.getColumnName();
-                IntRange indexOf = colMap.get(columnName);
-                if (indexOf == null) {
-                    throw new EstivateEvaluatorException(context, "Column not found: " + columnName);
-                }
-
-                context.setQueryResult(TableQueryEvaluator.findTdsInRange(row.select("td"), indexOf));
-            } else {
+            if (ast.getRegex() != null) {
                 Pattern regex = ast.getRegex();
 
-                Set<Entry<String, IntRange>> entrySet = colMap.entrySet();
+                Set<Entry<String, IntRange>> entrySet = textColMap.entrySet();
                 for (Entry<String, IntRange> entry : entrySet) {
                     if (regex.matcher(entry.getKey().replaceAll("\\\\/", "/")).matches()) {
                         IntRange indexOf = entry.getValue();
@@ -80,8 +73,23 @@ public class ColumnQueryEvaluator implements QueryEvaluator {
                 if (context.getQueryResult().isEmpty()) {
                     throw new EstivateEvaluatorException(context, "Column not found: " + regex.toString());
                 }
-            }
+            } else if (StringUtil.isNotBlank(ast.getColumnName())) {
+                String columnName = ast.getColumnName();
+                IntRange indexOf = textColMap.get(columnName);
+                if (indexOf == null) {
+                    throw new EstivateEvaluatorException(context, "Column not found: " + columnName);
+                }
 
+                context.setQueryResult(TableQueryEvaluator.findTdsInRange(row.select("td"), indexOf));
+            } else if (StringUtil.isNotBlank(ast.getHavingExpr())) {
+                String havingExpr = ast.getHavingExpr();
+                IntRange indexOf = context.getTableIndex().eval(havingExpr);
+                if (indexOf == null) {
+                    throw new EstivateEvaluatorException(context, "Column not found: " + havingExpr);
+                }
+
+                context.setQueryResult(TableQueryEvaluator.findTdsInRange(row.select("td"), indexOf));
+            }
         }
 
     }
