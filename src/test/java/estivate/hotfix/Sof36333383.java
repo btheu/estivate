@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Text;
@@ -27,7 +27,7 @@ public class Sof36333383 extends EstivateTest {
 
 		Result_36333383 result = mapper.map(doc, Result_36333383.class);
 
-		Assert.assertNotNull(result);
+		Assertions.assertNotNull(result);
 
 		log.info(result.toString());
 	}

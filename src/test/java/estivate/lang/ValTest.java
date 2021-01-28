@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Select;
 import estivate.annotations.Val;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ValTest extends EstivateTest {
@@ -24,15 +23,15 @@ public class ValTest extends EstivateTest {
 
         Result2 result = this.mapper.map(document, Result2.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals("My Value 1 My Value 2 My Value 3", result.getValue1());
-        Assert.assertEquals("My Value 1 My Value 2 My Value 3", result.getValue2());
+        Assertions.assertEquals("My Value 1 My Value 2 My Value 3", result.getValue1());
+        Assertions.assertEquals("My Value 1 My Value 2 My Value 3", result.getValue2());
 
-        Assert.assertEquals(3, result.getValues().size());
-        Assert.assertEquals("My Value 1", result.getValues().get(0));
-        Assert.assertEquals("My Value 2", result.getValues().get(1));
-        Assert.assertEquals("My Value 3", result.getValues().get(2));
+        Assertions.assertEquals(3, result.getValues().size());
+        Assertions.assertEquals("My Value 1", result.getValues().get(0));
+        Assertions.assertEquals("My Value 2", result.getValues().get(1));
+        Assertions.assertEquals("My Value 3", result.getValues().get(2));
 
         log.info(result.toString());
     }
@@ -58,11 +57,11 @@ public class ValTest extends EstivateTest {
 
         Result result = this.mapper.map(document, Result.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals("My Value", result.getValue1());
-        Assert.assertEquals("My Value", result.getValue2());
-        Assert.assertEquals("My Value", result.getValue3());
+        Assertions.assertEquals("My Value", result.getValue1());
+        Assertions.assertEquals("My Value", result.getValue2());
+        Assertions.assertEquals("My Value", result.getValue3());
 
         log.info(result.toString());
     }

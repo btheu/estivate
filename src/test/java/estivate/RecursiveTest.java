@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.annotations.Attr;
 import estivate.annotations.Select;
@@ -23,13 +23,13 @@ public class RecursiveTest extends EstivateTest {
 
         Result3 result = mapper.map(document, Result3.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertNotNull(result.getSubResults());
-        Assert.assertEquals(3, result.getSubResults().size());
-        Assert.assertEquals("role_1", result.getSubResults().get(0).getRole());
-        Assert.assertEquals("role_2", result.getSubResults().get(1).getRole());
-        Assert.assertEquals("role_3", result.getSubResults().get(2).getRole());
+        Assertions.assertNotNull(result.getSubResults());
+        Assertions.assertEquals(3, result.getSubResults().size());
+        Assertions.assertEquals("role_1", result.getSubResults().get(0).getRole());
+        Assertions.assertEquals("role_2", result.getSubResults().get(1).getRole());
+        Assertions.assertEquals("role_3", result.getSubResults().get(2).getRole());
 
         log.info(result.toString());
     }
@@ -41,13 +41,13 @@ public class RecursiveTest extends EstivateTest {
 
         Result3 result = mapper.map(document, Result3.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertNotNull(result.getSubResults());
-        Assert.assertEquals(3, result.getSubResults().size());
-        Assert.assertEquals("Name 1", result.getSubResults().get(0).getName());
-        Assert.assertEquals("Name 2", result.getSubResults().get(1).getName());
-        Assert.assertEquals("Name 3", result.getSubResults().get(2).getName());
+        Assertions.assertNotNull(result.getSubResults());
+        Assertions.assertEquals(3, result.getSubResults().size());
+        Assertions.assertEquals("Name 1", result.getSubResults().get(0).getName());
+        Assertions.assertEquals("Name 2", result.getSubResults().get(1).getName());
+        Assertions.assertEquals("Name 3", result.getSubResults().get(2).getName());
 
         log.info(result.toString());
     }
@@ -78,13 +78,13 @@ public class RecursiveTest extends EstivateTest {
 
         ResultSingle result = mapper.map(document, ResultSingle.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertNotNull(result.getSubResult1());
-        Assert.assertNotNull(result.getSubResult2());
+        Assertions.assertNotNull(result.getSubResult1());
+        Assertions.assertNotNull(result.getSubResult2());
 
-        Assert.assertEquals("Name 2", result.getSubResult1().getName());
-        Assert.assertEquals("Name 2", result.getSubResult2().getName());
+        Assertions.assertEquals("Name 2", result.getSubResult1().getName());
+        Assertions.assertEquals("Name 2", result.getSubResult2().getName());
 
         log.info(result.toString());
     }
@@ -96,13 +96,13 @@ public class RecursiveTest extends EstivateTest {
 
         ResultList result = mapper.map(document, ResultList.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertNotNull(result.getSubResults1());
-        Assert.assertNotNull(result.getSubResults2());
+        Assertions.assertNotNull(result.getSubResults1());
+        Assertions.assertNotNull(result.getSubResults2());
 
-        Assert.assertEquals(3, result.getSubResults1().size());
-        Assert.assertEquals(3, result.getSubResults2().size());
+        Assertions.assertEquals(3, result.getSubResults1().size());
+        Assertions.assertEquals(3, result.getSubResults2().size());
 
         List<SubResult> subResults = result.getSubResults1();
         for (SubResult subResult : subResults) {

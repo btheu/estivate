@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import estivate.EstivateTest;
 import estivate.annotations.Column;
@@ -18,7 +18,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@FixMethodOrder(MethodSorters.JVM)
+@TestMethodOrder(value = OrderAnnotation.class)
 public class TableTest extends EstivateTest {
 
     @Test
@@ -28,9 +28,9 @@ public class TableTest extends EstivateTest {
 
         Result1 result = this.mapper.map(document, Result1.class);
 
-        Assert.assertEquals("streetA", result.lines.get(0).getStreet());
-        Assert.assertEquals("streetB", result.lines.get(1).getStreet());
-        Assert.assertEquals("streetC", result.lines.get(2).getStreet());
+        Assertions.assertEquals("streetA", result.lines.get(0).getStreet());
+        Assertions.assertEquals("streetB", result.lines.get(1).getStreet());
+        Assertions.assertEquals("streetC", result.lines.get(2).getStreet());
 
         log.info(result.toString());
     }
@@ -111,9 +111,9 @@ public class TableTest extends EstivateTest {
 
         Result2 result = this.mapper.map(document, Result2.class);
 
-        Assert.assertEquals("valueA", result.lines.get(0).getValue());
-        Assert.assertEquals("valueB", result.lines.get(1).getValue());
-        Assert.assertEquals("valueC", result.lines.get(2).getValue());
+        Assertions.assertEquals("valueA", result.lines.get(0).getValue());
+        Assertions.assertEquals("valueB", result.lines.get(1).getValue());
+        Assertions.assertEquals("valueC", result.lines.get(2).getValue());
 
         log.info(result.toString());
     }
@@ -148,9 +148,9 @@ public class TableTest extends EstivateTest {
 
         Result3 result = this.mapper.map(document, Result3.class);
 
-        Assert.assertEquals("valueA", result.lines.get(0).getValue());
-        Assert.assertEquals("valueB", result.lines.get(1).getValue());
-        Assert.assertEquals("valueC", result.lines.get(2).getValue());
+        Assertions.assertEquals("valueA", result.lines.get(0).getValue());
+        Assertions.assertEquals("valueB", result.lines.get(1).getValue());
+        Assertions.assertEquals("valueC", result.lines.get(2).getValue());
 
         log.info(result.toString());
     }
@@ -185,9 +185,9 @@ public class TableTest extends EstivateTest {
 
         Result4 result = this.mapper.map(document, Result4.class);
 
-        Assert.assertEquals("valueA", result.lines.get(0).getValue());
-        Assert.assertEquals("valueB", result.lines.get(1).getValue());
-        Assert.assertEquals("valueC", result.lines.get(2).getValue());
+        Assertions.assertEquals("valueA", result.lines.get(0).getValue());
+        Assertions.assertEquals("valueB", result.lines.get(1).getValue());
+        Assertions.assertEquals("valueC", result.lines.get(2).getValue());
 
         log.info(result.toString());
     }
@@ -199,11 +199,11 @@ public class TableTest extends EstivateTest {
 
         Result4 result = this.mapper.map(document, Result4.class);
 
-        Assert.assertEquals("valueA", result.lines.get(0).getValue());
-        Assert.assertEquals("valueB", result.lines.get(1).getValue());
-        Assert.assertEquals("valueC", result.lines.get(2).getValue());
+        Assertions.assertEquals("valueA", result.lines.get(0).getValue());
+        Assertions.assertEquals("valueB", result.lines.get(1).getValue());
+        Assertions.assertEquals("valueC", result.lines.get(2).getValue());
 
-        Assert.assertEquals("spanC", result.lines.get(2).getCol9());
+        Assertions.assertEquals("spanC", result.lines.get(2).getCol9());
 
         log.info(result.toString());
     }
@@ -242,22 +242,22 @@ public class TableTest extends EstivateTest {
 
         Result7 result = this.mapper.map(document, Result7.class);
 
-        Assert.assertEquals("name1A", result.lines.get(0).getName());
-        Assert.assertEquals("name1B", result.lines.get(1).getName());
+        Assertions.assertEquals("name1A", result.lines.get(0).getName());
+        Assertions.assertEquals("name1B", result.lines.get(1).getName());
 
-        Assert.assertEquals("value246A", result.lines.get(0).getValue246());
-        Assert.assertEquals("value257A", result.lines.get(0).getValue257());
-        Assert.assertEquals("value346A", result.lines.get(0).getValue346());
-        Assert.assertEquals("value357A", result.lines.get(0).getValue357());
+        Assertions.assertEquals("value246A", result.lines.get(0).getValue246());
+        Assertions.assertEquals("value257A", result.lines.get(0).getValue257());
+        Assertions.assertEquals("value346A", result.lines.get(0).getValue346());
+        Assertions.assertEquals("value357A", result.lines.get(0).getValue357());
 
-        Assert.assertEquals("value356A value357A", result.lines.get(0).getValue35());
+        Assertions.assertEquals("value356A value357A", result.lines.get(0).getValue35());
 
-        Assert.assertEquals("value246B", result.lines.get(1).getValue246());
-        Assert.assertEquals("value257B", result.lines.get(1).getValue257());
-        Assert.assertEquals("value346B", result.lines.get(1).getValue346());
-        Assert.assertEquals("value357B", result.lines.get(1).getValue357());
+        Assertions.assertEquals("value246B", result.lines.get(1).getValue246());
+        Assertions.assertEquals("value257B", result.lines.get(1).getValue257());
+        Assertions.assertEquals("value346B", result.lines.get(1).getValue346());
+        Assertions.assertEquals("value357B", result.lines.get(1).getValue357());
 
-        Assert.assertEquals("value356B value357B", result.lines.get(1).getValue35());
+        Assertions.assertEquals("value356B value357B", result.lines.get(1).getValue35());
 
         log.info(result.toString());
     }
@@ -308,11 +308,11 @@ public class TableTest extends EstivateTest {
 
         Result8 result = this.mapper.map(document, Result8.class);
 
-        Assert.assertEquals("name1A", result.lines.get(0).getName());
-        Assert.assertEquals("name1B", result.lines.get(1).getName());
+        Assertions.assertEquals("name1A", result.lines.get(0).getName());
+        Assertions.assertEquals("name1B", result.lines.get(1).getName());
 
-        Assert.assertEquals("value4A", result.lines.get(0).getValue4());
-        Assert.assertEquals("value4B", result.lines.get(1).getValue4());
+        Assertions.assertEquals("value4A", result.lines.get(0).getValue4());
+        Assertions.assertEquals("value4B", result.lines.get(1).getValue4());
 
         log.info(result.toString());
     }
@@ -343,11 +343,11 @@ public class TableTest extends EstivateTest {
 
         Result9 result = this.mapper.map(document, Result9.class);
 
-        Assert.assertEquals("name1A", result.lines.get(0).getName());
-        Assert.assertEquals("name1B", result.lines.get(1).getName());
+        Assertions.assertEquals("name1A", result.lines.get(0).getName());
+        Assertions.assertEquals("name1B", result.lines.get(1).getName());
 
-        Assert.assertEquals("value4A", result.lines.get(0).getValue4());
-        Assert.assertEquals("value4B", result.lines.get(1).getValue4());
+        Assertions.assertEquals("value4A", result.lines.get(0).getValue4());
+        Assertions.assertEquals("value4B", result.lines.get(1).getValue4());
 
         log.info(result.toString());
     }
@@ -378,11 +378,11 @@ public class TableTest extends EstivateTest {
 
         Result10 result = this.mapper.map(document, Result10.class);
 
-        Assert.assertEquals("name1A", result.lines.get(0).getName());
-        Assert.assertEquals("name1B", result.lines.get(1).getName());
+        Assertions.assertEquals("name1A", result.lines.get(0).getName());
+        Assertions.assertEquals("name1B", result.lines.get(1).getName());
 
-        Assert.assertEquals("value4A", result.lines.get(0).getValue4());
-        Assert.assertEquals("value4B", result.lines.get(1).getValue4());
+        Assertions.assertEquals("value4A", result.lines.get(0).getValue4());
+        Assertions.assertEquals("value4B", result.lines.get(1).getValue4());
 
         log.info(result.toString());
     }
@@ -413,11 +413,11 @@ public class TableTest extends EstivateTest {
 
         Result11 result = this.mapper.map(document, Result11.class);
 
-        Assert.assertEquals("name1A", result.lines.get(0).getName());
-        Assert.assertEquals("name1B", result.lines.get(1).getName());
+        Assertions.assertEquals("name1A", result.lines.get(0).getName());
+        Assertions.assertEquals("name1B", result.lines.get(1).getName());
 
-        Assert.assertEquals("value4A", result.lines.get(0).getValue4());
-        Assert.assertEquals("value4B", result.lines.get(1).getValue4());
+        Assertions.assertEquals("value4A", result.lines.get(0).getValue4());
+        Assertions.assertEquals("value4B", result.lines.get(1).getValue4());
 
         log.info(result.toString());
     }

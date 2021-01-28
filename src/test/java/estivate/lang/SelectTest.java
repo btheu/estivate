@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.util.Collection;
 
 import org.jsoup.nodes.Element;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Select;
@@ -24,7 +24,7 @@ public class SelectTest extends EstivateTest {
 
 		ResultIndex result = mapper.map(document, ResultIndex.class);
 
-		Assert.assertNotNull(result);
+		Assertions.assertNotNull(result);
 		assertContains("Name 1", result.getName1());
 		assertContains("Name 2", result.getName2());
 		assertContains("Name 3", result.getName3());
@@ -46,7 +46,7 @@ public class SelectTest extends EstivateTest {
 
         ResultString result = mapper.map(document, ResultString.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
         assertNotBlank(result.getName1());
         assertNotBlank(result.getName2());
     }
@@ -58,12 +58,12 @@ public class SelectTest extends EstivateTest {
 
         ResultElement result = mapper.map(document, ResultElement.class);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getInput1());
-        Assert.assertNotNull(result.getInput2());
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.getInput1());
+        Assertions.assertNotNull(result.getInput2());
 
-        Assert.assertEquals("input", result.getInput1().tagName());
-        Assert.assertEquals("input", result.getInput2().tagName());
+        Assertions.assertEquals("input", result.getInput1().tagName());
+        Assertions.assertEquals("input", result.getInput2().tagName());
 
         log.info(result.toString());
 
@@ -77,13 +77,13 @@ public class SelectTest extends EstivateTest {
         Collection<ResultList> results = mapper.mapToList(document,
                 ResultList.class);
 
-        Assert.assertNotNull(results);
-        Assert.assertEquals(3, results.size());
+        Assertions.assertNotNull(results);
+        Assertions.assertEquals(3, results.size());
 
         for (ResultList result : results) {
-            Assert.assertNotNull(result);
-            Assert.assertNotNull(result.getName1());
-            Assert.assertNotNull(result.getName2());
+            Assertions.assertNotNull(result);
+            Assertions.assertNotNull(result.getName1());
+            Assertions.assertNotNull(result.getName2());
         }
 
         log.info(results.toString());

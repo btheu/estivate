@@ -3,8 +3,8 @@ package estivate.lang;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Is;
@@ -22,11 +22,11 @@ public class IsTest extends EstivateTest {
 
         Result2 result = this.mapper.map(document, Result2.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals(false, result.isValue1());
-        Assert.assertEquals(false, result.isValue2());
-        Assert.assertEquals(true, result.isValue3());
+        Assertions.assertEquals(false, result.isValue1());
+        Assertions.assertEquals(false, result.isValue2());
+        Assertions.assertEquals(true, result.isValue3());
 
         log.info(result.toString());
     }
@@ -52,11 +52,11 @@ public class IsTest extends EstivateTest {
 
         Result result = this.mapper.map(document, Result.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals(true, result.getValue1());
-        Assert.assertEquals(true, result.isValue2());
-        Assert.assertEquals(true, result.isValue3());
+        Assertions.assertEquals(true, result.getValue1());
+        Assertions.assertEquals(true, result.isValue2());
+        Assertions.assertEquals(true, result.isValue3());
 
         log.info(result.toString());
     }

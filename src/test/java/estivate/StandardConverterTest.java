@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.annotations.Text;
 import lombok.Data;
@@ -23,31 +23,31 @@ public class StandardConverterTest extends EstivateTest {
 
         Result result = mapper.map(document, Result.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals(new Integer("3"), result.getInt1());
-        Assert.assertEquals(3, result.getInt2());
+        Assertions.assertEquals(new Integer("3"), result.getInt1());
+        Assertions.assertEquals(3, result.getInt2());
 
-        Assert.assertEquals(new Boolean("false"), result.getBool1());
-        Assert.assertEquals(false, result.isBool2());
+        Assertions.assertEquals(new Boolean("false"), result.getBool1());
+        Assertions.assertEquals(false, result.isBool2());
 
-        Assert.assertEquals(new Character('C'), result.getChar1());
-        Assert.assertEquals('C', result.getChar2());
+        Assertions.assertEquals(new Character('C'), result.getChar1());
+        Assertions.assertEquals('C', result.getChar2());
 
-        Assert.assertEquals(new Byte("11"), result.getByte1());
-        Assert.assertEquals(11, result.getByte2());
+        Assertions.assertEquals(new Byte("11"), result.getByte1());
+        Assertions.assertEquals(11, result.getByte2());
 
-        Assert.assertEquals(new Double("5.5"), result.getDouble1());
-        Assert.assertEquals(5.5d, result.getDouble2(), 0);
+        Assertions.assertEquals(new Double("5.5"), result.getDouble1());
+        Assertions.assertEquals(5.5d, result.getDouble2(), 0);
 
-        Assert.assertEquals(new Long("6"), result.getLong1());
-        Assert.assertEquals(6L, result.getLong2());
+        Assertions.assertEquals(new Long("6"), result.getLong1());
+        Assertions.assertEquals(6L, result.getLong2());
 
-        Assert.assertEquals(new Short("7"), result.getShort1());
-        Assert.assertEquals(7, result.getShort2());
+        Assertions.assertEquals(new Short("7"), result.getShort1());
+        Assertions.assertEquals(7, result.getShort2());
 
-        Assert.assertEquals(new Float("10.2"), result.getFloat1());
-        Assert.assertEquals(10.2f, result.getFloat2(), 0);
+        Assertions.assertEquals(new Float("10.2"), result.getFloat1());
+        Assertions.assertEquals(10.2f, result.getFloat2(), 0);
 
         log.info(result.toString());
     }
@@ -59,31 +59,31 @@ public class StandardConverterTest extends EstivateTest {
 
         Result result = mapper.map(document, Result.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals(new Integer("3000"), result.getInt1());
-        Assert.assertEquals(3000, result.getInt2());
+        Assertions.assertEquals(new Integer("3000"), result.getInt1());
+        Assertions.assertEquals(3000, result.getInt2());
 
-        Assert.assertEquals(new Boolean("false"), result.getBool1());
-        Assert.assertEquals(false, result.isBool2());
+        Assertions.assertEquals(new Boolean("false"), result.getBool1());
+        Assertions.assertEquals(false, result.isBool2());
 
-        Assert.assertEquals(new Character('C'), result.getChar1());
-        Assert.assertEquals('C', result.getChar2());
+        Assertions.assertEquals(new Character('C'), result.getChar1());
+        Assertions.assertEquals('C', result.getChar2());
 
-        Assert.assertEquals(new Byte("11"), result.getByte1());
-        Assert.assertEquals(11, result.getByte2());
+        Assertions.assertEquals(new Byte("11"), result.getByte1());
+        Assertions.assertEquals(11, result.getByte2());
 
-        Assert.assertEquals(new Double("5000.5"), result.getDouble1());
-        Assert.assertEquals(5000.5d, result.getDouble2(), 0);
+        Assertions.assertEquals(new Double("5000.5"), result.getDouble1());
+        Assertions.assertEquals(5000.5d, result.getDouble2(), 0);
 
-        Assert.assertEquals(new Long("6000"), result.getLong1());
-        Assert.assertEquals(6000L, result.getLong2());
+        Assertions.assertEquals(new Long("6000"), result.getLong1());
+        Assertions.assertEquals(6000L, result.getLong2());
 
-        Assert.assertEquals(new Short("7000"), result.getShort1());
-        Assert.assertEquals(7000, result.getShort2());
+        Assertions.assertEquals(new Short("7000"), result.getShort1());
+        Assertions.assertEquals(7000, result.getShort2());
 
-        Assert.assertEquals(new Float("1000.2"), result.getFloat1());
-        Assert.assertEquals(1000.2f, result.getFloat2(), 0);
+        Assertions.assertEquals(new Float("1000.2"), result.getFloat1());
+        Assertions.assertEquals(1000.2f, result.getFloat2(), 0);
 
         log.info(result.toString());
     }
@@ -94,7 +94,7 @@ public class StandardConverterTest extends EstivateTest {
 
         ResultList1 result = mapper.map(document, ResultList1.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
         List<Integer> integers = result.getIntegers1();
         for (Integer integer : integers) {
@@ -115,11 +115,11 @@ public class StandardConverterTest extends EstivateTest {
 
         ResultBig result = mapper.map(document, ResultBig.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"),
+        Assertions.assertEquals(new BigInteger("1111111111111111111111111111111111111111111111111111111111"),
                 result.getBigInt1());
-        Assert.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"),
+        Assertions.assertEquals(new BigDecimal("2222222222222222222222222222222222222222222222222222222222"),
                 result.getBigDec1());
     }
 

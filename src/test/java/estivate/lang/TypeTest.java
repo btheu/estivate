@@ -6,14 +6,13 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import org.jsoup.nodes.Element;
-import org.junit.Test;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Select;
 import estivate.annotations.Text;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Test the argument Type case
