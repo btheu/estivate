@@ -5,28 +5,28 @@ import java.io.InputStream;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public abstract class EstivateTest {
 
 	protected EstivateMapper mapper = new EstivateMapper();
 
 	protected void assertNotBlank(String object) {
-		Assert.assertNotNull("Should not be blank", object);
-		Assert.assertNotEquals("Should not be blank", "", object.trim());
+		Assertions.assertNotNull("Should not be blank", object);
+		Assertions.assertNotEquals("Should not be blank", "", object.trim());
 	}
 
 	protected void assertContains(String contains, String word) {
-		Assert.assertTrue(word.contains(contains));
+		Assertions.assertTrue(word.contains(contains));
 	}
 
 	protected void assertNotContains(String contains, String word) {
-		Assert.assertFalse(word.contains(contains));
+		Assertions.assertFalse(word.contains(contains));
 	}
 
 	protected InputStream read(String string) {
 		InputStream resourceAsStream = EstivateMapper.class.getResourceAsStream(string);
-		Assert.assertNotNull(resourceAsStream);
+		Assertions.assertNotNull(resourceAsStream);
 		return resourceAsStream;
 	}
 

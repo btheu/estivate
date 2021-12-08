@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Select;
 import estivate.annotations.Text;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TextTest extends EstivateTest {
@@ -24,19 +23,19 @@ public class TextTest extends EstivateTest {
 
         Result2 result = this.mapper.map(document, Result2.class);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals("Text1 Text2 Text3 child of 3", result.getCas1());
-        Assert.assertEquals("Text1 Text2 Text3", result.getCas2());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("Text1 Text2 Text3 child of 3", result.getCas1());
+        Assertions.assertEquals("Text1 Text2 Text3", result.getCas2());
 
-        Assert.assertEquals(3, result.getCas3().size());
-        Assert.assertEquals("Text1", result.getCas3().get(0));
-        Assert.assertEquals("Text2", result.getCas3().get(1));
-        Assert.assertEquals("Text3 child of 3", result.getCas3().get(2));
+        Assertions.assertEquals(3, result.getCas3().size());
+        Assertions.assertEquals("Text1", result.getCas3().get(0));
+        Assertions.assertEquals("Text2", result.getCas3().get(1));
+        Assertions.assertEquals("Text3 child of 3", result.getCas3().get(2));
 
-        Assert.assertEquals(3, result.getCas4().size());
-        Assert.assertEquals("Text1", result.getCas4().get(0));
-        Assert.assertEquals("Text2", result.getCas4().get(1));
-        Assert.assertEquals("Text3", result.getCas4().get(2));
+        Assertions.assertEquals(3, result.getCas4().size());
+        Assertions.assertEquals("Text1", result.getCas4().get(0));
+        Assertions.assertEquals("Text2", result.getCas4().get(1));
+        Assertions.assertEquals("Text3", result.getCas4().get(2));
 
         log.info(result.toString());
     }
@@ -65,10 +64,10 @@ public class TextTest extends EstivateTest {
 
         Result result = this.mapper.map(document, Result.class);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals("This is my name: John", result.getName1());
-        Assert.assertEquals("This is my name: John", result.getName2());
-        Assert.assertEquals("This is my name: John", result.getName3());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("This is my name: John", result.getName1());
+        Assertions.assertEquals("This is my name: John", result.getName2());
+        Assertions.assertEquals("This is my name: John", result.getName3());
 
         log.info(result.toString());
 
@@ -81,12 +80,12 @@ public class TextTest extends EstivateTest {
 
         ResultOwn result = this.mapper.map(document, ResultOwn.class);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getName1());
-        Assert.assertNotNull(result.getName2());
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.getName1());
+        Assertions.assertNotNull(result.getName2());
 
-        Assert.assertEquals("John", result.getName1());
-        Assert.assertEquals("John", result.getName2());
+        Assertions.assertEquals("John", result.getName1());
+        Assertions.assertEquals("John", result.getName2());
 
         log.info(result.toString());
 

@@ -3,12 +3,14 @@ package estivate.core.impl;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import estivate.core.Converter;
 import estivate.core.Function;
+import lombok.SneakyThrows;
 
 /**
  * Handles primitives types or their respective object definition class type
@@ -79,6 +81,12 @@ public class PrimitiveConverter implements Converter {
 			return new BigInteger(s.replaceAll(" ", ""));
 		}
 	};
+	public static Function<String, Object> parseURL = new Function<String, Object>() {
+	    @SneakyThrows
+	    public Object apply(String s) {
+	        return new URL(s.replaceAll(" ", ""));
+	    }
+	};
 
 	private static final Map<Type, Function<String, Object>> mLBD = new HashMap<Type, Function<String, Object>>();
 	static {
@@ -102,6 +110,8 @@ public class PrimitiveConverter implements Converter {
 
 		mLBD.put(BigDecimal.class, parseBigDecimal);
 		mLBD.put(BigInteger.class, parseBigInteger);
+
+		mLBD.put(URL.class, parseURL);
 	}
 
 	private static final Set<Type> primitivesAndBoxes = mLBD.keySet();

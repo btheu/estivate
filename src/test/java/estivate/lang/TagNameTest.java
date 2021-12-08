@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Select;
 import estivate.annotations.TagName;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TagNameTest extends EstivateTest {
@@ -24,15 +23,15 @@ public class TagNameTest extends EstivateTest {
 
         Result2 result = this.mapper.map(document, Result2.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals("input div span", result.getTagName1());
-        Assert.assertEquals("input div span", result.getTagName2());
+        Assertions.assertEquals("input div span", result.getTagName1());
+        Assertions.assertEquals("input div span", result.getTagName2());
 
-        Assert.assertEquals(3, result.getTagNames().size());
-        Assert.assertEquals("input", result.getTagNames().get(0));
-        Assert.assertEquals("div", result.getTagNames().get(1));
-        Assert.assertEquals("span", result.getTagNames().get(2));
+        Assertions.assertEquals(3, result.getTagNames().size());
+        Assertions.assertEquals("input", result.getTagNames().get(0));
+        Assertions.assertEquals("div", result.getTagNames().get(1));
+        Assertions.assertEquals("span", result.getTagNames().get(2));
 
         log.info(result.toString());
     }
@@ -59,11 +58,11 @@ public class TagNameTest extends EstivateTest {
 
         Result result = this.mapper.map(document, Result.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals("input", result.getTagName1());
-        Assert.assertEquals("input", result.getTagName2());
-        Assert.assertEquals("input", result.getTagName3());
+        Assertions.assertEquals("input", result.getTagName1());
+        Assertions.assertEquals("input", result.getTagName2());
+        Assertions.assertEquals("input", result.getTagName3());
 
         log.info(result.toString());
     }

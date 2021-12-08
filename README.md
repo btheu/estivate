@@ -49,7 +49,7 @@ Definition of Result class POJO definition which is:
 <dependency>
 	<groupId>com.github.btheu.estivate</groupId>
 	<artifactId>estivate</artifactId>
-	<version>0.4.1</version>
+	<version>0.4.2</version>
 </dependency>
 ```
 
@@ -492,7 +492,7 @@ public class Rapport {
 
 The MIT License
 
-© 2016-2021, Benoit Theunissen <benoit.theunissen@gmail.com>
+© 2016-2017, Benoit Theunissen <benoit.theunissen@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

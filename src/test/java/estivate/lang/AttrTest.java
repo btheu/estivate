@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Attr;
 import estivate.annotations.Select;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AttrTest extends EstivateTest {
@@ -24,14 +23,14 @@ public class AttrTest extends EstivateTest {
 
         Result2 result = this.mapper.map(document, Result2.class);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals("role_1 role_2 role_3", result.getRole1());
-        Assert.assertEquals("role_1 role_2 role_3", result.getRole2());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("role_1 role_2 role_3", result.getRole1());
+        Assertions.assertEquals("role_1 role_2 role_3", result.getRole2());
 
-        Assert.assertEquals(3, result.getRoles().size());
-        Assert.assertEquals("role_1", result.getRoles().get(0));
-        Assert.assertEquals("role_2", result.getRoles().get(1));
-        Assert.assertEquals("role_3", result.getRoles().get(2));
+        Assertions.assertEquals(3, result.getRoles().size());
+        Assertions.assertEquals("role_1", result.getRoles().get(0));
+        Assertions.assertEquals("role_2", result.getRoles().get(1));
+        Assertions.assertEquals("role_3", result.getRoles().get(2));
 
         log.info(result.toString());
 
@@ -59,10 +58,10 @@ public class AttrTest extends EstivateTest {
 
         Result result = this.mapper.map(document, Result.class);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals("role_of_name", result.getName1());
-        Assert.assertEquals("role_of_name", result.getName2());
-        Assert.assertEquals("role_of_name", result.getName3());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("role_of_name", result.getName1());
+        Assertions.assertEquals("role_of_name", result.getName2());
+        Assertions.assertEquals("role_of_name", result.getName3());
 
         log.info(result.toString());
 

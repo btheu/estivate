@@ -6,8 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.jsoup.select.Elements;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.annotations.Convert;
 import estivate.annotations.Text;
@@ -36,20 +36,20 @@ public class CustomConverterTest extends EstivateTest {
         instance.set(Calendar.MONTH, 0);
         instance.set(Calendar.YEAR, 2016);
 
-        Assert.assertEquals(instance.getTime().toString(), result.getDate1().toString());
+        Assertions.assertEquals(instance.getTime().toString(), result.getDate1().toString());
 
-        Assert.assertEquals(instance.getTime().toString(), result.getDate2().toString());
+        Assertions.assertEquals(instance.getTime().toString(), result.getDate2().toString());
 
-        Assert.assertEquals(345, result.getInteger());
+        Assertions.assertEquals(345, result.getInteger());
 
         assertEquals(new int[] { 12, 345, 6789 }, result.getIntegers());
     }
 
     private void assertEquals(int[] expected, int[] current) {
-        Assert.assertEquals(expected.length, current.length);
+        Assertions.assertEquals(expected.length, current.length);
 
         for (int i = 0; i < current.length; i++) {
-            Assert.assertEquals(expected[i], current[i]);
+            Assertions.assertEquals(expected[i], current[i]);
         }
 
     }

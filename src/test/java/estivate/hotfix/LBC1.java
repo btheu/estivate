@@ -5,15 +5,14 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Select;
 import estivate.annotations.Text;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LBC1 extends EstivateTest {
@@ -37,8 +36,8 @@ public class LBC1 extends EstivateTest {
 
         List<Article> articles = (List<Article>) this.mapper.map(document, type);
 
-        Assert.assertNotNull(articles);
-        Assert.assertEquals(35, articles.size());
+        Assertions.assertNotNull(articles);
+        Assertions.assertEquals(35, articles.size());
 
         log.info(articles.toString());
 

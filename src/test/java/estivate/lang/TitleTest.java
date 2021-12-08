@@ -3,8 +3,8 @@ package estivate.lang;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import estivate.EstivateTest;
 import estivate.annotations.Select;
@@ -22,10 +22,10 @@ public class TitleTest extends EstivateTest {
 
         Result result = mapper.map(document, Result.class);
 
-        Assert.assertNotNull(result);
+        Assertions.assertNotNull(result);
 
-        Assert.assertEquals("Page Title", result.getTitle1());
-        Assert.assertEquals("Page Title", result.getTitle2());
+        Assertions.assertEquals("Page Title", result.getTitle1());
+        Assertions.assertEquals("Page Title", result.getTitle2());
 
         log.info(result.toString());
     }
@@ -37,11 +37,11 @@ public class TitleTest extends EstivateTest {
 
         ResultPage result = mapper.map(document, ResultPage.class);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getContent());
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.getContent());
 
-        Assert.assertEquals("Page Title", result.getContent().getTitle1());
-        Assert.assertEquals("Page Title", result.getContent().getTitle2());
+        Assertions.assertEquals("Page Title", result.getContent().getTitle1());
+        Assertions.assertEquals("Page Title", result.getContent().getTitle2());
 
         log.info(result.toString());
     }
