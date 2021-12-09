@@ -10,19 +10,17 @@ Giving this simple HTML, we want to the POJO's ```name``` field set with the bod
 
 ```html
 <html>
-	<head></head>
-	<body>
-		<div id="nameId">This is my name</div>
-	</body>
+  <head></head>
+  <body>
+    <div id="nameId">This is my name</div>
+  </body>
 </html>
 ```
 
 ```java
 public class Result {
-
-	@Text(select="#nameId")
-	public String name;
-
+  @Text(select="#nameId")
+  public String name;
 }
 ```
 
@@ -30,9 +28,7 @@ Mapping a DOM document to a POJO is very easy.
 
 ```java
 InputStream document = ...
-
 EstivateMapper mapper = new EstivateMapper();
-
 Result result = mapper.map(document, Result.class);
 ```
 
@@ -47,9 +43,9 @@ Definition of Result class POJO definition which is:
 
 ```xml
 <dependency>
-	<groupId>com.github.btheu.estivate</groupId>
-	<artifactId>estivate</artifactId>
-	<version>0.4.2</version>
+  <groupId>com.github.btheu.estivate</groupId>
+  <artifactId>estivate</artifactId>
+  <version>0.4.2</version>
 </dependency>
 ```
 
@@ -57,19 +53,15 @@ Definition of Result class POJO definition which is:
 
 ```java
 InputStream document = ...
-
 EstivateMapper mapper = new EstivateMapper();
-
 List<Result> result = mapper.mapToList(document, Result.class);
 ```
 
 ```java
 @Select("div.someClass")
 public class Result {
-
-	@Text(select=".name")
-	public String name;
-
+  @Text(select=".name")
+  public String name;
 }
 ```
 
@@ -80,14 +72,12 @@ This provides a way to implement custom operations just after mapping.
 
 ```java
 public class Result {
-
-	public String name;
-	
-	@Text(select="#nameId")
-	public void setName(String pName){
-		this.name = pName.substring(0,3).toUpperCase();
-	}
-
+  public String name;
+  
+  @Text(select="#nameId")
+  public void setName(String pName){
+    this.name = pName.substring(0,3).toUpperCase();
+  }
 }
 ```
 
@@ -102,10 +92,8 @@ on this DOM Element.
 
 ```java
 public class Result {
-
-	@Text(select="div#content > span p")
-	public String description;
-
+  @Text(select="div#content > span p")
+  public String description;
 }
 ```
 
@@ -113,10 +101,8 @@ Also, the JSoup Element object can be mapped to the field or method.
 
 ```java
 public class Result {
-
-	@Select(select="div#content > span p")
-	public Element paragraphElement;
-
+  @Select(select="div#content > span p")
+  public Element paragraphElement;
 }
 ```
 
@@ -124,14 +110,12 @@ Method mapping is a way to perform further JSoup operations.
 
 ```java
 public class Result {
-
-	public String name;
-	
-	@Select(select="div#content > span p")
-	public void setName(Element pElement){
-		name = pElement.siblingNodes().first().text();
-	}
-
+  public String name;
+  
+  @Select(select="div#content > span p")
+  public void setName(Element pElement){
+    name = pElement.siblingNodes().first().text();
+  }
 }
 ```
 
@@ -144,10 +128,8 @@ normalized and trimmed.
 
 ```java
 public class Result {
-
-	@Text(select="#description")
-	public String description;
-
+  @Text(select="#description")
+  public String description;
 }
 ```
 
@@ -157,10 +139,8 @@ Maps the text owned by this element only; does not get the combined text of all 
 
 ```java
 public class Result {
-
-	@Text(select="#description")
-	public String description;
-
+  @Text(select="#description")
+  public String description;
 }
 ```
 
@@ -174,10 +154,8 @@ the absUrl method. E.g.:
 
 ```java
 public class Result {
-
-	@Attr(select="#picture", value="abs:href")
-	public String absoluteUrl;
-
+  @Attr(select="#picture", value="abs:href")
+  public String absoluteUrl;
 }
 ```
 
@@ -189,75 +167,55 @@ Each column are mapped to java class field/method.
 
 ```java
 InputStream document = ...
-
 EstivateMapper mapper = new EstivateMapper();
-
 List<Result> result = mapper.mapToList(document, Result.class);
 ```
 
 ```java
 @Table(select="#table1")
 public class Result {
-	@Column("Number Column")
-	public int number;
-	@Column("Street Column")
-	public int street;
-	@Column(name="Name.*Column", regex=true)
-	@Attr(select="span", value="title")
-	public String name;
+  @Column("Number Column")
+  public int number;
+  @Column("Street Column")
+  public int street;
+  @Column(name="Name.*Column", regex=true)
+  @Attr(select="span", value="title")
+  public String name;
 }
 ```
 
 ```html
 <html>
 <head>
-	<title>table-u1</title>
+  <title>table-u1</title>
 </head>
 <body>
-	<div id="content">
+  <div id="content">
 
 
 <table id="table1">
 <thead>
 <tr>
-	<th><span>Number Column</span></th>
-	<th><span>Street Column</span></th>
-	<th><span>Name Column</span></th>
+  <th><span>Number Column</span></th>
+  <th><span>Street Column</span></th>
+  <th><span>Name Column</span></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td>
-	<span>1</span>
-  </td>
-  <td>
-	<span>streetA</span>
-  </td>
-  <td>
-	<span title="nameA" />
-  </td>
+  <td><span>1</span></td>
+  <td><span>streetA</span></td>
+  <td><span title="nameA"/></td>
 </tr>
 <tr>
-  <td>
-	<span>2</span>
-  </td>
-  <td>
-	<span>streetB</span>
-  </td>
-  <td>
-	<span title="nameB" />
-  </td>
+  <td><span>2</span></td>
+  <td><span>streetB</span></td>
+  <td><span title="nameB"/></td>
 </tr>
 <tr>
-  <td>
-	<span>3</span>
-  </td>
-  <td>
-	<span>streetC</span>
-  </td>
-  <td>
-	<span title="nameC" />
-  </td>
+  <td><span>3</span></td>
+  <td><span>streetC</span></td>
+  <td><span title="nameC"/></td>
 </tr>
 </tbody>
 </table>
@@ -274,10 +232,8 @@ Check if this element matches the given Selector CSS query.
 
 ```java
 public class Result {
-
-	@Is(select="#setting", value=".specific")
-	public boolean isSpecific;
-
+  @Is(select="#setting", value=".specific")
+  public boolean isSpecific;
 }
 ```
 
@@ -288,10 +244,8 @@ or method is not satisfied.
 
 ```java
 public class Result {
-
-	@Text(select="#description", optional=true)
-	public String description;
-
+  @Text(select="#description", optional=true)
+  public String description;
 }
 ```
 
@@ -303,10 +257,8 @@ Maps the name of the tag for this element. E.g. div
 
 ```java
 public class Result {
-
-	@TagName(select=".picture", first=true)
-	public String pictureTagName;
-
+  @TagName(select=".picture", first=true)
+  public String pictureTagName;
 }
 ```
 
@@ -318,10 +270,8 @@ Maps the string contents of the document's title element.
 
 ```java
 public class Result {
-
-	@Title
-	public String pageTitle;
-
+  @Title
+  public String pageTitle;
 }
 ```
 
@@ -333,10 +283,8 @@ Maps the value of a form element (input, textarea, etc).
 
 ```java
 public class Result {
-
-	@Val("#form_field_1")
-	public String name;
-
+  @Val("#form_field_1")
+  public String name;
 }
 ```
 
@@ -348,10 +296,8 @@ POJO can have complexe mapping having sub POJO themself mapped with a sub DOM El
 
 ```java
 public class Page {
-
-	@Select(select="div#content2")
-	public Content content;
-
+  @Select(select="div#content2")
+  public Content content;
 }
 
 /**
@@ -359,13 +305,11 @@ public class Page {
 * selected by <code>Page</code> content rule
 */
 public class Content {
-
-	@Text(select=".name")
-	public String name;
-	
-	@Text(select=".description")
-	public String description;
-
+  @Text(select=".name")
+  public String name;
+  
+  @Text(select=".description")
+  public String description;
 }
 ```
 
@@ -374,27 +318,27 @@ The ```name``` field will be setted as ```"Actual name2"``` with the following H
 
 ```html
 <html>
-	<head></head>
-	<body>
-		<div id="content1">
-			<div class="name">
-				Actual name1
-			</div>
-			...
-			<div class="description">
-				This is the description of content 1.
-			</div>
-		</div>
-		<div id="content2">
-			<div class="name">
-				Actual name2
-			</div>
-			...
-			<div class="description">
-				This is the description of content 2.
-			</div>
-		</div>
-	</body>
+  <head></head>
+  <body>
+    <div id="content1">
+      <div class="name">
+        Actual name1
+      </div>
+      ...
+      <div class="description">
+        This is the description of content 1.
+      </div>
+    </div>
+    <div id="content2">
+      <div class="name">
+        Actual name2
+      </div>
+      ...
+      <div class="description">
+        This is the description of content 2.
+      </div>
+    </div>
+  </body>
 </html>
 ```
 
@@ -403,10 +347,8 @@ The ```name``` field will be setted as ```"Actual name2"``` with the following H
 
 ```java
 public class Page {
-
-	@Select(select="div.article p")
-	public List<Article> articles;
-
+  @Select(select="div.article p")
+  public List<Article> articles;
 }
 
 /**
@@ -415,13 +357,11 @@ public class Page {
 */
 // JSoupSelectList is not necessary as long Page already specify the select rule.
 public class Article {
-
-	@Text(select=".author")
-	public String author;
-	
-	@Text(select=".date")
-	public String date;
-
+  @Text(select=".author")
+  public String author;
+  
+  @Text(select=".date")
+  public String date;
 }
 ```
 
@@ -429,32 +369,32 @@ This will perfectly macht all aticles giving this HTML DOM.
 
 ```html
 <html>
-	<head></head>
-	<body>
-		<div class="article">
-			<p>
-				<div class="author">
-					Author first article.
-				</div>
-				...
-				<div class="date">
-					Nov. 1st 2015
-				</div>
-			</p>
-		</div>
-		... 
-		<div class="article">
-			<p>
-				<div class="author">
-					Author last article.
-				</div>
-				...
-				<div class="date">
-					Nov. 30th 2015
-				</div>
-			</p>
-		</div>
-	</body>
+  <head></head>
+  <body>
+    <div class="article">
+      <p>
+        <div class="author">
+          Author first article.
+        </div>
+        ...
+        <div class="date">
+          Nov. 1st 2015
+        </div>
+      </p>
+    </div>
+    ... 
+    <div class="article">
+      <p>
+        <div class="author">
+          Author last article.
+        </div>
+        ...
+        <div class="date">
+          Nov. 30th 2015
+        </div>
+      </p>
+    </div>
+  </body>
 </html>
 ```
 
@@ -464,27 +404,25 @@ Estivate handles primitive types for fields or methods arguments mapping.
 
 ```java
 public class Rapport {
-
-	@Text(select="#nbTeachers")
-	public Integer numberOfTeachers;
-	
-	@Text(select="#nbStudents")
-	public int numberOfStudents;
-
+  @Text(select="#nbTeachers")
+  public Integer numberOfTeachers;
+  
+  @Text(select="#nbStudents")
+  public int numberOfStudents;
 }
 ```
 
 ```html
 <html>
-	<head></head>
-	<body>
-		<div id="nbTeachers">
-			123
-		</div>
-		<div id="nbStudents">
-			456
-		</div>
-	</body>
+  <head></head>
+  <body>
+    <div id="nbTeachers">
+      123
+    </div>
+    <div id="nbStudents">
+      456
+    </div>
+  </body>
 </html>
 ```
 
@@ -492,7 +430,7 @@ public class Rapport {
 
 The MIT License
 
-© 2016-2017, Benoit Theunissen <benoit.theunissen@gmail.com>
+© 2016-2022, Benoit Theunissen <benoit.theunissen@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
