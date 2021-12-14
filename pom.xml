@@ -71,12 +71,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.8.1</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<compilerVersion>1.5</compilerVersion>
-					<source>1.5</source>
-					<target>1.5</target>
+					<release>15</release>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -88,17 +87,6 @@
 						<arg>--pinentry-mode</arg>
 						<arg>loopback</arg>
 					</gpgArguments>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>external.atlassian.jgitflow</groupId>
-				<artifactId>jgitflow-maven-plugin</artifactId>
-				<version>1.0-m5.1</version>
-				<configuration>
-					<flowInitContext>
-						<masterBranchName>master</masterBranchName>
-						<developBranchName>develop</developBranchName>
-					</flowInitContext>
 				</configuration>
 			</plugin>
 		</plugins>
