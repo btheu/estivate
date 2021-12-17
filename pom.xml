@@ -75,7 +75,8 @@
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<compilerVersion>1.5</compilerVersion>
-					<release>15</release>
+					<source>1.5</source>
+					<target>1.5</target>
 				</configuration>
 			</plugin>
 			<plugin>
