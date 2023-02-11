@@ -430,7 +430,7 @@ public class Rapport {
 
 The MIT License
 
-© 2016-2022, Benoit Theunissen <benoit.theunissen@gmail.com>
+© 2016-2023, Benoit Theunissen <benoit.theunissen@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

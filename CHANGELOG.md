@@ -1,5 +1,6 @@
 ## 0.4.3 - pending
 
+*	build: update dependencies
 
 ## 0.4.2 - 2021-12-08
 
