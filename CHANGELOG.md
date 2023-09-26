@@ -1,19 +1,24 @@
-## 0.4.3 - pending
+## 0.4.4 - pending
 
+*	prepare version
+
+## 0.4.3 - 2023-09-26
+
+*	build: update dependencies
 
 ## 0.4.2 - 2021-12-08
 
-* update dependencies
+*	build: update dependencies
 
 ## 0.4.1 - 2020-05-17
 
-* update dependencies
-* refactor: add facade parse methods
-* fix: JSoup workaround inputStream document parse - byte buffer
-* feat(table): add classname selector to match head from <th> class
-* feat(table): rename cssClass => thClass
-* fix(RegexExtractorConvertor): handle long & double
-* feat(table): add thHaving() feature & refactor thClass
+*	update dependencies
+*	refactor: add facade parse methods
+*	fix: JSoup workaround inputStream document parse - byte buffer
+*	feat(table): add classname selector to match head from <th> class
+*	feat(table): rename cssClass => thClass
+*	fix(RegexExtractorConvertor): handle long & double
+*	feat(table): add thHaving() feature & refactor thClass
 
 ## 0.4.0 - 2019-12-02
 
@@ -77,8 +82,8 @@
 
 Fist release providing features :
 
-*   @Select
-*   @Text
-*   @Attr
+*	@Select
+*	@Text
+*	@Attr
 
 
