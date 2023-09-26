@@ -1,4 +1,8 @@
-## 0.4.3 - pending
+## 0.4.4 - pending
+
+*	prepare version
+
+## 0.4.3 - 2023-09-26
 
 *	build: update dependencies
 
